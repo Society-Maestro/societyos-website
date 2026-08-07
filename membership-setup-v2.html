@@ -1,0 +1,2435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocietyOS — Membership Setup</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-elevated: #1a1a2e;
+            --bg-card: #16162a;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-glow: rgba(138, 75, 255, 0.3);
+            --nyx-purple: #8a4bff;
+            --nyx-purple-light: #a870ff;
+            --nyx-purple-glow: rgba(138, 75, 255, 0.15);
+            --raven-gold: #d4a843;
+            --raven-gold-light: #e8c170;
+            --raven-gold-glow: rgba(212, 168, 67, 0.15);
+            --accent-cyan: #00d9ff;
+            --accent-cyan-glow: rgba(0, 217, 255, 0.1);
+            --success: #2dd4a8;
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b8;
+            --text-tertiary: #6a6a82;
+            --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'SF Pro Display', 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient glow */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%; left: -10%;
+            width: 60%; height: 60%;
+            background: radial-gradient(circle, var(--nyx-purple-glow) 0%, transparent 60%);
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -20%; right: -10%;
+            width: 50%; height: 50%;
+            background: radial-gradient(circle, var(--raven-gold-glow) 0%, transparent 60%);
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+        .header h1 .gradient {
+            background: linear-gradient(135deg, var(--nyx-purple-light), var(--raven-gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Progress steps */
+        .steps {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 3rem;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .step-dot {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--border-subtle);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            transition: var(--transition);
+        }
+        .step.active .step-dot {
+            border-color: var(--nyx-purple);
+            background: var(--nyx-purple-glow);
+            color: var(--nyx-purple-light);
+            box-shadow: 0 0 20px var(--nyx-purple-glow);
+        }
+        .step.completed .step-dot {
+            background: var(--nyx-purple);
+            border-color: var(--nyx-purple);
+            color: white;
+        }
+        .step.skipped .step-dot {
+            border-color: var(--border-subtle);
+            background: transparent;
+            color: var(--text-tertiary);
+            opacity: 0.4;
+            text-decoration: line-through;
+        }
+        .step.skipped .step-label {
+            opacity: 0.35;
+            text-decoration: line-through;
+        }
+        .step-label {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+            transition: var(--transition);
+        }
+        .step.active .step-label {
+            color: var(--text-primary);
+        }
+        .step-line {
+            width: 40px; height: 2px;
+            background: var(--border-subtle);
+            transition: var(--transition);
+        }
+        .step-line.completed {
+            background: var(--nyx-purple);
+        }
+
+        /* Main content area */
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Stage area — where the morphing happens */
+        .stage {
+            width: 100%;
+            max-width: 800px;
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* The AI Bubble — the morphing element */
+        .ai-bubble {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%,
+                rgba(168, 112, 255, 0.3) 0%,
+                rgba(138, 75, 255, 0.15) 50%,
+                rgba(10, 10, 15, 0.8) 100%);
+            border: 1px solid var(--border-glow);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow:
+                0 0 60px var(--nyx-purple-glow),
+                inset 0 0 40px rgba(138, 75, 255, 0.08);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-12px) scale(1.02); }
+        }
+
+        /* Inner orb pulse */
+        .ai-bubble::before {
+            content: '';
+            position: absolute;
+            width: 60%; height: 60%;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--nyx-purple-glow) 0%, transparent 70%);
+            animation: pulse-inner 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-inner {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        /* The S in the bubble */
+        .ai-bubble-mark {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--nyx-purple), var(--raven-gold));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            z-index: 2;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 20px var(--nyx-purple-glow);
+        }
+
+        /* Morphed states */
+        .ai-bubble.morphed-phone {
+            width: 200px;
+            height: 100px;
+            border-radius: 24px;
+            animation: none;
+        }
+        .ai-bubble.morphed-phone .ai-bubble-mark {
+            width: 40px; height: 40px;
+            font-size: 1.2rem;
+        }
+
+        .ai-bubble.morphed-case {
+            width: 220px;
+            height: 110px;
+            border-radius: 28px;
+            animation: none;
+        }
+
+        /* Orbiting particles */
+        .orbit-container {
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        .orbit-particle {
+            position: absolute;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            box-shadow: 0 0 8px var(--accent-cyan);
+            top: 50%; left: 50%;
+        }
+        .orbit-particle:nth-child(1) { animation: orbit 6s linear infinite; }
+        .orbit-particle:nth-child(2) { animation: orbit 8s linear infinite reverse; }
+        .orbit-particle:nth-child(3) { animation: orbit 10s linear infinite; }
+
+        @keyframes orbit {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(130px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(130px) rotate(-360deg); }
+        }
+
+        /* Selection prompt */
+        .stage-prompt {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            transition: opacity 0.4s;
+        }
+        .stage-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        /* Selection grid */
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .selection-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem 1rem 2.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: visible;
+            min-height: 180px;
+
+            /* Default state: visible, slightly dimmed */
+            opacity: 0.85;
+            filter: brightness(0.9) saturate(0.8);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        }
+        .selection-card:hover,
+        .selection-card.selected {
+            overflow: visible;
+        }
+        .selection-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--nyx-purple), var(--raven-gold));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: var(--transition);
+        }
+
+        /* Smokey glow aura on hover — the illumination */
+        .selection-card::after {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border-radius: 18px;
+            background: linear-gradient(135deg,
+                var(--nyx-purple-glow) 0%,
+                transparent 40%,
+                transparent 60%,
+                var(--raven-gold-glow) 100%);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .selection-card:hover {
+            /* Illuminate from shadow */
+            opacity: 1;
+            filter: brightness(1) saturate(1);
+            border-color: var(--border-glow);
+            background: var(--bg-elevated);
+            transform: translateY(-4px);
+
+            /* Smokey light around the edge */
+            box-shadow:
+                0 0 0 1px var(--border-glow),
+                0 0 20px rgba(138, 75, 255, 0.2),
+                0 0 40px rgba(138, 75, 255, 0.1),
+                0 0 60px rgba(212, 168, 67, 0.05),
+                0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+        .selection-card:hover::before { transform: scaleX(1); }
+        .selection-card:hover::after { opacity: 1; }
+
+        /* Animated smoke particles on hover */
+        .selection-card:hover .smoke-layer {
+            opacity: 1;
+        }
+        .smoke-layer {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 16px;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            pointer-events: none;
+        }        .smoke-particle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(8px);
+            opacity: 0;
+        }
+        .selection-card:hover .smoke-particle {
+            animation: smoke-drift 3s ease-out infinite;
+        }
+        .smoke-particle:nth-child(1) {
+            width: 40px; height: 40px;
+            background: rgba(138, 75, 255, 0.15);
+            bottom: 10%; left: 10%;
+            animation-delay: 0s !important;
+        }
+        .smoke-particle:nth-child(2) {
+            width: 30px; height: 30px;
+            background: rgba(212, 168, 67, 0.1);
+            bottom: 15%; right: 15%;
+            animation-delay: 0.8s !important;
+        }
+        .smoke-particle:nth-child(3) {
+            width: 50px; height: 50px;
+            background: rgba(0, 217, 255, 0.08);
+            bottom: 5%; left: 40%;
+            animation-delay: 1.5s !important;
+        }
+
+        @keyframes smoke-drift {
+            0% { opacity: 0; transform: translateY(0) scale(0.5); }
+            20% { opacity: 0.6; }
+            100% { opacity: 0; transform: translateY(-80px) scale(1.5); }
+        }
+
+        /* Selected state — fully illuminated, persistent */
+        .selection-card.selected {
+            opacity: 1;
+            filter: brightness(1) saturate(1);
+            border-color: var(--nyx-purple);
+            background: var(--bg-elevated);
+            box-shadow:
+                0 0 0 1px var(--nyx-purple),
+                0 0 20px rgba(138, 75, 255, 0.25),
+                0 0 40px rgba(138, 75, 255, 0.12),
+                0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+        .selection-card.selected::before { transform: scaleX(1); }
+        .selection-card.selected::after { opacity: 0.5; }
+        .selection-card.selected .smoke-layer { opacity: 1; }
+        .selection-card.selected .smoke-particle { animation: smoke-drift 3s ease-out infinite; }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60px;
+            color: var(--text-tertiary);
+            transition: color 0.4s ease;
+        }
+        .card-icon svg {
+            max-width: 56px;
+            max-height: 48px;
+        }
+        .selection-card:hover .card-icon,
+        .selection-card.selected .card-icon {
+            color: var(--text-primary);
+        }
+        /* Brand-specific hover colors */
+        .selection-card[data-id^="samsung"]:hover .card-icon,
+        .selection-card[data-id^="samsung"].selected .card-icon {
+            color: #1428a0;
+        }
+        .selection-card[data-id^="iphone"]:hover .card-icon,
+        .selection-card[data-id^="iphone"].selected .card-icon,
+        .selection-card[data-id^="mac-mini"]:hover .card-icon,
+        .selection-card[data-id^="mac-mini"].selected .card-icon {
+            color: var(--text-primary);
+        }
+        .selection-card[data-id^="motorola"]:hover .card-icon,
+        .selection-card[data-id^="motorola"].selected .card-icon {
+            color: #5c92fa;
+        }
+        .selection-card[data-id^="framework"]:hover .card-icon,
+        .selection-card[data-id^="framework"].selected .card-icon {
+            color: #00d9ff;
+        }
+        .selection-card[data-id^="tangem"]:hover .card-icon,
+        .selection-card[data-id^="tangem"].selected .card-icon {
+            color: var(--accent-cyan);
+        }
+        .selection-card[data-id="founding-nodes"]:hover .card-icon,
+        .selection-card[data-id="founding-nodes"].selected .card-icon {
+            color: var(--raven-gold);
+        }
+        /* Case silhouettes — visible by default, illuminate on hover */
+        .case-silhouette {
+            opacity: 0.6;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            position: absolute;
+            top: 68%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.85);
+        }
+        /* Default phone shape — tall */
+        .case-silhouette:not(.case-foldable-book):not(.case-foldable-horizontal) {
+            width: 50px;
+            height: 100px;
+        }
+        /* Foldable wide + horizontal — both landscape (Fold8 Wide + iPhone Ultra) */
+        .case-foldable-horizontal,
+        .case-foldable-wide-shape {
+            width: 90px;
+            height: 60px;
+        }
+        /* Foldable book tall — portrait (Fold8 Ultra, Motorola) */
+        .case-foldable-book:not(.case-foldable-wide-shape) {
+            width: 60px;
+            height: 90px;
+        }
+        .selection-card:hover .case-silhouette,
+        .selection-card.selected .case-silhouette {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }        /* Case body — the outline of the case (works on rect and path) */
+        .case-silhouette .case-body {
+            fill: none;
+            stroke: rgba(138, 75, 255, 0.2);
+            stroke-width: 1.5;
+            transition: all 0.6s ease;
+        }
+        .selection-card:hover .case-silhouette .case-body,
+        .selection-card.selected .case-silhouette .case-body {
+            stroke: var(--nyx-purple-light);
+            stroke-width: 2;
+            filter: drop-shadow(0 0 4px var(--nyx-purple-glow)) drop-shadow(0 0 8px var(--nyx-purple-glow));
+        }
+        /* Variants */
+        .case-silhouette .case-body-thick {
+            stroke-width: 2.5;
+        }
+        .case-silhouette .case-body-translucent {
+            stroke: rgba(0, 217, 255, 0.2);
+        }
+        .selection-card:hover .case-silhouette .case-body-translucent {
+            stroke: var(--accent-cyan);
+            filter: drop-shadow(0 0 4px var(--accent-cyan-glow)) drop-shadow(0 0 8px var(--accent-cyan-glow));
+        }
+        .case-silhouette .case-body-ghost {
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-dasharray: 3 2;
+        }
+        .selection-card:hover .case-silhouette .case-body-ghost {
+            stroke: rgba(255, 255, 255, 0.5);
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.2)) drop-shadow(0 0 8px rgba(255, 255, 255, 0.1));
+        }
+        .case-silhouette .case-body-inner {
+            fill: none;
+            stroke: rgba(138, 75, 255, 0.15);
+            stroke-width: 1;
+        }
+        .selection-card:hover .case-silhouette .case-body-inner {
+            stroke: rgba(168, 112, 255, 0.5);
+        }
+        /* Camera bump */
+        .case-silhouette .case-camera {
+            fill: rgba(0, 0, 0, 0.3);
+            stroke: rgba(138, 75, 255, 0.15);
+            stroke-width: 1;
+            transition: all 0.6s ease;
+        }
+        .selection-card:hover .case-silhouette .case-camera {
+            stroke: var(--nyx-purple-light);
+            fill: rgba(138, 75, 255, 0.1);
+            filter: drop-shadow(0 0 3px var(--nyx-purple-glow));
+        }
+        /* Edge lines */
+        .case-silhouette .case-edge {
+            stroke: rgba(138, 75, 255, 0.1);
+            stroke-width: 1;
+            transition: all 0.6s ease;
+        }
+        .selection-card:hover .case-silhouette .case-edge {
+            stroke: var(--nyx-purple-light);
+            stroke-width: 1.5;
+            filter: drop-shadow(0 0 3px var(--nyx-purple-glow));
+        }
+        /* Detail lines (gradient) */
+        .case-silhouette .case-detail {
+            stroke: rgba(212, 168, 67, 0.1);
+            stroke-width: 1;
+            transition: all 0.6s ease;
+        }
+        .selection-card:hover .case-silhouette .case-detail {
+            stroke: var(--raven-gold-light);
+            filter: drop-shadow(0 0 3px var(--raven-gold-glow));
+        }
+        /* Detail dots (particle) */
+        .case-silhouette .case-detail-dot {
+            fill: rgba(0, 217, 255, 0.1);
+            transition: all 0.6s ease;
+        }
+        .selection-card:hover .case-silhouette .case-detail-dot {
+            fill: var(--accent-cyan);
+            filter: drop-shadow(0 0 2px var(--accent-cyan-glow));
+        }
+        /* Stitch lines (leather) */
+        .case-silhouette .case-stitch {
+            stroke: rgba(212, 168, 67, 0.1);
+            stroke-width: 0.5;
+            stroke-dasharray: 2 2;
+            transition: all 0.6s ease;
+        }
+        .selection-card:hover .case-silhouette .case-stitch {
+            stroke: var(--raven-gold-light);
+            filter: drop-shadow(0 0 2px var(--raven-gold-glow));
+        }
+        /* Glow lines (frosted) */
+        .case-silhouette .case-glow-line {
+            stroke: rgba(0, 217, 255, 0.05);
+            stroke-width: 1;
+            transition: all 0.6s ease;
+        }
+        .selection-card:hover .case-silhouette .case-glow-line {
+            stroke: var(--accent-cyan);
+            filter: drop-shadow(0 0 3px var(--accent-cyan-glow)) drop-shadow(0 0 6px var(--accent-cyan-glow));
+        }
+        /* Glow circle (ghost) */
+        .case-silhouette .case-glow-circle {
+            fill: rgba(255, 255, 255, 0.03);
+            stroke: rgba(255, 255, 255, 0.08);
+            stroke-width: 1;
+            transition: all 0.6s ease;
+        }
+        .selection-card:hover .case-silhouette .case-glow-circle {
+            fill: rgba(255, 255, 255, 0.08);
+            stroke: rgba(255, 255, 255, 0.3);
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.2));
+        }
+        /* Vent holes (rugged) */
+        .case-silhouette .case-vent {
+            fill: rgba(0, 0, 0, 0.3);
+            stroke: rgba(138, 75, 255, 0.1);
+            stroke-width: 0.5;
+            transition: all 0.6s ease;
+        }
+        .selection-card:hover .case-silhouette .case-vent {
+            stroke: var(--nyx-purple-light);
+            fill: rgba(138, 75, 255, 0.2);
+            filter: drop-shadow(0 0 2px var(--nyx-purple-glow));
+        }
+        /* Crease (foldable) */
+        .case-silhouette .case-crease {
+            stroke: rgba(138, 75, 255, 0.1);
+            stroke-width: 1;
+            stroke-dasharray: 3 2;
+            transition: all 0.6s ease;
+        }
+        .selection-card:hover .case-silhouette .case-crease,
+        .selection-card.selected .case-silhouette .case-crease {
+            stroke: var(--nyx-purple-light);
+            filter: drop-shadow(0 0 3px var(--nyx-purple-glow));
+            opacity: 0.3;
+        }
+
+        /* Foldable book — left/right halves slide apart on hover (applies to both tall and wide) */
+        .case-foldable-book {
+            overflow: visible !important;
+        }
+        .case-foldable-book .fold-left,
+        .case-foldable-book .fold-right {
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-box: fill-box;
+        }
+        .selection-card:hover .case-foldable-book .fold-left {
+            transform: translate(-6px, 0);
+        }
+        .selection-card:hover .case-foldable-book .fold-right {
+            transform: translate(6px, 0);
+        }
+        .selection-card.selected .case-foldable-book .fold-left {
+            transform: translate(-4px, 0);
+        }
+        .selection-card.selected .case-foldable-book .fold-right {
+            transform: translate(4px, 0);
+        }
+
+        /* Foldable horizontal — top/bottom halves slide apart on hover (iPhone Ultra) */
+        .case-foldable-horizontal {
+            overflow: visible !important;
+        }
+        .case-foldable-horizontal .fold-top,
+        .case-foldable-horizontal .fold-bottom {
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-box: fill-box;
+        }
+        .selection-card:hover .case-foldable-horizontal .fold-top {
+            transform: translate(0, -5px);
+        }
+        .selection-card:hover .case-foldable-horizontal .fold-bottom {
+            transform: translate(0, 5px);
+        }
+        .selection-card.selected .case-foldable-horizontal .fold-top {
+            transform: translate(0, -3px);
+        }
+        .selection-card.selected .case-foldable-horizontal .fold-bottom {
+            transform: translate(0, 3px);
+        }
+
+        .card-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .card-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Device render area */
+        .device-render {
+            margin-top: 2rem;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            position: relative;
+        }
+
+        /* ── Step 2 split layout: case grid + live phone preview ── */
+        .step2-layout {
+            display: flex;
+            gap: 2rem;
+            width: 100%;
+            max-width: 1000px;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        .step2-grid-side { flex: 1; min-width: 0; }
+        .step2-grid-side.has-single-case .selection-grid {
+            grid-template-columns: 1fr;
+            max-width: 340px;
+            margin: 0 auto;
+        }
+        .step2-grid-side.has-single-case .selection-card {
+            min-height: 220px;
+            padding: 2rem 1.5rem 3rem;
+        }
+        .step2-grid-side.has-single-case .selection-card .card-title {
+            font-size: 1.15rem;
+        }
+        .step2-grid-side.has-single-case .selection-card .card-subtitle {
+            font-size: 0.88rem;
+        }
+        .step2-grid-side.has-single-case .selection-card .case-silhouette {
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+        .step2-grid-side.has-single-case .selection-card:hover .case-silhouette,
+        .step2-grid-side.has-single-case .selection-card.selected .case-silhouette {
+            transform: translate(-50%, -50%) scale(1.3);
+        }
+        .step2-preview-side {
+            width: 300px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 1rem;
+        }
+        .case-preview-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 1.5rem 1.25rem 2rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+        .case-preview-panel.has-case {
+            border-color: var(--border-glow);
+            box-shadow: 0 0 20px var(--nyx-purple-glow);
+        }
+        .case-preview-phone-label {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.25rem;
+        }
+        .case-preview-phone-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        .case-preview-device-area {
+            min-height: 340px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .case-preview-info {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+            min-height: 80px;
+        }
+        .case-preview-case-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--nyx-purple-light);
+            margin-bottom: 0.25rem;
+        }
+        .case-preview-lifestyle {
+            font-size: 0.78rem;
+            color: var(--text-tertiary);
+            margin-bottom: 0.5rem;
+        }
+        .case-preview-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--raven-gold-light);
+        }
+        .case-preview-hint {
+            font-size: 0.72rem;
+            color: var(--text-tertiary);
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        /* Color swatches */
+        .color-swatches {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .color-swatch {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            border: 2px solid var(--border-subtle);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .color-swatch:hover { transform: scale(1.15); border-color: var(--nyx-purple-light); }
+        .color-swatch.selected {
+            border-color: var(--nyx-purple);
+            box-shadow: 0 0 10px var(--nyx-purple-glow);
+            transform: scale(1.1);
+        }
+
+        /* ── Realistic case wrap materials ── */
+        .case-wrap {
+            position: absolute;
+            top: -8px; left: -8px; right: -8px; bottom: -8px;
+            border-radius: 26px;
+            pointer-events: none;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+        }
+        /* The detailed SVG case design overlaying the phone */
+        .case-wrap svg.case-design {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border-radius: inherit;
+        }
+        /* Foldable case wrap adjustments */
+        .phone-mockup.foldable-interactive .case-wrap {
+            border-radius: 16px;
+            top: -6px; left: -6px; right: -6px; bottom: -6px;
+        }
+
+
+        /* Phone render */
+        .phone-mockup {
+            width: 140px;
+            height: 280px;
+            border-radius: 20px;
+            background: linear-gradient(145deg, #1a1a2e, #0d0d12);
+            border: 2px solid var(--border-glow);
+            position: relative;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px var(--nyx-purple-glow);
+        }
+        .phone-mockup::before {
+            content: '';
+            position: absolute;
+            top: 8px; left: 50%;
+            transform: translateX(-50%);
+            width: 60px; height: 6px;
+            border-radius: 3px;
+            background: var(--border-subtle);
+        }
+        .phone-mockup.screen-on::after {
+            content: '';
+            position: absolute;
+            top: 24px; left: 8px; right: 8px; bottom: 8px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(138, 75, 255, 0.1), rgba(212, 168, 67, 0.05));
+            border: 1px solid var(--border-subtle);
+        }
+
+        /* Foldable phone — book style (tall) */
+        .phone-mockup.foldable {
+            width: 200px;
+            height: 260px;
+            border-radius: 12px;
+        }
+        .phone-mockup.foldable::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            width: 2px; height: 100%;
+            background: var(--border-subtle);
+            transform: translateX(-50%);
+        }
+
+        /* Foldable phone — wide style (landscape) */
+        .phone-mockup.foldable-wide {
+            width: 260px;
+            height: 200px;
+            border-radius: 12px;
+        }
+        .phone-mockup.foldable-wide::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 0;
+            width: 100%; height: 2px;
+            background: var(--border-subtle);
+            transform: translateY(-50%);
+        }
+
+        /* Foldable phone — horizontal fold (SAME SIZE as foldable-wide, horizontal crease) */
+        .phone-mockup.foldable-horizontal {
+            width: 260px;
+            height: 200px;
+            border-radius: 12px;
+        }
+        .phone-mockup.foldable-horizontal::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 0;
+            width: 100%; height: 2px;
+            background: var(--border-subtle);
+            transform: translateY(-50%);
+        }
+
+        /* Interactive foldable mockup — halves that open and close on tap */
+        .phone-mockup.foldable-interactive {
+            cursor: pointer;
+            overflow: visible;
+            border: 1px solid var(--border-subtle);
+            background: linear-gradient(135deg, #0a0a1a 0%, #111122 100%);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .phone-mockup.foldable-interactive::before {
+            display: none;
+        }
+
+        /* Fold halves — shared */
+        .fold-half {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0c0c20 0%, #141430 100%);
+        }
+
+        /* Book fold — left/right */
+        .phone-mockup.foldable-interactive.foldable,
+        .phone-mockup.foldable-interactive.foldable-wide {
+            flex-direction: row;
+        }
+        .fold-left-half {
+            border-radius: 12px 0 0 12px;
+            border-right: 1px solid var(--border-subtle);
+        }
+        .fold-right-half {
+            border-radius: 0 12px 12px 0;
+            border-left: 1px solid var(--border-subtle);
+        }
+
+        /* Horizontal fold — top/bottom */
+        .phone-mockup.foldable-interactive.foldable-horizontal {
+            flex-direction: column;
+        }
+        .fold-top-half {
+            border-radius: 12px 12px 0 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .fold-bottom-half {
+            border-radius: 0 0 12px 12px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        /* Screen content — glowing accent */
+        .fold-screen {
+            width: 80%;
+            height: 80%;
+            border-radius: 4px;
+            background: linear-gradient(135deg,
+                rgba(138, 75, 255, 0.06) 0%,
+                rgba(212, 168, 67, 0.03) 100%);
+            border: 1px solid rgba(138, 75, 255, 0.08);
+            transition: all 0.8s ease;
+        }
+
+        /* Crease line */
+        .fold-crease-line {
+            position: absolute;
+            background: var(--border-subtle);
+            transition: all 0.8s ease;
+            opacity: 0.5;
+        }
+        .fold-crease-vertical {
+            width: 1px;
+            height: 100%;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+        }
+        .fold-crease-horizontal {
+            width: 100%;
+            height: 1px;
+            left: 0; top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* CLOSED state — halves overlap (compact phone) */
+        .phone-mockup.foldable-interactive.fold-closed .fold-left-half {
+            transform: translateX(0);
+            border-radius: 12px;
+            z-index: 2;
+            opacity: 1;
+        }
+        .phone-mockup.foldable-interactive.fold-closed .fold-right-half {
+            transform: translateX(0);
+            border-radius: 12px;
+            z-index: 1;
+            opacity: 0.3;
+        }
+        .phone-mockup.foldable-interactive.fold-closed .fold-top-half {
+            transform: translateY(0);
+            border-radius: 12px;
+            z-index: 2;
+            opacity: 1;
+        }
+        .phone-mockup.foldable-interactive.fold-closed .fold-bottom-half {
+            transform: translateY(0);
+            border-radius: 12px;
+            z-index: 1;
+            opacity: 0.3;
+        }
+        .phone-mockup.foldable-interactive.fold-closed .fold-crease-line {
+            opacity: 0.2;
+        }
+        .phone-mockup.foldable-interactive.fold-closed .fold-screen {
+            opacity: 0.4;
+        }
+
+        /* OPEN state — halves slide apart */
+        .phone-mockup.foldable-interactive.fold-open .fold-left-half {
+            transform: translateX(-15px);
+            border-radius: 12px 0 0 12px;
+            opacity: 1;
+        }
+        .phone-mockup.foldable-interactive.fold-open .fold-right-half {
+            transform: translateX(15px);
+            border-radius: 0 12px 12px 0;
+            opacity: 1;
+        }
+        .phone-mockup.foldable-interactive.fold-open .fold-top-half {
+            transform: translateY(-12px);
+            border-radius: 12px 12px 0 0;
+            opacity: 1;
+        }
+        .phone-mockup.foldable-interactive.fold-open .fold-bottom-half {
+            transform: translateY(12px);
+            border-radius: 0 0 12px 12px;
+            opacity: 1;
+        }
+        .phone-mockup.foldable-interactive.fold-open .fold-crease-line {
+            opacity: 0.8;
+            background: var(--nyx-purple-light);
+            box-shadow: 0 0 4px var(--nyx-purple-glow);
+        }
+        .phone-mockup.foldable-interactive.fold-open .fold-screen {
+            opacity: 1;
+            border-color: rgba(138, 75, 255, 0.2);
+        }
+
+        /* Fold hint text */
+        .fold-hint {
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        /* Case on phone */
+        .case-overlay {
+            position: absolute;
+            top: -4px; left: -4px; right: -4px; bottom: -4px;
+            border-radius: 24px;
+            border: 3px solid;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+        }
+        .case-overlay.magsafe {
+            border-color: var(--raven-gold);
+            box-shadow: 0 0 30px var(--raven-gold-glow), inset 0 0 20px var(--raven-gold-glow);
+        }
+        .case-overlay.magsafe::before {
+            content: '';
+            position: absolute;
+            top: 40px; left: 50%;
+            transform: translateX(-50%);
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            border: 2px solid var(--raven-gold);
+            opacity: 0.6;
+        }
+        .case-overlay.clear {
+            border-color: rgba(0, 217, 255, 0.3);
+            background: rgba(0, 217, 255, 0.03);
+            backdrop-filter: blur(2px);
+        }
+        .case-overlay.leather {
+            border-color: #4a3a2a;
+            background: linear-gradient(135deg, rgba(74, 58, 42, 0.2), rgba(50, 38, 28, 0.1));
+        }
+        .case-overlay.raven-gold {
+            border-color: var(--raven-gold);
+            background: linear-gradient(135deg, rgba(212, 168, 67, 0.1), rgba(184, 144, 47, 0.05));
+            box-shadow: 0 0 30px var(--raven-gold-glow);
+        }
+
+        /* Action button */
+        .action-bar {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .btn {
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--nyx-purple), #6d3df0);
+            color: white;
+            box-shadow: 0 4px 20px var(--nyx-purple-glow);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--nyx-purple-glow);
+        }
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+        }
+        .btn-ghost:hover {
+            color: var(--text-primary);
+            border-color: var(--border-glow);
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, var(--raven-gold), #b8902f);
+            color: #1a1a1a;
+            box-shadow: 0 4px 20px var(--raven-gold-glow);
+        }
+
+        /* Summary panel */
+        .summary {
+            display: none;
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            max-width: 500px;
+            width: 100%;
+        }
+        .summary.visible {
+            display: block;
+            animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .summary-row:last-child { border-bottom: none; }
+        .summary-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .summary-value {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* NFC tap animation */
+        .nfc-pulse {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-cyan);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .nfc-pulse.active {
+            animation: nfc-tap 1.5s ease-out;
+        }
+        @keyframes nfc-tap {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(2.5); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .header h1 { font-size: 1.5rem; }
+            .selection-grid { grid-template-columns: repeat(2, 1fr); }
+            .step-label { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <h1>Welcome to <span class="gradient">SocietyOS</span></h1>
+        <p>Let's configure your sovereign experience</p>
+    </div>
+
+    <!-- Progress steps -->
+    <div class="steps">
+        <div class="step active" id="step-1">
+            <div class="step-dot">1</div>
+            <span class="step-label">Device</span>
+        </div>
+        <div class="step-line" id="line-1"></div>
+        <div class="step" id="step-2">
+            <div class="step-dot">2</div>
+            <span class="step-label">Case</span>
+        </div>
+        <div class="step-line" id="line-2"></div>
+        <div class="step" id="step-3">
+            <div class="step-dot">3</div>
+            <span class="step-label">Wallet</span>
+        </div>
+        <div class="step-line" id="line-3"></div>
+        <div class="step" id="step-4">
+            <div class="step-dot">4</div>
+            <span class="step-label">Membership</span>
+        </div>
+    </div>
+
+    <!-- Main stage -->
+    <div class="content">
+        <div class="stage" id="stage">
+            <!-- AI Bubble with orbiting particles -->
+            <div class="orbit-container" id="orbit-container">
+                <div class="orbit-particle"></div>
+                <div class="orbit-particle"></div>
+                <div class="orbit-particle"></div>
+            </div>
+
+            <div class="ai-bubble" id="ai-bubble">
+                <div class="ai-bubble-mark">S</div>
+            </div>
+
+            <div class="nfc-pulse" id="nfc-pulse"></div>
+
+            <div class="stage-prompt" id="stage-prompt">Select your device</div>
+            <div class="stage-subtitle" id="stage-subtitle">The bubble will morph to match your world</div>
+        </div>
+
+        <!-- Selection grid — changes based on step -->
+        <div class="selection-grid" id="selection-grid">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- Device render area -->
+        <div class="device-render" id="device-render" style="display:none;">
+            <div class="phone-mockup" id="phone-mockup">
+                <div class="case-overlay" id="case-overlay" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary" id="summary">
+            <h3 style="margin-bottom:1rem; text-align:center;">Your Sovereign Setup</h3>
+            <div class="summary-row">
+                <span class="summary-label">Device</span>
+                <span class="summary-value" id="sum-device">—</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Case</span>
+                <span class="summary-value" id="sum-case">—</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Wallet</span>
+                <span class="summary-value" id="sum-wallet">—</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Membership</span>
+                <span class="summary-value" id="sum-membership">—</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="action-bar">
+        <button class="btn btn-ghost" id="btn-back" style="display:none;" onclick="goBack()">← Back</button>
+        <button class="btn btn-primary" id="btn-next" disabled onclick="goNext()">Continue →</button>
+    </div>
+</div>
+
+<script>
+
+    // Phone → compatible case series mapping
+    const phoneCaseMap = {
+        'iphone-18-pro': ['a18'],
+        'iphone-18-promax': ['a18'],
+        'iphone-ultra': ['a18-foldable'],  // Foldable iPhone — Aramid only
+        'iphone-17': ['a17'],
+        'iphone-17-pro': ['a17'],
+        'iphone-17-promax': ['a17'],
+        'samsung-fold8-ultra': ['sf8'],
+        'samsung-fold8-wide': ['sf8w'],
+        'motorola-razr-fold': [],
+        'samsung-s26-ultra': ['s26'],
+        'mac-mini': [],
+        'framework': [],
+    };
+
+    // Case series → case IDs
+    const caseSeriesMap = {
+        'a18': ['a18-aramid', 'a18-aramid-gradient', 'a18-aramid-particle', 'a18-armor-shock', 'a18-shockproof', 'a18-vegan-leather', 'a18-frosted', 'a18-ghost-lumen', 'a18-rugged'],
+        'a18-foldable': ['a18-ultra-aramid'],  // iPhone Ultra foldable — Aramid only
+        'a17': ['a17-aramid', 'a17-shockproof', 'a17-vegan-leather', 'a17-frosted', 'a17-rugged'],
+        'sf8': ['sf8-aramid'],
+        'sf8w': ['sf8w-aramid'], // Fold8 Wide — dedicated wide fold case
+        's26': ['s26-aramid', 's26-frosted'],
+    };
+
+    // Case material mapping for visual rendering
+    const caseMaterialMap = {
+        'a18-aramid': 'aramid',
+        'a18-ultra-aramid': 'aramid',
+        'a18-aramid-gradient': 'aramid-gradient',
+        'a18-aramid-particle': 'aramid-particle',
+        'a18-armor-shock': 'armor',
+        'a18-shockproof': 'shockproof',
+        'a18-vegan-leather': 'leather',
+        'a18-frosted': 'frosted',
+        'a18-ghost-lumen': 'ghost',
+        'a18-rugged': 'rugged',
+        'a17-aramid': 'aramid',
+        'a17-shockproof': 'shockproof',
+        'a17-vegan-leather': 'leather',
+        'a17-frosted': 'frosted',
+        'a17-rugged': 'rugged',
+        'sf8-aramid': 'aramid',
+        'sf8w-aramid': 'aramid',
+        's26-aramid': 'aramid',
+        's26-frosted': 'frosted',
+    };
+
+    // Color variants per case
+    const caseColors = {
+        'a18-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
+        'a18-ultra-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
+        'a18-aramid-gradient': [{ name: 'Ombre Black/Gray', hex: '#2a2a2a' }],
+        'a18-aramid-particle': [{ name: 'Blue/Black', hex: '#1a1a2a' }],
+        'a18-armor-shock': [{ name: 'Black', hex: '#1c1c1c' }],
+        'a18-shockproof': [{ name: 'Dark Blue', hex: '#1a1a2e' }, { name: 'White', hex: '#e0e0e0' }],
+        'a18-vegan-leather': [
+            { name: 'Black', hex: '#1a1a1a' }, { name: 'White', hex: '#e0e0e0' },
+            { name: 'Gray', hex: '#3a3a3a' }, { name: 'Dark Blue', hex: '#1a1a2e' },
+            { name: 'Dark Cherry', hex: '#2a0a0a' }
+        ],
+        'a18-frosted': [{ name: 'Translucent Gray', hex: '#2a2a2a' }, { name: 'White', hex: '#e0e0e0' }],
+        'a18-ghost-lumen': [{ name: 'Transparent', hex: '#e0e0e0' }, { name: 'Yellow Lemon', hex: '#d4a843' }],
+        'a18-rugged': [{ name: 'Translucent Gray', hex: '#2a2a2a' }],
+        'a17-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
+        'a17-shockproof': [{ name: 'Black', hex: '#1a1a1a' }, { name: 'White', hex: '#e0e0e0' }],
+        'a17-vegan-leather': [{ name: 'Black', hex: '#1a1a1a' }, { name: 'White', hex: '#e0e0e0' }],
+        'a17-frosted': [{ name: 'Translucent Gray', hex: '#2a2a2a' }, { name: 'White', hex: '#e0e0e0' }],
+        'a17-rugged': [{ name: 'Translucent Gray', hex: '#2a2a2a' }],
+        'sf8-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
+        'sf8w-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
+        's26-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
+        's26-frosted': [{ name: 'Translucent Gray', hex: '#2a2a2a' }],
+    };
+
+    // State
+    let currentStep = 1;
+    const selections = {
+        device: null,
+        case: null,
+        wallet: null,
+        membership: null
+    };
+
+    // Data for each step
+    const stepData = {
+        1: {
+            prompt: 'Select your device',
+            subtitle: 'The bubble will morph to match your world',
+            options: [
+                // iPhone 18 Series
+                { id: 'iphone-18-pro', label: 'iPhone 18 Pro', subtitle: 'A20 Pro · Sept 2026', logo: 'apple', type: 'phone' },
+                { id: 'iphone-18-promax', label: 'iPhone 18 Pro Max', subtitle: 'A20 Pro · 12GB RAM', logo: 'apple', type: 'phone' },
+                { id: 'iphone-ultra', label: 'iPhone Ultra', subtitle: 'Foldable · 7.8" · Horizontal Fold', logo: 'apple', type: 'foldable-wide' },
+                // iPhone 17 Series
+                { id: 'iphone-17', label: 'iPhone 17', subtitle: 'A19 · 6.3"', logo: 'apple', type: 'phone' },
+                { id: 'iphone-17-pro', label: 'iPhone 17 Pro', subtitle: 'A19 Pro · 6.3"', logo: 'apple', type: 'phone' },
+                { id: 'iphone-17-promax', label: 'iPhone 17 Pro Max', subtitle: 'A19 Pro · 6.9" · up to 2TB', logo: 'apple', type: 'phone' },
+                // Android Foldables
+                { id: 'samsung-fold8-ultra', label: 'Samsung Z Fold8 Ultra', subtitle: 'Galaxy AI · DeX · 8.0" Book', logo: 'samsung', type: 'foldable' },
+                { id: 'samsung-fold8-wide', label: 'Samsung Z Fold8 Wide', subtitle: 'Galaxy AI · DeX · 4:3 Wide', logo: 'samsung', type: 'foldable-wide' },
+                { id: 'motorola-razr-fold', label: 'Motorola Razr Fold', subtitle: 'Smart Connect · 8.1" Book', logo: 'motorola', type: 'foldable' },
+                // Samsung S26
+                { id: 'samsung-s26-ultra', label: 'Samsung S26 Ultra', subtitle: 'Snapdragon 8 Elite', logo: 'samsung', type: 'phone' },
+                // Desktop Hardware
+                { id: 'mac-mini', label: 'Mac Mini M4', subtitle: 'Onyx Tier · Local AI', logo: 'apple', type: 'desktop' },
+                { id: 'framework', label: 'Framework Desktop', subtitle: 'Gold Tier · Llama 70B', logo: 'framework', type: 'desktop' },
+            ]
+        },
+        2: {
+            prompt: 'Choose your case',
+            subtitle: 'Select the case that fits your lifestyle — powered by Aulumu',
+            options: [
+                // A18 Series (iPhone 18 Pro / Pro Max)
+                { id: 'a18-aramid', label: 'Aramid Fiber', subtitle: 'A18 · $65.98', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light', material: 'aramid', series: 'a18', hasMagsafe: true },
+                { id: 'a18-aramid-gradient', label: 'Gradient Aramid', subtitle: 'A18 · $69.98', type: 'raven-gold', lifestyle: 'Trendsetter · Color-Shifting', material: 'aramid-gradient', series: 'a18', hasMagsafe: true },
+                { id: 'a18-aramid-particle', label: 'Particle Aramid', subtitle: 'A18 · $69.98', type: 'clear', lifestyle: 'Cyberpunk · Statement Piece', material: 'aramid-particle', series: 'a18', hasMagsafe: true },
+                { id: 'a18-armor-shock', label: 'Armor Shockproof', subtitle: 'A18 · $79.98', type: 'leather', lifestyle: 'Adventurer · Maximum Protection', material: 'armor', series: 'a18', hasMagsafe: true },
+                { id: 'a18-shockproof', label: 'Shock Proof', subtitle: 'A18 · $59.98', type: 'magsafe', lifestyle: 'Practical · Dual-Layer Defense', material: 'shockproof', series: 'a18', hasMagsafe: true },
+                { id: 'a18-vegan-leather', label: 'Vegan Leather', subtitle: 'A18 · $45.98', type: 'leather', lifestyle: 'Professional · Classic Style', material: 'leather', series: 'a18', hasMagsafe: true },
+                { id: 'a18-frosted', label: 'Hyper Frosted', subtitle: 'A18 · $39.98', type: 'clear', lifestyle: 'Night Owl · Glow-in-Dark', material: 'frosted', series: 'a18', hasMagsafe: true },
+                { id: 'a18-ghost-lumen', label: 'Ghost Lumen', subtitle: 'A18 · $39.98', type: 'clear', lifestyle: 'Showcase · Nearly Invisible', material: 'ghost', series: 'a18', hasMagsafe: true },
+                { id: 'a18-rugged', label: 'Rugged', subtitle: 'A18 · $25.98', type: 'raven-gold', lifestyle: 'Outdoors · Budget Tough', material: 'rugged', series: 'a18', hasMagsafe: true },
+                // A18 Ultra (iPhone Ultra foldable — Aramid only)
+                { id: 'a18-ultra-aramid', label: 'Aramid Fiber', subtitle: 'A18 Ultra · $69.98', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light Foldable', material: 'aramid', series: 'a18-foldable', hasMagsafe: true },
+                // A17 Series (iPhone 17 / Pro / Pro Max / Air)
+                { id: 'a17-aramid', label: 'Aramid Fiber', subtitle: 'A17 · $64.98', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light', material: 'aramid', series: 'a17', hasMagsafe: true },
+                { id: 'a17-shockproof', label: 'Shock Proof', subtitle: 'A17 · $59.98', type: 'magsafe', lifestyle: 'Practical · Dual-Layer Defense', material: 'shockproof', series: 'a17', hasMagsafe: true },
+                { id: 'a17-vegan-leather', label: 'Vegan Leather', subtitle: 'A17 · $45.98', type: 'leather', lifestyle: 'Professional · Classic Style', material: 'leather', series: 'a17', hasMagsafe: true },
+                { id: 'a17-frosted', label: 'Frosted IMD', subtitle: 'A17 · $39.98', type: 'clear', lifestyle: 'Night Owl · CoolHyper', material: 'frosted', series: 'a17', hasMagsafe: true },
+                { id: 'a17-rugged', label: 'Rugged', subtitle: 'A17 · $25.98', type: 'raven-gold', lifestyle: 'Outdoors · Budget Tough', material: 'rugged', series: 'a17', hasMagsafe: true },
+                // SF8 (Samsung Z Fold8)
+                { id: 'sf8-aramid', label: 'Fold8 Aramid Fiber', subtitle: 'SF8 · $75.98', type: 'magsafe', lifestyle: 'Foldable · Cooling System', material: 'aramid', series: 'sf8', hasMagsafe: true },
+                { id: 'sf8w-aramid', label: 'Fold8 Wide Aramid Fiber', subtitle: 'SF8 Wide · $75.98', type: 'magsafe', lifestyle: 'Foldable Wide · Cooling System', material: 'aramid', series: 'sf8w', hasMagsafe: true },
+                // S26 (Samsung S26 Ultra)
+                { id: 's26-aramid', label: 'S26 Aramid Fiber', subtitle: 'S26 · $69.98', type: 'magsafe', lifestyle: 'Minimalist · Temp Sensor', material: 'aramid', series: 's26', hasMagsafe: true },
+                { id: 's26-frosted', label: 'S26 Frosted', subtitle: 'S26 · $35.98', type: 'clear', lifestyle: 'Night Owl · Glow Lines', material: 'frosted', series: 's26', hasMagsafe: true },
+            ]
+        },
+        3: {
+            prompt: 'Activate your Sovereign Wallet',
+            subtitle: 'Tap your Tangem card to your phone to pair',
+            options: [
+                { id: 'tangem-purple', label: 'SocietyOS Card', subtitle: 'Nyx Purple · NFC · EAL6+', logo: 'tangem', type: 'tangem' },
+                { id: 'tangem-gold', label: 'Founding NODES Card', subtitle: 'Raven Gold · NFC · EAL6+', logo: 'tangem', type: 'tangem' },
+                { id: 'skip-wallet', label: 'Add Later', subtitle: 'Can activate anytime', logo: 'skip', type: 'skip' },
+            ]
+        },
+        4: {
+            prompt: 'Choose your membership',
+            subtitle: 'Your sovereign journey begins',
+            options: [
+                { id: 'society-tv', label: 'Society TV', subtitle: '$99/mo · Streaming', logo: 'societyos', type: 'tier' },
+                { id: 'premium', label: 'Premium Socialite', subtitle: '$299/mo · Full SocietyOS', logo: 'societyos', type: 'tier' },
+                { id: 'founding-nodes', label: 'Founding NODES', subtitle: '$2,499 lifetime · Everything', logo: 'solana', type: 'tier' },
+            ]
+        }
+    };
+
+    // Brand SVG logos
+    const logos = {
+        apple: `<svg viewBox="0 0 24 24" fill="currentColor" width="40" height="40"><path d="M17.05 12.04c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.1-2.01-3.77-2.04-1.6-.16-3.12.94-3.93.94-.82 0-2.07-.92-3.41-.89-1.75.03-3.37 1.02-4.27 2.58-1.82 3.15-.46 7.81 1.31 10.37.87 1.26 1.91 2.67 3.27 2.62 1.32-.05 1.82-.85 3.41-.85 1.59 0 2.04.85 3.43.82 1.42-.02 2.31-1.27 3.18-2.54 1-1.46 1.41-2.88 1.43-2.95-.03-.01-2.74-1.05-2.77-4.2zM14.6 4.59c.72-.87 1.21-2.08 1.08-3.29-1.04.04-2.31.69-3.06 1.56-.67.77-1.26 2-1.1 3.18 1.16.09 2.36-.59 3.08-1.45z"/></svg>`,
+        samsung: `<svg viewBox="0 0 120 24" fill="currentColor" width="56" height="22"><path d="M0 2.5h8.2c3.2 0 5.1 1.5 5.1 4.3 0 1.7-.8 2.8-2.1 3.4 1.6.5 2.5 1.8 2.5 3.6 0 3-2.2 4.7-5.6 4.7H0V2.5zm4.2 3.3v3.3h3.1c1.2 0 1.9-.6 1.9-1.7s-.7-1.6-1.9-1.6H4.2zm0 6.3v3.6h3.3c1.4 0 2.1-.7 2.1-1.8s-.7-1.8-2.1-1.8H4.2zM16.5 2.5h4.2v16h-4.2zM30.5 18.5h-4.2v-1.2c-.7.9-1.9 1.5-3.3 1.5-2.6 0-4.2-1.8-4.2-4.4V7h4.2v6.6c0 1.3.7 2 1.8 2 1.1 0 1.8-.7 1.8-2V7h4.2v11.5zM35.5 7h4.2v1.2c.7-.9 1.9-1.5 3.3-1.5 2.6 0 4.2 1.8 4.2 4.4v7.4h-4.2v-6.6c0-1.3-.7-2-1.8-2-1.1 0-1.8.7-1.8 2v6.6h-4.2V7zM54.5 11.8c0-1.3-.7-2-1.8-2-1.1 0-1.8.7-1.8 2v6.7h-4.2V7h4.2v1.2c.7-.9 1.9-1.5 3.3-1.5 2.6 0 4.2 1.8 4.2 4.4v7.4h-4.2v-6.7zM64.5 18.5h-4.2v-1.2c-.7.9-1.9 1.5-3.3 1.5-2.6 0-4.2-1.8-4.2-4.4V7h4.2v6.6c0 1.3.7 2 1.8 2 1.1 0 1.8-.7 1.8-2V7h4.2v11.5zM73.5 6.8c-3.7 0-6.3 2.6-6.3 6 0 3.4 2.6 6 6.3 6 2.3 0 4.3-1.1 5.4-2.9l-3.5-2c-.5.7-1.1 1.1-1.9 1.1-1.2 0-2.1-.9-2.1-2.2 0-1.3.9-2.2 2.1-2.2.8 0 1.4.4 1.9 1.1l3.5-2c-1.1-1.8-3.1-2.9-5.4-2.9zM79.5 18.5h4.2v-16h-4.2zM85.5 2.5h4.2v16h-4.2zM100 7l-2.5 6.5L95 7h-4.5l5 11.5h4l5-11.5z"/></svg>`,
+        motorola: `<svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48"><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 7c-2.8 0-5 2.2-5 5v5h2.5v-5c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5v5H17v-5c0-2.8-2.2-5-5-5z"/><circle cx="12" cy="12" r="1.5"/></svg>`,
+        framework: `<svg viewBox="0 0 24 24" fill="currentColor" width="40" height="40"><rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="8" y="8" width="8" height="8" rx="1" fill="currentColor" opacity="0.3"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>`,
+        tangem: `<svg viewBox="0 0 40 28" fill="none" stroke="currentColor" stroke-width="1.5" width="56" height="38"><rect x="2" y="2" width="36" height="24" rx="4"/><rect x="8" y="6" width="10" height="6" rx="1" fill="currentColor" opacity="0.3"/><circle cx="30" cy="20" r="2.5" fill="currentColor" opacity="0.5"/><line x1="22" y1="6" x2="22" y2="22" stroke-dasharray="1 1"/></svg>`,
+        societyos: `<svg viewBox="0 0 32 32" width="40" height="40"><defs><linearGradient id="sos-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8a4bff"/><stop offset="100%" stop-color="#d4a843"/></linearGradient></defs><rect x="6" y="6" width="20" height="20" rx="6" fill="url(#sos-grad)"/><text x="16" y="22" text-anchor="middle" fill="white" font-size="14" font-weight="800" font-family="sans-serif">S</text></svg>`,
+        solana: `<svg viewBox="0 0 24 24" fill="currentColor" width="40" height="40"><path d="M5 8.5h10.5l2-2H7zM5 15.5h10.5l2-2H7zM8.5 6.5l-2 2h10.5l2-2zM8.5 13.5l-2 2h10.5l2-2z"/></svg>`,
+        skip: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="40" height="40"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`,
+    };
+
+    function getLogoHTML(logoKey) {
+        if (logos[logoKey]) {
+            return `<div class="card-icon">${logos[logoKey]}</div>`;
+        }
+        return `<div class="card-icon"><svg viewBox="0 0 48 48" fill="none"><rect x="14" y="8" width="20" height="32" rx="4" stroke="currentColor" stroke-width="2" opacity="0.6"/></svg></div>`;
+    }
+
+    // Case silhouette SVGs — phone case outlines that illuminate on hover
+    const caseSilhouettes = {
+        // Aramid Fiber — slim, straight edges, camera bump top-left
+        aramid: `<svg viewBox="0 0 60 120" class="case-silhouette" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="4" width="44" height="112" rx="10" class="case-body"/>
+            <rect x="12" y="8" width="20" height="24" rx="4" class="case-camera"/>
+            <line x1="8" y1="20" x2="52" y2="20" class="case-edge"/>
+            <line x1="8" y1="100" x2="52" y2="100" class="case-edge"/>
+        </svg>`,
+        // Gradient Aramid — diagonal fade lines
+        aramid_gradient: `<svg viewBox="0 0 60 120" class="case-silhouette" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="4" width="44" height="112" rx="10" class="case-body"/>
+            <rect x="12" y="8" width="20" height="24" rx="4" class="case-camera"/>
+            <line x1="20" y1="4" x2="52" y2="116" class="case-detail"/>
+            <line x1="30" y1="4" x2="52" y2="80" class="case-detail"/>
+        </svg>`,
+        // Particle Aramid — dotted texture
+        aramid_particle: `<svg viewBox="0 0 60 120" class="case-silhouette" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="4" width="44" height="112" rx="10" class="case-body"/>
+            <rect x="12" y="8" width="20" height="24" rx="4" class="case-camera"/>
+            <circle cx="20" cy="50" r="1.5" class="case-detail-dot"/>
+            <circle cx="30" cy="55" r="1.5" class="case-detail-dot"/>
+            <circle cx="25" cy="65" r="1.5" class="case-detail-dot"/>
+            <circle cx="35" cy="70" r="1.5" class="case-detail-dot"/>
+            <circle cx="22" cy="80" r="1.5" class="case-detail-dot"/>
+            <circle cx="38" cy="85" r="1.5" class="case-detail-dot"/>
+            <circle cx="28" cy="95" r="1.5" class="case-detail-dot"/>
+        </svg>`,
+        // Armor Shockproof — thicker, rounded corners, rugged
+        armor: `<svg viewBox="0 0 60 120" class="case-silhouette" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="2" width="48" height="116" rx="14" class="case-body case-body-thick"/>
+            <rect x="10" y="6" width="22" height="26" rx="5" class="case-camera"/>
+            <path d="M6 40 Q3 40 3 43 M3 77 Q3 80 6 80" class="case-edge"/>
+            <path d="M54 40 Q57 40 57 43 M57 77 Q57 80 54 80" class="case-edge"/>
+        </svg>`,
+        // Shock Proof — dual layer, inner outline
+        shockproof: `<svg viewBox="0 0 60 120" class="case-silhouette" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="3" width="48" height="114" rx="12" class="case-body"/>
+            <rect x="10" y="7" width="40" height="106" rx="9" class="case-body-inner"/>
+            <rect x="12" y="9" width="20" height="24" rx="4" class="case-camera"/>
+        </svg>`,
+        // Vegan Leather — smooth, stitched edge
+        leather: `<svg viewBox="0 0 60 120" class="case-silhouette" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="4" width="44" height="112" rx="10" class="case-body"/>
+            <rect x="12" y="8" width="20" height="24" rx="4" class="case-camera"/>
+            <line x1="10" y1="8" x2="10" y2="112" class="case-stitch"/>
+            <line x1="50" y1="8" x2="50" y2="112" class="case-stitch"/>
+        </svg>`,
+        // Frosted — translucent, glow lines
+        frosted: `<svg viewBox="0 0 60 120" class="case-silhouette" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="4" width="44" height="112" rx="10" class="case-body case-body-translucent"/>
+            <rect x="12" y="8" width="20" height="24" rx="4" class="case-camera"/>
+            <line x1="15" y1="50" x2="45" y2="50" class="case-glow-line"/>
+            <line x1="15" y1="70" x2="45" y2="70" class="case-glow-line"/>
+            <line x1="15" y1="90" x2="45" y2="90" class="case-glow-line"/>
+        </svg>`,
+        // Ghost Lumen — fully transparent, minimal
+        ghost: `<svg viewBox="0 0 60 120" class="case-silhouette" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="4" width="44" height="112" rx="10" class="case-body case-body-ghost"/>
+            <rect x="12" y="8" width="20" height="24" rx="4" class="case-camera"/>
+            <circle cx="30" cy="70" r="8" class="case-glow-circle"/>
+        </svg>`,
+        // Rugged — ventilation holes, thick
+        rugged: `<svg viewBox="0 0 60 120" class="case-silhouette" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="2" width="48" height="116" rx="12" class="case-body case-body-thick"/>
+            <rect x="10" y="6" width="22" height="26" rx="5" class="case-camera"/>
+            <circle cx="20" cy="60" r="2" class="case-vent"/>
+            <circle cx="30" cy="60" r="2" class="case-vent"/>
+            <circle cx="40" cy="60" r="2" class="case-vent"/>
+            <circle cx="20" cy="75" r="2" class="case-vent"/>
+            <circle cx="30" cy="75" r="2" class="case-vent"/>
+            <circle cx="40" cy="75" r="2" class="case-vent"/>
+        </svg>`,
+        // Foldable Book Tall — portrait, vertical crease, left/right open (Samsung Fold8 Ultra, Motorola Razr Fold)
+        // Proportions: tall and narrow, ~1:1.5 ratio
+        foldable: `<svg viewBox="0 0 80 120" class="case-silhouette case-foldable-book" xmlns="http://www.w3.org/2000/svg">
+            <g class="fold-left">
+                <path d="M14 4 Q6 4 6 12 L6 108 Q6 116 14 116 L40 116 L40 4 Z" class="case-body"/>
+                <rect x="10" y="8" width="18" height="20" rx="3" class="case-camera"/>
+            </g>
+            <g class="fold-right">
+                <path d="M40 4 L40 116 L66 116 Q74 116 74 108 L74 12 Q74 4 66 4 Z" class="case-body"/>
+            </g>
+            <line x1="40" y1="4" x2="40" y2="116" class="case-crease"/>
+        </svg>`,
+        // Foldable Book Wide — landscape, vertical crease, left/right open (Samsung Fold8 Wide)
+        // Proportions: wide and short, ~1.5:1 ratio (wider than tall when open)
+        foldable_wide: `<svg viewBox="0 0 120 80" width="90" height="60" class="case-silhouette case-foldable-book case-foldable-wide-shape" xmlns="http://www.w3.org/2000/svg">
+            <g class="fold-left">
+                <path d="M12 4 Q4 4 4 12 L4 68 Q4 76 12 76 L60 76 L60 4 Z" class="case-body"/>
+                <rect x="8" y="8" width="16" height="10" rx="3" class="case-camera"/>
+            </g>
+            <g class="fold-right">
+                <path d="M60 4 L60 76 L108 76 Q116 76 116 68 L116 12 Q116 4 108 4 Z" class="case-body"/>
+            </g>
+            <line x1="60" y1="4" x2="60" y2="76" class="case-crease"/>
+        </svg>`,
+        // Foldable Horizontal — SAME WIDE LANDSCAPE SHAPE as foldable_wide, but horizontal crease (iPhone Ultra)
+        foldable_horizontal: `<svg viewBox="0 0 120 80" width="90" height="60" class="case-silhouette case-foldable-horizontal" xmlns="http://www.w3.org/2000/svg">
+            <g class="fold-top">
+                <path d="M12 4 Q4 4 4 12 L4 40 L116 40 L116 12 Q116 4 108 4 Z" class="case-body"/>
+                <rect x="8" y="8" width="16" height="10" rx="3" class="case-camera"/>
+            </g>
+            <g class="fold-bottom">
+                <path d="M4 40 L4 68 Q4 76 12 76 L108 76 Q116 76 116 68 L116 40 Z" class="case-body"/>
+            </g>
+            <line x1="4" y1="40" x2="116" y2="40" class="case-crease"/>
+        </svg>`,
+        // Default fallback
+        default: `<svg viewBox="0 0 60 120" class="case-silhouette" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="4" width="44" height="112" rx="10" class="case-body"/>
+            <rect x="12" y="8" width="20" height="24" rx="4" class="case-camera"/>
+        </svg>`,
+    };
+
+    // Map case IDs to silhouette keys
+    const caseSilhouetteMap = {
+        'a18-aramid': 'aramid',
+        'a18-ultra-aramid': 'foldable_wide',
+        'a18-aramid-gradient': 'aramid_gradient',
+        'a18-aramid-particle': 'aramid_particle',
+        'a18-armor-shock': 'armor',
+        'a18-shockproof': 'shockproof',
+        'a18-vegan-leather': 'leather',
+        'a18-frosted': 'frosted',
+        'a18-ghost-lumen': 'ghost',
+        'a18-rugged': 'rugged',
+        'a17-aramid': 'aramid',
+        'a17-shockproof': 'shockproof',
+        'a17-vegan-leather': 'leather',
+        'a17-frosted': 'frosted',
+        'a17-rugged': 'rugged',
+        'sf8-aramid': 'foldable',
+        'sf8w-aramid': 'foldable_wide',
+        's26-aramid': 'aramid',
+        's26-frosted': 'frosted',
+    };
+
+    function getCaseSilhouette(caseId) {
+        const key = caseSilhouetteMap[caseId] || 'default';
+        return caseSilhouettes[key] || caseSilhouettes.default;
+    }
+    const bubble = document.getElementById('ai-bubble');
+    const orbitContainer = document.getElementById('orbit-container');
+    const prompt = document.getElementById('stage-prompt');
+    const subtitle = document.getElementById('stage-subtitle');
+    const grid = document.getElementById('selection-grid');
+    const deviceRender = document.getElementById('device-render');
+    const phoneMockup = document.getElementById('phone-mockup');
+    const caseOverlay = document.getElementById('case-overlay');
+    const btnNext = document.getElementById('btn-next');
+    const btnBack = document.getElementById('btn-back');
+    const summary = document.getElementById('summary');
+    const nfcPulse = document.getElementById('nfc-pulse');
+
+    // Render step
+    function renderStep(step) {
+        const data = stepData[step];
+        prompt.style.opacity = '0';
+        subtitle.style.opacity = '0';
+
+        setTimeout(() => {
+            prompt.textContent = data.prompt;
+            subtitle.textContent = data.subtitle;
+            prompt.style.opacity = '1';
+            subtitle.style.opacity = '1';
+        }, 300);
+
+        // Reset bubble to orb
+        bubble.className = 'ai-bubble';
+        bubble.querySelector('.ai-bubble-mark').textContent = 'S';
+
+        // Clear grid
+        grid.innerHTML = '';
+        grid.style.display = 'grid';
+        deviceRender.style.display = 'none';
+        summary.classList.remove('visible');
+
+        // Remove step2 split layout if exiting step 2
+        const existingLayout = document.querySelector('.step2-layout');
+        if (existingLayout && step !== 2) {
+            // Move grid back out of the layout
+            const gridSide = existingLayout.querySelector('.step2-grid-side');
+            if (gridSide && grid.parentElement === gridSide) {
+                existingLayout.parentElement.insertBefore(grid, existingLayout);
+            }
+            existingLayout.remove();
+        }
+
+        // Update steps
+        const hasCases = deviceHasCases(selections.device?.id);
+        for (let i = 1; i <= 4; i++) {
+            const stepEl = document.getElementById(`step-${i}`);
+            stepEl.classList.remove('active', 'completed', 'skipped');
+            // If device has no cases, step 2 is visually skipped
+            if (!hasCases && i === 2) {
+                stepEl.classList.add('skipped');
+            } else if (i < step) {
+                stepEl.classList.add('completed');
+            } else if (i === step) {
+                stepEl.classList.add('active');
+            }
+        }
+        for (let i = 1; i <= 3; i++) {
+            const line = document.getElementById(`line-${i}`);
+            // If step 2 is skipped, treat line-1 and line-2 as completed when past step 2
+            if (!hasCases && i <= 2) {
+                line.classList.toggle('completed', step > 2);
+            } else {
+                line.classList.toggle('completed', i < step);
+            }
+        }
+
+        // Render options
+        data.options.forEach(opt => {
+            const card = document.createElement('div');
+            card.className = 'selection-card';
+            card.dataset.id = opt.id;
+
+            const iconHTML = getLogoHTML(opt.logo || opt.type);
+            // Show silhouettes on step 1 for foldable devices, and step 2 for all cases
+            const showSilhouette = (step === 2 && opt.id) || (step === 1 && (opt.type === 'foldable' || opt.type === 'foldable-wide' || opt.type === 'foldable-horizontal'));
+            let silhouetteHTML = '';
+            if (step === 2 && opt.id) {
+                silhouetteHTML = getCaseSilhouette(opt.id);
+            } else if (step === 1 && opt.type === 'foldable') {
+                silhouetteHTML = caseSilhouettes.foldable;
+            } else if (step === 1 && opt.type === 'foldable-wide') {
+                silhouetteHTML = caseSilhouettes.foldable_wide;
+            } else if (step === 1 && opt.type === 'foldable-horizontal') {
+                silhouetteHTML = caseSilhouettes.foldable_horizontal;
+            }
+
+            card.innerHTML = `
+                <div class="smoke-layer">
+                    <div class="smoke-particle"></div>
+                    <div class="smoke-particle"></div>
+                    <div class="smoke-particle"></div>
+                </div>
+                ${iconHTML}
+                ${silhouetteHTML}
+                <div class="card-title">${opt.label}</div>
+                <div class="card-subtitle">${opt.subtitle}</div>
+            `;
+
+            card.addEventListener('click', () => selectOption(step, opt, card));
+            // Step 2: live preview on hover
+            if (step === 2) {
+                card.addEventListener('mouseenter', () => {
+                    if (!card.classList.contains('selected')) {
+                        renderCaseInPreview(opt);
+                    }
+                });
+            }
+            grid.appendChild(card);
+        });
+
+        // Step 2: filter cases by selected phone and show split layout
+        if (step === 2) {
+            const deviceId = selections.device ? selections.device.id : null;
+            const compatibleSeries = deviceId ? (phoneCaseMap[deviceId] || []) : [];
+            const compatibleCaseIds = new Set();
+            compatibleSeries.forEach(s => (caseSeriesMap[s] || []).forEach(id => compatibleCaseIds.add(id)));
+
+            // Filter grid cards — hide incompatible cases
+            if (compatibleCaseIds.size > 0) {
+                grid.querySelectorAll('.selection-card').forEach(card => {
+                    if (compatibleCaseIds.has(card.dataset.id)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            // Apply featured styling when only one case option is available
+            const gridSide = document.querySelector('.step2-grid-side');
+            if (gridSide) {
+                if (compatibleCaseIds.size === 1) {
+                    gridSide.classList.add('has-single-case');
+                } else {
+                    gridSide.classList.remove('has-single-case');
+                }
+            }
+
+            // Build split layout: grid on left, preview on right
+            const contentEl = document.querySelector('.content');
+            let layout = contentEl.querySelector('.step2-layout');
+            if (!layout) {
+                layout = document.createElement('div');
+                layout.className = 'step2-layout';
+                // Move grid into left side
+                const gridParent = grid.parentElement;
+                gridParent.insertBefore(layout, grid);
+                const gridSide = document.createElement('div');
+                gridSide.className = 'step2-grid-side';
+                gridSide.appendChild(grid);
+                layout.appendChild(gridSide);
+
+                // Build preview panel on right
+                const previewSide = document.createElement('div');
+                previewSide.className = 'step2-preview-side';
+                previewSide.innerHTML = `
+                    <div class="case-preview-panel" id="case-preview-panel">
+                        <div class="case-preview-phone-label">Your Device</div>
+                        <div class="case-preview-phone-name" id="case-preview-phone-name">—</div>
+                        <div class="case-preview-device-area" id="case-preview-device-area"></div>
+                        <div class="case-preview-info" id="case-preview-info">
+                            <div class="case-preview-hint">Hover or tap a case to preview</div>
+                        </div>
+                    </div>
+                `;
+                layout.appendChild(previewSide);
+            }
+
+            // Show phone in preview
+            grid.style.display = 'grid';
+            if (selections.device) {
+                document.getElementById('case-preview-phone-name').textContent = selections.device.label;
+                renderPhoneInPreview(selections.device);
+                if (selections.case) {
+                    renderCaseInPreview(selections.case);
+                } else if (compatibleCaseIds.size === 1) {
+                    // Auto-select and preview the single available case
+                    const onlyCaseId = [...compatibleCaseIds][0];
+                    const onlyCase = data.options.find(o => o.id === onlyCaseId);
+                    if (onlyCase) {
+                        const onlyCard = grid.querySelector(`[data-id="${onlyCaseId}"]`);
+                        if (onlyCard) onlyCard.classList.add('selected');
+                        selections.case = onlyCase;
+                        renderCaseInPreview(onlyCase);
+                        btnNext.disabled = false;
+                    }
+                }
+            }
+        }
+
+        // Reset selection state
+        btnNext.disabled = !isStepComplete(step);
+        btnBack.style.display = step > 1 ? 'inline-flex' : 'none';
+
+        // Last step — show summary if complete
+        if (step === 4 && selections.membership) {
+            showSummary();
+        }
+    }
+
+    function selectOption(step, opt, card) {
+        // Deselect siblings
+        grid.querySelectorAll('.selection-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+
+        // Store selection
+        if (step === 1) selections.device = opt;
+        if (step === 2) selections.case = opt;
+        if (step === 3) selections.wallet = opt;
+        if (step === 4) selections.membership = opt;
+
+        // Morph the bubble
+        morphBubble(step, opt);
+
+        // Show device render for device selection
+        if (step === 1) {
+            showDeviceRender(opt);
+        }
+        if (step === 2) {
+            renderCaseInPreview(opt);
+        }
+        if (step === 3 && opt.type === 'tangem') {
+            triggerNFCAnimation();
+        }
+
+        btnNext.disabled = false;
+
+        if (step === 4) {
+            showSummary();
+        }
+    }
+
+    function morphBubble(step, opt) {
+        bubble.className = 'ai-bubble';
+
+        if (step === 1) {
+            // Morph to phone shape
+            bubble.classList.add('morphed-phone');
+            bubble.querySelector('.ai-bubble-mark').innerHTML = logos[opt.logo] ? logos[opt.logo].replace(/width="\d+"/, 'width="24"').replace(/height="\d+"/, 'height="24"') : '✓';
+        } else if (step === 2) {
+            bubble.classList.add('morphed-case');
+            // Color the bubble based on case type
+            if (opt.type === 'magsafe') {
+                bubble.style.boxShadow = '0 0 60px var(--nyx-purple-glow), inset 0 0 40px rgba(138, 75, 255, 0.08)';
+            } else if (opt.type === 'raven-gold') {
+                bubble.style.boxShadow = '0 0 60px var(--raven-gold-glow), inset 0 0 40px rgba(212, 168, 67, 0.08)';
+            } else if (opt.type === 'clear') {
+                bubble.style.boxShadow = '0 0 60px var(--accent-cyan-glow), inset 0 0 40px rgba(0, 217, 255, 0.08)';
+            } else if (opt.type === 'leather') {
+                bubble.style.boxShadow = '0 0 60px rgba(74, 58, 42, 0.2), inset 0 0 40px rgba(74, 58, 42, 0.08)';
+            }
+            bubble.querySelector('.ai-bubble-mark').textContent = '✓';
+        } else if (step === 3) {
+            bubble.querySelector('.ai-bubble-mark').innerHTML = logos[opt.logo] ? logos[opt.logo].replace(/width="\d+"/, 'width="32"').replace(/height="\d+"/, 'height="32"') : '✓';
+        } else if (step === 4) {
+            bubble.querySelector('.ai-bubble-mark').innerHTML = logos[opt.logo] ? logos[opt.logo].replace(/width="\d+"/, 'width="32"').replace(/height="\d+"/, 'height="32"') : '✓';
+            if (opt.id === 'founding-nodes') {
+                bubble.style.boxShadow = '0 0 60px var(--raven-gold-glow), inset 0 0 40px rgba(212, 168, 67, 0.08)';
+            }
+        }
+    }
+
+    // ── Step 2 preview functions ──
+    function renderPhoneInPreview(deviceOpt) {
+        const area = document.getElementById('case-preview-device-area');
+        if (!area) return;
+        area.innerHTML = '';
+
+        const isFoldable = deviceOpt.type === 'foldable' || deviceOpt.type === 'foldable-wide' || deviceOpt.type === 'foldable-horizontal';
+        const isHorizontal = deviceOpt.type === 'foldable-horizontal';
+        const isWide = deviceOpt.type === 'foldable-wide';
+
+        if (isFoldable) {
+            const mockupClass = isHorizontal ? 'foldable-horizontal' : (isWide ? 'foldable-wide' : 'foldable');
+            const mockup = document.createElement('div');
+            mockup.className = 'phone-mockup foldable-interactive ' + mockupClass + ' fold-open';
+            mockup.style.cssText = 'opacity:1; transform:scale(0.85); cursor:default;';
+
+            if (isHorizontal) {
+                mockup.innerHTML = `
+                    <div class="fold-half fold-top-half"><div class="fold-screen"></div></div>
+                    <div class="fold-crease-line fold-crease-horizontal"></div>
+                    <div class="fold-half fold-bottom-half"><div class="fold-screen"></div></div>
+                `;
+            } else {
+                mockup.innerHTML = `
+                    <div class="fold-half fold-left-half"><div class="fold-screen"></div></div>
+                    <div class="fold-crease-line fold-crease-vertical"></div>
+                    <div class="fold-half fold-right-half"><div class="fold-screen"></div></div>
+                `;
+            }
+            area.appendChild(mockup);
+        } else {
+            const mockup = document.createElement('div');
+            mockup.className = 'phone-mockup screen-on';
+            mockup.style.cssText = 'opacity:1; transform:scale(0.9);';
+            mockup.innerHTML = `
+                <div class="phone-notch"></div>
+                <div class="phone-screen" style="width:80%;">
+                    <div style="font-size:0.65rem; color:var(--text-tertiary); text-align:center; padding-top:40px;">${deviceOpt.label}</div>
+                </div>
+            `;
+            area.appendChild(mockup);
+        }
+    }
+
+    // ── Full-size SVG case designs rendered on the phone mockup ──
+    // Based on actual Aulumu product photography analysis
+    const caseDesignSVGs = {
+        // Aramid Fiber — 2x2 twill carbon weave, camera bump with lenses, AULUMU branding
+        aramid: (isFold, isHorizontal) => {
+            const w = 100, h = isFold ? (isHorizontal ? 100 : 200) : 200;
+            const cam = isFold ? '' : `
+                <rect x="6" y="6" width="30" height="38" rx="8" fill="#0a0a0a" stroke="#2a2a2a" stroke-width="1.5"/>
+                <circle cx="16" cy="16" r="5" fill="#050505" stroke="#1a1a2a" stroke-width="0.5"/>
+                <circle cx="15" cy="15" r="1.5" fill="#1a1a3a" opacity="0.6"/>
+                <circle cx="16" cy="28" r="4" fill="#050505" stroke="#1a1a2a" stroke-width="0.5"/>
+                <circle cx="15.5" cy="27" r="1" fill="#1a1a3a" opacity="0.5"/>
+                <circle cx="26" cy="22" r="1.5" fill="#1a1a1a" stroke="#333" stroke-width="0.3"/>`;
+            return `<svg class="case-design" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <defs>
+                    <pattern id="aramid-twill" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+                        <rect width="8" height="8" fill="#161616"/>
+                        <path d="M0,4 L4,0 M4,8 L8,4" stroke="#2a2a2a" stroke-width="0.8"/>
+                        <path d="M0,8 L8,0" stroke="#222" stroke-width="0.6"/>
+                        <path d="M-4,4 L0,0 M4,4 L8,0 M0,8 L4,4 M8,8 L12,4" stroke="#1c1c1c" stroke-width="0.4"/>
+                    </pattern>
+                    <linearGradient id="aramid-sheen" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="rgba(255,255,255,0.04)"/>
+                        <stop offset="50%" stop-color="rgba(255,255,255,0)"/>
+                        <stop offset="100%" stop-color="rgba(0,0,0,0.1)"/>
+                    </linearGradient>
+                </defs>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="url(#aramid-twill)"/>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="url(#aramid-sheen)"/>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="none" stroke="#2a2a2a" stroke-width="1.5"/>
+                <rect x="2" y="2" width="${w-4}" height="${h-4}" rx="14" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+                ${cam}
+                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="#3a3a3a" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+            </svg>`;
+        },
+
+        // Gradient Aramid — ombre black/gray with diagonal shift lines
+        'aramid-gradient': (isFold, isHorizontal) => {
+            const w = 100, h = isFold ? (isHorizontal ? 100 : 200) : 200;
+            const cam = isFold ? '' : `
+                <rect x="6" y="6" width="30" height="38" rx="8" fill="#0a0a0a" stroke="#3a3a3a" stroke-width="1.5"/>
+                <circle cx="16" cy="16" r="5" fill="#050505" stroke="#2a2a2a" stroke-width="0.5"/>
+                <circle cx="16" cy="28" r="4" fill="#050505" stroke="#2a2a2a" stroke-width="0.5"/>
+                <circle cx="26" cy="22" r="1.5" fill="#1a1a1a" stroke="#333" stroke-width="0.3"/>`;
+            return `<svg class="case-design" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="grad-ombre" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#1a1a1a"/>
+                        <stop offset="30%" stop-color="#2e2e2e"/>
+                        <stop offset="55%" stop-color="#262626"/>
+                        <stop offset="80%" stop-color="#1c1c1c"/>
+                        <stop offset="100%" stop-color="#0a0a0a"/>
+                    </linearGradient>
+                    <pattern id="grad-weave" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+                        <rect width="8" height="8" fill="transparent"/>
+                        <path d="M0,4 L4,0 M4,8 L8,4" stroke="rgba(255,255,255,0.05)" stroke-width="0.6"/>
+                        <path d="M0,8 L8,0" stroke="rgba(255,255,255,0.03)" stroke-width="0.4"/>
+                    </pattern>
+                </defs>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="url(#grad-ombre)"/>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="url(#grad-weave)"/>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="none" stroke="#3a3a3a" stroke-width="1.5"/>
+                <line x1="20" y1="0" x2="${w}" y2="${h*0.7}" stroke="rgba(212,168,67,0.06)" stroke-width="0.5"/>
+                <line x1="50" y1="0" x2="${w}" y2="${h*0.5}" stroke="rgba(212,168,67,0.04)" stroke-width="0.5"/>
+                ${cam}
+                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="#4a4a4a" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+            </svg>`;
+        },
+
+        // Particle Aramid — cyberpunk blue/black with scattered glowing dots
+        'aramid-particle': (isFold, isHorizontal) => {
+            const w = 100, h = isFold ? (isHorizontal ? 100 : 200) : 200;
+            const cam = isFold ? '' : `
+                <rect x="6" y="6" width="30" height="38" rx="8" fill="#050510" stroke="#1a1a2a" stroke-width="1.5"/>
+                <circle cx="16" cy="16" r="5" fill="#050505" stroke="#1a1a2a" stroke-width="0.5"/>
+                <circle cx="16" cy="28" r="4" fill="#050505" stroke="#1a1a2a" stroke-width="0.5"/>
+                <circle cx="26" cy="22" r="1.5" fill="#0a0a15" stroke="#333" stroke-width="0.3"/>`;
+            let dots = '';
+            const positions = [[20,30],[50,40],[75,25],[35,55],[65,60],[25,75],[55,80],[80,70],[40,95],[70,110],[20,100],[60,130],[85,120],[30,145],[65,160],[25,175],[75,180],[50,170]];
+            positions.forEach(([x,y]) => { if (y < h-10) dots += `<circle cx="${x}" cy="${y}" r="2" fill="rgba(0,217,255,0.15)"/><circle cx="${x}" cy="${y}" r="0.8" fill="rgba(0,217,255,0.4)"/>`; });
+            return `<svg class="case-design" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <defs>
+                    <pattern id="particle-twill" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+                        <rect width="8" height="8" fill="#0a0a15"/>
+                        <path d="M0,4 L4,0 M4,8 L8,4" stroke="rgba(100,100,150,0.06)" stroke-width="0.5"/>
+                    </pattern>
+                </defs>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="url(#particle-twill)"/>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="none" stroke="#1a1a2a" stroke-width="1.5"/>
+                ${dots}
+                ${cam}
+                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="#2a2a3a" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+            </svg>`;
+        },
+
+        // Armor Shockproof — thick, reinforced corners, aramid+TPU blend
+        armor: (isFold, isHorizontal) => {
+            const w = 100, h = isFold ? (isHorizontal ? 100 : 200) : 200;
+            const cam = isFold ? '' : `
+                <rect x="4" y="4" width="34" height="42" rx="9" fill="#050505" stroke="#2a2a2a" stroke-width="2"/>
+                <circle cx="17" cy="16" r="6" fill="#050505" stroke="#222" stroke-width="0.5"/>
+                <circle cx="17" cy="30" r="5" fill="#050505" stroke="#222" stroke-width="0.5"/>
+                <circle cx="28" cy="23" r="2" fill="#1a1a1a" stroke="#333" stroke-width="0.3"/>`;
+            return `<svg class="case-design" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <defs>
+                    <pattern id="armor-twill" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+                        <rect width="8" height="8" fill="#141414"/>
+                        <path d="M0,4 L4,0 M4,8 L8,4" stroke="#222" stroke-width="0.6"/>
+                    </pattern>
+                </defs>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="20" fill="url(#armor-twill)"/>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="20" fill="none" stroke="#2a2a2a" stroke-width="2.5"/>
+                <path d="M0,22 Q0,0 22,0 L14,0 Q6,0 6,8 L6,16 Q6,22 0,22 Z" fill="#2a2a2a" opacity="0.5"/>
+                <path d="M${w},22 Q${w},0 ${w-22},0 L${w-14},0 Q${w-6},0 ${w-6},8 L${w-6},16 Q${w-6},22 ${w},22 Z" fill="#2a2a2a" opacity="0.5"/>
+                <path d="M0,${h-22} Q0,${h} 22,${h} L14,${h} Q6,${h} 6,${h-8} L6,${h-16} Q6,${h-22} 0,${h-22} Z" fill="#2a2a2a" opacity="0.5"/>
+                <path d="M${w},${h-22} Q${w},${h} ${w-22},${h} L${w-14},${h} Q${w-6},${h} ${w-6},${h-8} L${w-6},${h-16} Q${w-6},${h-22} ${w},${h-22} Z" fill="#2a2a2a" opacity="0.5"/>
+                <line x1="0" y1="${h*0.35}" x2="${w}" y2="${h*0.35}" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/>
+                <line x1="0" y1="${h*0.65}" x2="${w}" y2="${h*0.65}" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/>
+                ${cam}
+                <text x="${w*0.5}" y="${h-10}" text-anchor="middle" fill="#333" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+            </svg>`;
+        },
+
+        // Shock Proof — dual-layer PC+TPU, inner outline, side bumpers
+        shockproof: (isFold, isHorizontal) => {
+            const w = 100, h = isFold ? (isHorizontal ? 100 : 200) : 200;
+            const cam = isFold ? '' : `
+                <rect x="6" y="6" width="30" height="38" rx="8" fill="#0a0a14" stroke="#2a2a3e" stroke-width="1.5"/>
+                <circle cx="16" cy="16" r="5" fill="#050505" stroke="#2a2a3e" stroke-width="0.5"/>
+                <circle cx="16" cy="28" r="4" fill="#050505" stroke="#2a2a3e" stroke-width="0.5"/>
+                <circle cx="26" cy="22" r="1.5" fill="#1a1a2e" stroke="#333" stroke-width="0.3"/>`;
+            return `<svg class="case-design" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="shock-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#1a1a2e"/>
+                        <stop offset="100%" stop-color="#0d0d18"/>
+                    </linearGradient>
+                </defs>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="18" fill="url(#shock-grad)"/>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="18" fill="none" stroke="#2a2a3e" stroke-width="2"/>
+                <rect x="4" y="4" width="${w-8}" height="${h-8}" rx="14" fill="none" stroke="rgba(138,75,255,0.12)" stroke-width="1"/>
+                <rect x="0" y="30" width="4" height="${h-60}" rx="2" fill="#2a2a3e" opacity="0.6"/>
+                <rect x="${w-4}" y="30" width="4" height="${h-60}" rx="2" fill="#2a2a3e" opacity="0.6"/>
+                ${cam}
+                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="#3a3a4e" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+            </svg>`;
+        },
+
+        // Vegan Leather — smooth leather with gold stitching
+        leather: (isFold, isHorizontal) => {
+            const w = 100, h = isFold ? (isHorizontal ? 100 : 200) : 200;
+            const cam = isFold ? '' : `
+                <rect x="6" y="6" width="30" height="38" rx="8" fill="#0a0503" stroke="#3a2a1a" stroke-width="1.5"/>
+                <circle cx="16" cy="16" r="5" fill="#050502" stroke="#2a1a0e" stroke-width="0.5"/>
+                <circle cx="16" cy="28" r="4" fill="#050502" stroke="#2a1a0e" stroke-width="0.5"/>
+                <circle cx="26" cy="22" r="1.5" fill="#1a0e08" stroke="#333" stroke-width="0.3"/>`;
+            return `<svg class="case-design" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="leather-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#2a1a0e"/>
+                        <stop offset="50%" stop-color="#221208"/>
+                        <stop offset="100%" stop-color="#1a1208"/>
+                    </linearGradient>
+                    <pattern id="leather-grain" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+                        <rect width="4" height="4" fill="transparent"/>
+                        <circle cx="2" cy="2" r="0.4" fill="rgba(255,255,255,0.025)"/>
+                        <circle cx="0" cy="0" r="0.3" fill="rgba(0,0,0,0.03)"/>
+                        <circle cx="4" cy="4" r="0.3" fill="rgba(0,0,0,0.03)"/>
+                    </pattern>
+                </defs>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="url(#leather-grad)"/>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="url(#leather-grain)"/>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="none" stroke="#3a2a1a" stroke-width="1.5"/>
+                <rect x="5" y="5" width="${w-10}" height="${h-10}" rx="12" fill="none" stroke="rgba(212,168,67,0.3)" stroke-width="0.8" stroke-dasharray="3 2"/>
+                ${cam}
+                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="#4a3a2a" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+            </svg>`;
+        },
+
+        // Hyper Frosted — translucent with glow-in-dark accent circle and lines
+        frosted: (isFold, isHorizontal) => {
+            const w = 100, h = isFold ? (isHorizontal ? 100 : 200) : 200;
+            const cam = isFold ? '' : `
+                <rect x="6" y="6" width="30" height="38" rx="8" fill="rgba(0,0,0,0.12)" stroke="rgba(0,217,255,0.2)" stroke-width="1"/>
+                <circle cx="16" cy="16" r="5" fill="rgba(0,0,0,0.2)"/>
+                <circle cx="16" cy="28" r="4" fill="rgba(0,0,0,0.2)"/>
+                <circle cx="26" cy="22" r="1.5" fill="rgba(0,0,0,0.15)"/>`;
+            return `<svg class="case-design" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="frost-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="rgba(255,255,255,0.07)"/>
+                        <stop offset="50%" stop-color="rgba(200,200,220,0.04)"/>
+                        <stop offset="100%" stop-color="rgba(255,255,255,0.03)"/>
+                    </linearGradient>
+                </defs>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="url(#frost-grad)"/>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="none" stroke="rgba(0,217,255,0.25)" stroke-width="1.5"/>
+                <line x1="15" y1="${h*0.22}" x2="${w-15}" y2="${h*0.22}" stroke="rgba(0,217,255,0.18)" stroke-width="0.8"/>
+                <line x1="15" y1="${h*0.5}" x2="${w-15}" y2="${h*0.5}" stroke="rgba(0,217,255,0.15)" stroke-width="0.8"/>
+                <line x1="15" y1="${h*0.78}" x2="${w-15}" y2="${h*0.78}" stroke="rgba(0,217,255,0.12)" stroke-width="0.8"/>
+                <circle cx="${w*0.5}" cy="${h*0.5}" r="14" fill="none" stroke="rgba(0,217,255,0.15)" stroke-width="1"/>
+                <circle cx="${w*0.5}" cy="${h*0.5}" r="10" fill="none" stroke="rgba(0,217,255,0.1)" stroke-width="0.5"/>
+                <circle cx="${w*0.5}" cy="${h*0.5}" r="1.5" fill="rgba(0,217,255,0.3)"/>
+                ${cam}
+                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="rgba(0,217,255,0.2)" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+            </svg>`;
+        },
+
+        // Ghost Lumen — nearly invisible transparent with subtle lumen glow
+        ghost: (isFold, isHorizontal) => {
+            const w = 100, h = isFold ? (isHorizontal ? 100 : 200) : 200;
+            const cam = isFold ? '' : `
+                <rect x="6" y="6" width="30" height="38" rx="8" fill="rgba(0,0,0,0.06)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                <circle cx="16" cy="16" r="5" fill="rgba(0,0,0,0.1)"/>
+                <circle cx="16" cy="28" r="4" fill="rgba(0,0,0,0.1)"/>
+                <circle cx="26" cy="22" r="1.5" fill="rgba(0,0,0,0.08)"/>`;
+            return `<svg class="case-design" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="rgba(255,255,255,0.02)"/>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+                <rect x="3" y="3" width="${w-6}" height="${h-6}" rx="13" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+                <circle cx="${w*0.5}" cy="${h*0.55}" r="14" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+                <circle cx="${w*0.5}" cy="${h*0.55}" r="8" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)" stroke-width="0.3"/>
+                ${cam}
+                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="rgba(255,255,255,0.08)" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+            </svg>`;
+        },
+
+        // Rugged — thick outdoor shell with ventilation holes
+        rugged: (isFold, isHorizontal) => {
+            const w = 100, h = isFold ? (isHorizontal ? 100 : 200) : 200;
+            const cam = isFold ? '' : `
+                <rect x="4" y="4" width="34" height="42" rx="9" fill="#050505" stroke="#2a2a2a" stroke-width="2"/>
+                <circle cx="17" cy="16" r="6" fill="#050505" stroke="#222" stroke-width="0.5"/>
+                <circle cx="17" cy="30" r="5" fill="#050505" stroke="#222" stroke-width="0.5"/>
+                <circle cx="28" cy="23" r="2" fill="#1a1a1a" stroke="#333" stroke-width="0.3"/>`;
+            let vents = '';
+            for (let row = 0; row < 4; row++) {
+                for (let col = 0; col < 3; col++) {
+                    const cx = 25 + col * 25;
+                    const cy = h * 0.35 + row * 15;
+                    if (cy < h - 15) {
+                        vents += `<circle cx="${cx}" cy="${cy}" r="3" fill="#050505" stroke="#2a2a2a" stroke-width="0.5"/>`;
+                    }
+                }
+            }
+            return `<svg class="case-design" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="rugged-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#1a1a1a"/>
+                        <stop offset="100%" stop-color="#0a0a0a"/>
+                    </linearGradient>
+                </defs>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="18" fill="url(#rugged-grad)"/>
+                <rect x="0" y="0" width="${w}" height="${h}" rx="18" fill="none" stroke="#2a2a2a" stroke-width="2.5"/>
+                ${vents}
+                ${cam}
+                <text x="${w*0.5}" y="${h-10}" text-anchor="middle" fill="#333" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+            </svg>`;
+        },
+    };
+
+    function getCaseDesignSVG(material, isFoldable, isHorizontal) {
+        const fn = caseDesignSVGs[material] || caseDesignSVGs.aramid;
+        return fn(isFoldable, isHorizontal);
+    }
+
+    function renderCaseInPreview(caseOpt) {
+        const area = document.getElementById('case-preview-device-area');
+        if (!area) return;
+        const phoneMockup = area.querySelector('.phone-mockup');
+        if (!phoneMockup) return;
+
+        // Remove existing case wrap
+        const existingWrap = phoneMockup.querySelector('.case-wrap');
+        if (existingWrap) existingWrap.remove();
+
+        // Create case wrap with detailed SVG design
+        const material = caseOpt.material || caseMaterialMap[caseOpt.id] || 'aramid';
+        const isFoldable = phoneMockup.classList.contains('foldable-interactive');
+        const isHorizontal = phoneMockup.classList.contains('foldable-horizontal');
+
+        const wrap = document.createElement('div');
+        wrap.className = 'case-wrap';
+        wrap.dataset.material = material;
+
+        // Inject the detailed SVG case design
+        wrap.innerHTML = getCaseDesignSVG(material, isFoldable, isHorizontal);
+
+        // Add MagSafe ring as SVG element
+        if (caseOpt.hasMagsafe) {
+            const ring = document.createElement('div');
+            ring.className = 'case-magsafe-ring';
+            ring.style.cssText = 'position:absolute; top:38%; left:50%; transform:translate(-50%,-50%); width:28px; height:28px; border-radius:50%; border:2px solid var(--raven-gold); opacity:0.45; box-shadow:0 0 8px rgba(212,168,67,0.2);';
+            wrap.appendChild(ring);
+        }
+
+        phoneMockup.appendChild(wrap);
+
+        // Update info panel
+        const info = document.getElementById('case-preview-info');
+        const panel = document.getElementById('case-preview-panel');
+        if (info) {
+            info.innerHTML = `
+                <div class="case-preview-case-name">${caseOpt.label}</div>
+                <div class="case-preview-lifestyle">${caseOpt.lifestyle || ''}</div>
+                <div class="case-preview-price">${caseOpt.subtitle}</div>
+            `;
+            // Add color swatches
+            const colors = caseColors[caseOpt.id] || [];
+            if (colors.length > 1) {
+                const swatchContainer = document.createElement('div');
+                swatchContainer.className = 'color-swatches';
+                colors.forEach((c, i) => {
+                    const sw = document.createElement('div');
+                    sw.className = 'color-swatch' + (i === 0 ? ' selected' : '');
+                    sw.style.background = c.hex;
+                    sw.title = c.name;
+                    swatchContainer.appendChild(sw);
+                });
+                info.appendChild(swatchContainer);
+            }
+        }
+        if (panel) panel.classList.add('has-case');
+    }
+
+    function showDeviceRender(opt) {
+        grid.style.display = 'none';
+        deviceRender.style.display = 'flex';
+
+        // For foldables: build an interactive foldable mockup with open/close toggle
+        if (opt.type === 'foldable' || opt.type === 'foldable-wide' || opt.type === 'foldable-horizontal') {
+            const isHorizontal = opt.type === 'foldable-horizontal';
+            const isWide = opt.type === 'foldable-wide';
+            const mockupClass = isHorizontal ? 'foldable-horizontal' : (isWide ? 'foldable-wide' : 'foldable');
+
+            phoneMockup.className = 'phone-mockup foldable-interactive ' + mockupClass;
+            phoneMockup.classList.add('fold-closed');
+
+            if (isHorizontal) {
+                phoneMockup.innerHTML = `
+                    <div class="fold-half fold-top-half"><div class="fold-screen fold-screen-top"></div></div>
+                    <div class="fold-crease-line fold-crease-horizontal"></div>
+                    <div class="fold-half fold-bottom-half"><div class="fold-screen fold-screen-bottom"></div></div>
+                    <div class="fold-hint">Tap to unfold</div>
+                `;
+            } else {
+                phoneMockup.innerHTML = `
+                    <div class="fold-half fold-left-half"><div class="fold-screen fold-screen-left"></div></div>
+                    <div class="fold-crease-line fold-crease-vertical"></div>
+                    <div class="fold-half fold-right-half"><div class="fold-screen fold-screen-right"></div></div>
+                    <div class="fold-hint">Tap to open</div>
+                `;
+            }
+
+            phoneMockup.onclick = function() {
+                phoneMockup.classList.toggle('fold-closed');
+                phoneMockup.classList.toggle('fold-open');
+                const hint = phoneMockup.querySelector('.fold-hint');
+                if (hint) hint.textContent = phoneMockup.classList.contains('fold-open') ? 'Tap to close' : 'Tap to open';
+            };
+
+            phoneMockup.classList.add('screen-on');
+            setTimeout(() => {
+                phoneMockup.style.opacity = '1';
+                phoneMockup.style.transform = 'scale(1)';
+            }, 100);
+            return;
+        }
+
+        // Standard phone mockup (non-foldable)
+        phoneMockup.className = 'phone-mockup';
+        phoneMockup.classList.add('screen-on');
+        phoneMockup.innerHTML = `
+            <div class="phone-notch"></div>
+            <div class="phone-screen" style="width: 80%;">
+                <div class="phone-screen-content">
+                    <div style="font-size: 0.7rem; color: var(--text-tertiary);">${opt.label}</div>
+                </div>
+            </div>
+        `;
+        setTimeout(() => {
+            phoneMockup.style.opacity = '1';
+            phoneMockup.style.transform = 'scale(1)';
+        }, 100);
+    }
+
+    function triggerNFCAnimation() {
+        nfcPulse.className = 'nfc-pulse';
+        nfcPulse.offsetWidth; // reflow
+        nfcPulse.classList.add('active');
+
+        // Multiple pulse rings
+        setTimeout(() => {
+            nfcPulse.classList.remove('active');
+            nfcPulse.offsetWidth;
+            nfcPulse.classList.add('active');
+        }, 500);
+    }
+
+    // Check if the selected device has any compatible cases
+    function deviceHasCases(deviceId) {
+        if (!deviceId) return false;
+        const series = phoneCaseMap[deviceId] || [];
+        return series.some(s => (caseSeriesMap[s] || []).length > 0);
+    }
+
+    function isStepComplete(step) {
+        if (step === 1) return selections.device !== null;
+        if (step === 2) return selections.case !== null;
+        if (step === 3) return selections.wallet !== null;
+        if (step === 4) return selections.membership !== null;
+        return false;
+    }
+
+    function showSummary() {
+        summary.classList.add('visible');
+        document.getElementById('sum-device').textContent = selections.device?.label || '—';
+        document.getElementById('sum-case').textContent = selections.case?.label || (deviceHasCases(selections.device?.id) ? '—' : 'No case available');
+        document.getElementById('sum-wallet').textContent = selections.wallet?.label || '—';
+        document.getElementById('sum-membership').textContent = selections.membership?.label || '—';
+
+        // Change button to gold if founding member
+        if (selections.membership?.id === 'founding-nodes') {
+            btnNext.className = 'btn btn-gold';
+            btnNext.textContent = 'Claim Your NODE →';
+        }
+    }
+
+    function goNext() {
+        if (currentStep < 4) {
+            currentStep++;
+            // Skip step 2 (case selection) if device has no compatible cases
+            if (currentStep === 2 && !deviceHasCases(selections.device?.id)) {
+                selections.case = null; // ensure no stale case
+                currentStep = 3;
+            }
+            renderStep(currentStep);
+        } else {
+            // Complete — would redirect to payment
+            alert('SocietyOS setup complete! Welcome to the Society.');
+        }
+    }
+
+    function goBack() {
+        if (currentStep > 1) {
+            currentStep--;
+            // Skip step 2 when going back if device has no compatible cases
+            if (currentStep === 2 && !deviceHasCases(selections.device?.id)) {
+                currentStep = 1;
+            }
+            renderStep(currentStep);
+        }
+    }
+
+    // Init
+    renderStep(1);
+</script>
+
+</body>
+</html>

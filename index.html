@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocietyOS — The Operating System for the Sovereign</title>
+    <meta name="description" content="In an era of no sovereignty, SocietyOS delivers a true sovereign experience. AI-powered command center with absolute data sovereignty. Custom agentic browser, Maestro Assistant, Society TV, Tangem Wallet, and extension services connecting digital life to real life through SocietyOS: Summits, Cinema, Gatherings. Designed by The Nyx & Raven Ranch.">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap');
+        /* ═══════════════════════════════════════════════════
+           SOCIETYOS — UNIVERSAL UI DESIGN SYSTEM
+           This CSS is the single source of truth for all
+           SocietyOS surfaces: web, app, store, TV panel.
+           CCO Ares: Use these tokens when building in Hostinger.
+           ═══════════════════════════════════════════════════ */
+
+        :root {
+            /* ── Core Palette — SocietyOS Logo Theme ── */
+            /* Deep Blue (left section of logo) */
+            --bg-primary: #0d1f2d;
+            --bg-secondary: #122844;
+            --bg-elevated: #1a3358;
+            --bg-card: #152a45;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-glow: rgba(197, 160, 89, 0.3);
+            
+            /* ── Brand Colors ── */
+            /* Brushed Gold/Brass (middle strip of logo) */
+            --society-gold: #c5a059;
+            --society-gold-light: #e5c585;
+            --society-gold-dark: #a08040;
+            --society-gold-glow: rgba(197, 160, 89, 0.15);
+            /* Emerald Green (right section of logo) */
+            --society-green: #1b5e3e;
+            --society-green-light: #2a8a5e;
+            --society-green-dark: #0f4029;
+            --society-green-glow: rgba(27, 94, 62, 0.2);
+            /* Deep Blue (primary brand) */
+            --society-blue: #1e3d59;
+            --society-blue-light: #2a5a82;
+            --society-blue-dark: #122844;
+            --society-blue-glow: rgba(30, 61, 89, 0.2);
+            
+            /* ── Accent ── */
+            --accent-gold: #c5a059;
+            --accent-green: #2a8a5e;
+            --success: #2dd4a8;
+            --danger: #ff4d6d;
+            
+            /* ── Text ── */
+            --text-primary: #f0f0f5;
+            --text-secondary: #b0b8c8;
+            --text-tertiary: #6a7a8a;
+            
+            /* ── Typography ── */
+            --font-display: 'Montserrat', 'SF Pro Display', 'Inter', -apple-system, sans-serif;
+            --font-body: 'Inter', 'SF Pro Text', -apple-system, sans-serif;
+            --font-mono: 'SF Mono', 'JetBrains Mono', monospace;
+            
+            /* ── Spacing ── */
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 2rem;
+            --space-lg: 4rem;
+            --space-xl: 8rem;
+            
+            /* ── Radius ── */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 32px;
+            
+            /* ── Transitions ── */
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Ambient Background Glow ── */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%; left: -10%;
+            width: 60%; height: 60%;
+            background: radial-gradient(circle, var(--society-blue-glow) 0%, transparent 60%);
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -20%; right: -10%;
+            width: 50%; height: 50%;
+            background: radial-gradient(circle, var(--society-blue-glow) 0%, transparent 60%);
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ═══ NAVIGATION ═══ */
+        .nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            background: rgba(13, 31, 45, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--border-subtle);
+            transition: var(--transition);
+        }
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .nav-logo-img {
+            height: 36px;
+            width: auto;
+            object-fit: contain;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0;
+            width: 0; height: 2px;
+            background: var(--society-gold);
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-cta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .btn {
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.6rem 1.5rem;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+        }
+        .btn-ghost:hover {
+            color: var(--text-primary);
+            border-color: var(--border-glow);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--society-gold), #6d3df0);
+            color: white;
+            box-shadow: 0 4px 20px var(--society-gold-glow);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--society-gold-glow);
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, var(--society-gold), #b8902f);
+            color: #1a1a1a;
+            box-shadow: 0 4px 20px var(--society-gold-glow);
+        }
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--society-gold-glow);
+        }
+
+        /* ═══ HERO ═══ */
+        .hero {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+        }
+        .hero-inner { max-width: 900px; }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-glow);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            color: var(--society-gold-light);
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+        .hero-badge .pulse {
+            width: 8px; height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .hero h1 {
+            font-family: 'Montserrat', var(--font-display);
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(180deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero h1 .gradient {
+            background: linear-gradient(135deg, var(--society-gold-light), var(--society-gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            color: var(--text-secondary);
+            max-width: 680px;
+            margin: 0 auto 3rem;
+            line-height: 1.7;
+        }
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .hero-platforms {
+            margin-top: 4rem;
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            opacity: 0.5;
+        }
+        .hero-platforms span {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* ═══ SECTIONS ═══ */
+        section { position: relative; z-index: 1; }
+        .section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 6rem 2rem;
+        }
+        .section-label {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--society-gold-light);
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-family: 'Montserrat', var(--font-display);
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 640px;
+            margin-bottom: 4rem;
+        }
+
+        /* ═══ TANGEM WALLET SECTION ═══ */
+        .tangem-section {
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .tangem-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        @media (max-width: 900px) {
+            .tangem-grid { grid-template-columns: 1fr; gap: 2rem; }
+        }
+        .tangem-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+        }
+        .tangem-card {
+            width: 320px;
+            height: 200px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #0d0d12 0%, #1a1a2e 100%);
+            border: 1px solid var(--border-glow);
+            position: relative;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 40px var(--society-gold-glow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+        .tangem-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--society-gold-glow) 0%, transparent 50%, var(--society-gold-glow) 100%);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .tangem-card:hover {
+            transform: translateY(-8px) rotate(-2deg);
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.6),
+                0 0 60px var(--society-gold-glow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        .tangem-card-brand {
+            font-family: 'Montserrat', var(--font-display);
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1;
+        }
+        .tangem-card-brand .mark {
+            width: 28px; height: 28px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--society-gold), var(--society-gold));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.9rem; color: white;
+        }
+        .tangem-card-chip {
+            width: 48px; height: 36px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #c4a030, #8a7010);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .tangem-card-chip::before {
+            content: '';
+            width: 24px; height: 2px;
+            background: rgba(0, 0, 0, 0.3);
+            box-shadow:
+                0 4px 0 rgba(0, 0, 0, 0.2),
+                0 8px 0 rgba(0, 0, 0, 0.2),
+                0 12px 0 rgba(0, 0, 0, 0.2);
+        }
+        .tangem-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            z-index: 1;
+        }
+        .tangem-card-label {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .tangem-card-nfc {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.7rem;
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+        .tangem-card-nfc-icon {
+            width: 16px; height: 16px;
+            border: 2px solid var(--accent-green);
+            border-radius: 50%;
+            position: relative;
+        }
+        .tangem-card-nfc-icon::before {
+            content: '';
+            position: absolute;
+            top: -4px; left: -4px;
+            width: 20px; height: 20px;
+            border: 1px solid var(--accent-green);
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+        .tangem-card-nfc-icon::after {
+            content: '';
+            position: absolute;
+            top: -8px; left: -8px;
+            width: 28px; height: 28px;
+            border: 1px solid var(--accent-green);
+            border-radius: 50%;
+            opacity: 0.25;
+        }
+        .tangem-card-gold {
+            background: linear-gradient(135deg, #1a1a14 0%, #2a2418 100%);
+            border-color: rgba(212, 168, 67, 0.3);
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 40px var(--society-gold-glow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            transform: rotate(4deg) translateX(20px);
+            position: absolute;
+            top: 40%; left: 55%;
+        }
+        .tangem-card-gold:hover {
+            transform: rotate(2deg) translateX(20px) translateY(-8px);
+        }
+        .tangem-card-gold .tangem-card-brand .mark {
+            background: linear-gradient(135deg, var(--society-gold), #b8902f);
+        }
+        .tangem-features {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            margin-top: 2rem;
+        }
+        .tangem-feature {
+            display: flex;
+            gap: 1rem;
+            align-items: start;
+        }
+        .tangem-feature-icon {
+            width: 44px; height: 44px;
+            min-width: 44px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+        }
+        .tangem-feature h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+        .tangem-feature p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .tangem-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            background: var(--bg-elevated);
+            border: 1px solid rgba(42, 138, 94, 0.2);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            color: var(--accent-green);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        /* ═══ FEATURE GRID ═══ */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.5rem;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--society-gold), var(--society-gold));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: var(--transition);
+        }
+        .feature-card:hover {
+            border-color: var(--border-glow);
+            transform: translateY(-4px);
+            background: var(--bg-elevated);
+        }
+        .feature-card:hover::before { transform: scaleX(1); }
+        .feature-icon {
+            width: 56px; height: 56px;
+            border-radius: var(--radius-md);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .feature-card h3 {
+            font-family: 'Montserrat', var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.65;
+        }
+
+        /* ═══ ECOSYSTEM / BRAND CONNECTION ═══ */
+        .ecosystem {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .ecosystem-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        @media (max-width: 900px) {
+            .ecosystem-grid { grid-template-columns: 1fr; }
+        }
+        .ecosystem-visual {
+            position: relative;
+            aspect-ratio: 1;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .eco-orbit {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid var(--border-subtle);
+        }
+        .eco-orbit-1 { width: 100%; height: 100%; animation: rotate 30s linear infinite; }
+        .eco-orbit-2 { width: 70%; height: 70%; animation: rotate 20s linear infinite reverse; }
+        .eco-orbit-3 { width: 40%; height: 40%; animation: rotate 15s linear infinite; }
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        .eco-core {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--society-gold), var(--society-gold));
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Montserrat', var(--font-display);
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: 0 0 60px var(--society-gold-glow);
+            z-index: 2;
+        }
+        .eco-node {
+            position: absolute;
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-glow);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+        }
+        .eco-node-1 { top: 0; left: 50%; transform: translateX(-50%); }
+        .eco-node-2 { top: 50%; right: 0; transform: translateY(-50%); }
+        .eco-node-3 { bottom: 0; left: 50%; transform: translateX(-50%); }
+        .eco-node-4 { top: 50%; left: 0; transform: translateY(-50%); }
+
+        /* ═══ PLATFORM SHOWCASE ═══ */
+        .platforms-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+        .platform-tile {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+        .platform-tile:hover {
+            border-color: var(--border-glow);
+            background: var(--bg-elevated);
+        }
+        .platform-tile .icon { font-size: 2rem; margin-bottom: 0.75rem; }
+        .platform-tile h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .platform-tile p {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+        }
+
+        /* ═══ PRICING / MEMBERSHIP ═══ */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .pricing-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            transition: var(--transition);
+            position: relative;
+        }
+        .pricing-card.featured {
+            border-color: var(--border-glow);
+            background: var(--bg-elevated);
+            box-shadow: 0 0 40px var(--society-gold-glow);
+        }
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -12px; left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--society-gold), #6d3df0);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.3rem 1rem;
+            border-radius: 100px;
+            letter-spacing: 0.1em;
+        }
+        .pricing-card:hover { transform: translateY(-4px); }
+        .pricing-tier {
+            font-family: 'Montserrat', var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--society-gold-light);
+            margin-bottom: 0.5rem;
+        }
+        .pricing-price {
+            font-family: 'Montserrat', var(--font-display);
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+        .pricing-price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-tertiary);
+        }
+        .pricing-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        .pricing-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        /* ═══ BRAND CONNECTION SECTION ═══ */
+        .brand-connection {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(180deg, transparent, var(--bg-secondary), transparent);
+        }
+        .brand-connection h3 {
+            font-family: 'Montserrat', var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .brand-connection p {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .brand-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            color: var(--society-gold-light);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .brand-link:hover { color: var(--society-gold); gap: 1rem; }
+
+        /* ═══ FOOTER ═══ */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-subtle);
+            padding: 4rem 2rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        .footer-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        @media (max-width: 768px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .footer-brand h4 {
+            font-family: 'Montserrat', var(--font-display);
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        .footer-brand p {
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+            max-width: 300px;
+        }
+        .footer-col h5 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-tertiary);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .footer-col ul {
+            list-style: none;
+        }
+        .footer-col ul li {
+            margin-bottom: 0.5rem;
+        }
+        .footer-col ul a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        .footer-col ul a:hover { color: var(--text-primary); }
+        .footer-bottom {
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .footer-bottom p {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+        }
+        .footer-bottom .nyx-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--society-gold-light);
+            font-weight: 500;
+        }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-inner { padding: 1rem; }
+            .section { padding: 4rem 1rem; }
+            .hero { padding: 6rem 1rem 3rem; }
+        }
+    </style>
+</head>
+<body>
+        <div class="gold-stripe"></div>
+
+<!-- ═══════════════════════════════════════════════════
+     NAVIGATION
+     ═══════════════════════════════════════════════════ -->
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="#" class="nav-logo">
+            <img src="assets/societyos-wordmark-white.png" alt="SocietyOS" class="nav-logo-img" />
+        </a>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#tangem">Sovereign Wallet</a></li>
+            <li><a href="#ecosystem">Ecosystem</a></li>
+            <li><a href="#platforms">Platforms</a></li>
+            <li><a href="#membership">Membership</a></li>
+        </ul>
+        <div class="nav-cta">
+            <a href="#" class="btn btn-ghost">Sign In</a>
+            <a href="#membership" class="btn btn-primary">Get Started</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════════════ -->
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-badge">
+            <span class="pulse"></span>
+            Now in Development — Join the Founding Circle
+        </div>
+        <h1>
+            The Operating System<br>
+            for the <span class="gradient">Sovereign</span>
+        </h1>
+        <p>
+            In an era of no sovereignty, SocietyOS delivers a true sovereign experience.
+            AI-powered command center with absolute data sovereignty. Custom agentic browser.
+            Maestro Assistant. Society TV. Tangem Wallet. Extension services connecting your
+            digital life to real life through SocietyOS: Summits, Cinema, Gatherings.
+        </p>
+        <div class="hero-cta">
+            <a href="#membership" class="btn btn-primary">Join the Founding Circle →</a>
+            <a href="#features" class="btn btn-ghost">Explore Features</a>
+        </div>
+        <div class="hero-platforms">
+            <span>📱 Android</span>
+            <span>💻 macOS</span>
+            <span>📲 iOS</span>
+            <span>📺 tvOS</span>
+            <span>🖥️ Custom Hardware</span>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     FEATURES
+     ═══════════════════════════════════════════════════ -->
+<div class="section" id="features">
+    <div class="section-label">Core Capabilities</div>
+    <h2 class="section-title">Everything you need.<br>Nothing you don't.</h2>
+    <p class="section-subtitle">
+        SocietyOS is not just a browser. It's a complete digital environment with AI at its core,
+        designed for those who demand control, privacy, and power.
+    </p>
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🧠</div>
+            <h3>Agentic AI Core</h3>
+            <p>
+                A built-in AI assistant that navigates, creates, codes, researches, and manages
+                your workflow. Select your favorite LLM models — you're always in control.
+                Calendar, mail, messaging, and more, unified in one intelligent interface.
+            </p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3>Absolute Data Sovereignty</h3>
+            <p>
+                Cloud-based convenience or fully sovereign local processing. Your data,
+                your rules. No third-party processing, no hidden tracking, no compromises.
+                Gold Business Ambassador tier includes dedicated infrastructure.
+            </p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📺</div>
+            <h3>Society TV</h3>
+            <p>
+                A custom media player that rivals the competition, integrated directly into
+                your browser. Curated entertainment, live concerts, blockbuster premieres,
+                and exclusive content — all part of The Nyx & Raven Ranch ecosystem.
+            </p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🔌</div>
+            <h3>Extension Services</h3>
+            <p>
+                First-party and collaborator extensions designed specifically for SocietyOS.
+                Connect your services, integrate your tools, and build on a platform
+                engineered for deep, meaningful integration — not just add-ons.
+            </p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Dual-Engine Performance</h3>
+            <p>
+                WebKit on Apple platforms for native performance. Chromium Embedded Framework
+                on Android and custom systems. The right engine for every platform,
+                with a unified AI layer abstracting the differences away.
+            </p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🔗</div>
+            <h3>NODES on Solana</h3>
+            <p>
+                Blockchain-integrated membership through NODES on Solana. Tokenized access,
+                governance rights, and a financial ecosystem that makes your membership
+                an asset, not just a subscription.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TANGEM SOVEREIGN WALLET
+     ═══════════════════════════════════════════════════ -->
+<div class="section tangem-section" id="tangem">
+    <div class="tangem-grid">
+        <div>
+            <div class="tangem-badge">
+                <span class="pulse" style="width: 8px; height: 8px; background: var(--accent-green); border-radius: 50%; animation: pulse 2s infinite;"></span>
+                Powered by Tangem — Co-Branded Partnership
+            </div>
+            <h2 class="section-title">SocietyOS<br>Sovereign Wallet</h2>
+            <p class="section-subtitle" style="margin-bottom: 1.5rem;">
+                Your membership. Your crypto. Your identity. In your pocket.
+                The SocietyOS Sovereign Wallet, powered by Tangem's EAL6+ certified
+                hardware, is the physical key to your digital world.
+            </p>
+            <div class="tangem-features">
+                <div class="tangem-feature">
+                    <div class="tangem-feature-icon">🔑</div>
+                    <div>
+                        <h4>Tap to Authenticate</h4>
+                        <p>NFC-powered access to SocietyOS. Tap your card to your phone — sign in, authorize transactions, unlock your membership. No passwords. No seeds. Just tap.</p>
+                    </div>
+                </div>
+                <div class="tangem-feature">
+                    <div class="tangem-feature-icon">⛓️</div>
+                    <div>
+                        <h4>NODES on Solana — Secured</h4>
+                        <p>Your Founding NODES tokens, stored on military-grade hardware. Cold storage for your membership assets with Tangem's seedless backup system.</p>
+                    </div>
+                </div>
+                <div class="tangem-feature">
+                    <div class="tangem-feature-icon">🏛️</div>
+                    <div>
+                        <h4>Ranch Access Pass</h4>
+                        <p>Your card IS your pass. VIP cabin access, event entry, horse boarding authentication, and Gold Business Ambassador privileges — all with one tap.</p>
+                    </div>
+                </div>
+                <div class="tangem-feature">
+                    <div class="tangem-feature-icon">🛡️</div>
+                    <div>
+                        <h4>Absolute Sovereignty</h4>
+                        <p>EAL6+ certified chip (same level as government IDs). Zero cards hacked in 6 million since 2017. 25-year warranty. Your keys, locked in silicon. No company, no bank, no government can touch them.</p>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                <a href="#membership" class="btn btn-primary">Get Your Sovereign Wallet →</a>
+                <a href="https://tangem.com/en/co-branding/" class="btn btn-ghost" target="_blank" rel="noopener">Learn About Tangem Co-Branding</a>
+            </div>
+        </div>
+        <div class="tangem-visual">
+            <!-- Primary card (Nyx Purple) -->
+            <div class="tangem-card">
+                <div class="tangem-card-brand">
+                    <div class="mark">S</div>
+                    SocietyOS
+                </div>
+                <div class="tangem-card-chip"></div>
+                <div class="tangem-card-footer">
+                    <div class="tangem-card-label">Sovereign Wallet</div>
+                    <div class="tangem-card-nfc">
+                        <div class="tangem-card-nfc-icon"></div>
+                        NFC
+                    </div>
+                </div>
+            </div>
+            <!-- Gold card (Raven Gold) — stacked behind -->
+            <div class="tangem-card tangem-card-gold">
+                <div class="tangem-card-brand">
+                    <div class="mark">S</div>
+                    SocietyOS
+                </div>
+                <div class="tangem-card-chip"></div>
+                <div class="tangem-card-footer">
+                    <div class="tangem-card-label">Founding NODES</div>
+                    <div class="tangem-card-nfc">
+                        <div class="tangem-card-nfc-icon"></div>
+                        NFC
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ECOSYSTEM / BRAND CONNECTION
+     ═══════════════════════════════════════════════════ -->
+<div class="ecosystem" id="ecosystem">
+    <div class="section">
+        <div class="ecosystem-grid">
+            <div>
+                <div class="section-label">The Nyx & Raven Ranch Ecosystem</div>
+                <h2 class="section-title">One vision.<br>Many worlds.</h2>
+                <p class="section-subtitle" style="margin-bottom: 2rem;">
+                    SocietyOS is the digital extension of The Nyx & Raven Ranch —
+                    a luxury entertainment destination in Florida. Together, they form
+                    a complete ecosystem spanning physical and digital experiences.
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="display: flex; gap: 1rem; align-items: start;">
+                        <span style="font-size: 1.5rem;">🏞️</span>
+                        <div>
+                            <strong style="color: var(--society-gold-light);">The Nyx & Raven Ranch</strong>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                                Luxury ranch destination — VIP cabins, equine services, events,
+                                and the world's first wildlife-compliant LED display.
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: start;">
+                        <span style="font-size: 1.5rem;">🌐</span>
+                        <div>
+                            <strong style="color: var(--society-gold-light);">SocietyOS</strong>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                                Agentic browser platform with AI tools, extension services,
+                                and absolute data sovereignty. Your digital command center.
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: start;">
+                        <span style="font-size: 1.5rem;">📺</span>
+                        <div>
+                            <strong style="color: var(--accent-green);">Society TV</strong>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                                Curated streaming with live entertainment, concerts, and
+                                exclusive premieres. Powered by SocietyOS media player.
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: start;">
+                        <span style="font-size: 1.5rem;">⛓️</span>
+                        <div>
+                            <strong style="color: var(--success);">NODES on Solana</strong>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                                Tokenized membership and governance. Your access becomes
+                                a tradable, appreciating asset on the Solana blockchain.
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: start;">
+                        <span style="font-size: 1.5rem;">💳</span>
+                        <div>
+                            <strong style="color: var(--accent-green);">Sovereign Wallet</strong>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                                Co-branded Tangem hardware wallet. Tap-to-authenticate NFC cards
+                                that secure your NODES, unlock your membership, and grant ranch access.
+                                EAL6+ certified. 25-year warranty.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ecosystem-visual">
+                <div class="eco-orbit eco-orbit-1"></div>
+                <div class="eco-orbit eco-orbit-2"></div>
+                <div class="eco-orbit eco-orbit-3"></div>
+                <div class="eco-core">SOS</div>
+                <div class="eco-node eco-node-1">🏞️</div>
+                <div class="eco-node eco-node-2">📺</div>
+                <div class="eco-node eco-node-3">⛓️</div>
+                <div class="eco-node eco-node-4">🧠</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     PLATFORMS
+     ═══════════════════════════════════════════════════ -->
+<div class="section" id="platforms">
+    <div class="section-label">Cross-Platform</div>
+    <h2 class="section-title">Everywhere you are.</h2>
+    <p class="section-subtitle">
+        Cloud-based and sovereign options. Consumer and B2B "Gold Business Ambassador" tiers.
+        One universal UI across every device.
+    </p>
+
+    <div class="platforms-row">
+        <div class="platform-tile">
+            <div class="icon">📱</div>
+            <h4>Android</h4>
+            <p>Google Play Store</p>
+        </div>
+        <div class="platform-tile">
+            <div class="icon">📲</div>
+            <h4>iOS</h4>
+            <p>App Store</p>
+        </div>
+        <div class="platform-tile">
+            <div class="icon">💻</div>
+            <h4>macOS</h4>
+            <p>Native WebKit</p>
+        </div>
+        <div class="platform-tile">
+            <div class="icon">📺</div>
+            <h4>tvOS</h4>
+            <p>Society TV</p>
+        </div>
+        <div class="platform-tile">
+            <div class="icon">🖥️</div>
+            <h4>Custom Hardware</h4>
+            <p>Apple Silicon & Framework</p>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     MEMBERSHIP / PRICING
+     ═══════════════════════════════════════════════════ -->
+<div class="section" id="membership">
+    <div class="section-label">Membership</div>
+    <h2 class="section-title" style="text-align: center;">Choose your access.</h2>
+    <p class="section-subtitle" style="text-align: center; margin-left: auto; margin-right: auto;">
+        From Society TV access to founding member NODES — there's a tier for everyone
+        in the SocietyOS ecosystem.
+    </p>
+
+    <div class="pricing-grid">
+        <div class="pricing-card">
+            <div class="pricing-tier">Society TV</div>
+            <div class="pricing-price">$99<span>/month</span></div>
+            <div class="pricing-desc">Streaming access to curated entertainment</div>
+            <ul class="pricing-features">
+                <li>Society TV full library</li>
+                <li>Live events & concerts</li>
+                <li>Blockbuster premieres</li>
+                <li>Mobile & TV streaming</li>
+            </ul>
+            <a href="#" class="btn btn-ghost" style="width: 100%; justify-content: center;">Get Started</a>
+        </div>
+
+        <div class="pricing-card featured">
+            <div class="pricing-tier">Premium Socialite</div>
+            <div class="pricing-price">$299<span>/month</span></div>
+            <div class="pricing-desc">Full SocietyOS experience with AI tools</div>
+            <ul class="pricing-features">
+                <li>Everything in Society TV</li>
+                <li>SocietyOS agentic browser</li>
+                <li>AI assistant with model selection</li>
+                <li>Extension services access</li>
+                <li>Calendar, mail, messaging tools</li>
+                <li>Ranch event discounts</li>
+            </ul>
+            <a href="#" class="btn btn-primary" style="width: 100%; justify-content: center;">Join Premium →</a>
+        </div>
+
+        <div class="pricing-card">
+            <div class="pricing-tier">Founding NODES</div>
+            <div class="pricing-price">$2,499<span>lifetime</span></div>
+            <div class="pricing-desc">Limited founding member NODES on Solana</div>
+            <ul class="pricing-features">
+                <li>Everything in Premium Socialite</li>
+                    <li>Lifetime access — no monthly fee</li>
+                    <li>NODES token on Solana</li>
+                    <li>SocietyOS Sovereign Wallet (Tangem card)</li>
+                    <li>Governance voting rights</li>
+                    <li>Ranch access pass included</li>
+                    <li>Gold Business Ambassador eligibility</li>
+            </ul>
+            <a href="#" class="btn btn-gold" style="width: 100%; justify-content: center;">Claim Your NODE</a>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     BRAND CONNECTION
+     ═══════════════════════════════════════════════════ -->
+<div class="brand-connection">
+    <h3>A Brand of The Nyx & Raven Ranch</h3>
+    <p>
+        SocietyOS is developed and operated by The Nyx & Raven Ranch —
+        building the future of luxury entertainment and sovereign technology.
+    </p>
+    <a href="https://www.nyxandraven.com" class="brand-link">
+        Visit The Nyx & Raven Ranch →
+    </a>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════════════ -->
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <img src="assets/societyos-wordmark-white.png" alt="SocietyOS" style="height: 32px; width: auto; margin-bottom: 0.75rem;" />
+                <h4>SocietyOS</h4>
+                <p>
+                    The Operating System for the Sovereign. Designed by The Nyx & Raven Ranch.
+                    Absolute data sovereignty. AI-powered. Cross-platform.
+                </p>
+            </div>
+            <div class="footer-col">
+                <h5>Platform</h5>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#platforms">Platforms</a></li>
+                    <li><a href="#membership">Membership</a></li>
+                    <li><a href="#">Society TV</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Ecosystem</h5>
+                <ul>
+                    <li><a href="https://www.nyxandraven.com">The Nyx & Raven Ranch</a></li>
+                    <li><a href="https://societyos.world">Society's Market</a></li>
+                    <li><a href="http://societyos.tv">Subscription Panel</a></li>
+                    <li><a href="#">NODES on Solana</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Company</h5>
+                <ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Privacy</a></li>
+                    <li><a href="#">Terms</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 SocietyOS. A brand of The Nyx & Raven Ranch. All rights reserved.</p>
+            <span class="nyx-badge">⚖️ Brandon Wayne, CEO — The Nyx & Raven Ranch | Founder of SocietyOS</span>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
