@@ -1374,6 +1374,49 @@
         .morph-case img.swapping {
             opacity: 0.3;
         }
+        
+        /* LOCKED — disable all hover effects after case is selected */
+        .selection-grid.case-locked .selection-card:hover {
+            opacity: 0.85;
+            filter: brightness(0.9) saturate(0.8);
+            border-color: var(--border-subtle);
+            background: var(--bg-card);
+            transform: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        }
+        .selection-grid.case-locked .selection-card:hover::before {
+            transform: scaleX(0);
+        }
+        .selection-grid.case-locked .selection-card:hover::after {
+            opacity: 0;
+        }
+        .selection-grid.case-locked .selection-card:hover .smoke-layer {
+            opacity: 0;
+        }
+        .selection-grid.case-locked .selection-card:hover .case-card-image {
+            border-color: rgba(255,255,255,0.06);
+            box-shadow: none;
+        }
+        .selection-grid.case-locked .selection-card:hover .case-card-image img {
+            opacity: 0.75;
+            transform: none;
+        }
+        .selection-grid.case-locked .selection-card.selected:hover {
+            opacity: 1;
+            filter: brightness(1) saturate(1);
+            border-color: var(--society-gold);
+            background: var(--bg-elevated);
+            box-shadow: 0 0 0 1px var(--society-gold), 0 0 20px rgba(197, 160, 89, 0.25), 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+        .selection-grid.case-locked .selection-card.selected:hover::before {
+            transform: scaleX(1);
+        }
+        .selection-grid.case-locked .selection-card.selected:hover::after {
+            opacity: 0.5;
+        }
+        .selection-grid.case-locked .selection-card.selected:hover .case-card-image img {
+            opacity: 1;
+        }
 
         /* Colorway selector — elegant pill selector */
         .colorway-selector {
@@ -2077,7 +2120,7 @@
 
         // Store selection
         if (step === 1) selections.device = opt;
-        if (step === 2) { selections.case = opt; window.__caseLocked = true; }
+        if (step === 2) { selections.case = opt; window.__caseLocked = true; document.getElementById('selection-grid').classList.add('case-locked'); }
         if (step === 3) selections.wallet = opt;
         if (step === 4) selections.membership = opt;
 
@@ -2681,7 +2724,10 @@
                 currentStep = 1;
             }
             // Unlock hover when returning to step 2
-            if (currentStep === 2) window.__caseLocked = false;
+            if (currentStep === 2) {
+                window.__caseLocked = false;
+                document.getElementById('selection-grid')?.classList.remove('case-locked');
+            }
             renderStep(currentStep);
         }
     }
