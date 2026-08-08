@@ -1583,37 +1583,30 @@
 
     // Case color → actual product photo mapping
     const caseColorImageMap = {
-        'a18-vegan-leather': {
-            'Black': 'case-images/a18-vegan-leather-black.jpg',
-            'White': 'case-images/a18-vegan-leather-white.jpg',
-            'Gray': 'case-images/a18-vegan-leather-white.jpg',
-            'Dark Blue': 'case-images/a18-vegan-leather-black.jpg',
-            'Dark Cherry': 'case-images/a18-vegan-leather-black.jpg',
-        },
         'a18-shockproof': {
             'Black': 'case-images/a18-shockproof-black.jpg',
             'White': 'case-images/a18-shockproof-white.jpg',
-            'Dark Blue': 'case-images/a18-shockproof-black.jpg',
+            'Yellowish-brown': 'case-images/a18-shockproof-brown.jpg',
+        },
+        'a18-vegan-leather': {
+            'White': 'case-images/a18-vegan-leather-white.jpg',
+            'Black': 'case-images/a18-vegan-leather-black.jpg',
         },
         'a18-frosted': {
             'Translucent Gray': 'case-images/a18-frosted-gray.jpg',
-            'White': 'case-images/a18-frosted-white.jpg',
-        },
-        'a18-ghost-lumen': {
-            'Transparent': 'case-images/ghost-a16.jpg',
-            'Yellow Lemon': 'case-images/ghost-a16.jpg',
-        },
-        'a17-vegan-leather': {
-            'Black': 'case-images/vegan-leather-black.png',
-            'White': 'case-images/vegan-leather-white.png',
+            'Translucent White': 'case-images/a18-frosted-white.jpg',
         },
         'a17-shockproof': {
-            'Black': 'case-images/shockproof-black-a17.png',
-            'White': 'case-images/shockproof-white-a17.png',
+            'Black': 'case-images/a17-shockproof-black.png',
+            'White': 'case-images/a17-shockproof-white.jpg',
+        },
+        'a17-vegan-leather': {
+            'White': 'case-images/a17-vegan-leather-white.jpg',
+            'Black': 'case-images/a17-vegan-leather-black.jpg',
         },
         'a17-frosted': {
-            'Translucent Gray': 'case-images/frosted-gray-a17.png',
-            'White': 'case-images/frosted-white-v2.png',
+            'Translucent Gray': 'case-images/a17-frosted-gray.png',
+            'Translucent White': 'case-images/a17-frosted-white-new.png',
         },
         's26-frosted': {
             'Translucent Gray': 'case-images/s26-frosted-gray.jpg',
@@ -1623,25 +1616,25 @@
 
     // Case → product image mapping
     const caseImageMap = {
-        "a18-aramid": "case-images/a16-aramid.jpg",
-        "a18-aramid-gradient": "case-images/a16-aramid.jpg",
-        "a18-aramid-particle": "case-images/a16-aramid.jpg",
-        "a18-armor-shock": "case-images/a16-aramid.jpg",
-        "a18-shockproof": "case-images/a16-shockproof.jpg",
-        "a18-vegan-leather": "case-images/a16-vegan-leather.jpg",
-        "a18-frosted": "case-images/a16-frosted.jpg",
-        "a18-ghost-lumen": "case-images/ghost-a16.jpg",
-        "a18-rugged": "case-images/rugged-a17.jpg",
-        "a18-ultra-aramid": "case-images/aramid-fold.png",
-        "a17-aramid": "case-images/aramid-a17.jpg",
-        "a17-shockproof": "case-images/shockproof-a17.png",
-        "a17-vegan-leather": "case-images/vegan-leather-a17.png",
-        "a17-frosted": "case-images/frosted-a17.png",
-        "a17-rugged": "case-images/rugged-a17.jpg",
-        "sf8-aramid": "case-images/aramid-fold.png",
-        "sf8w-aramid": "case-images/aramid-fold.png",
-        "s26-aramid": "case-images/s26-aramid.png",
-        "s26-frosted": "case-images/s26-frosted.png"
+        'a18-aramid': 'case-images/a18-aramid.jpg',
+        'a18-aramid-gradient': 'case-images/a18-aramid.jpg',
+        'a18-aramid-particle': 'case-images/a18-aramid.jpg',
+        'a18-armor-shock': 'case-images/a18-aramid.jpg',
+        'a18-shockproof': 'case-images/a18-shockproof-black.jpg',
+        'a18-vegan-leather': 'case-images/a18-vegan-leather-white.jpg',
+        'a18-frosted': 'case-images/a18-frosted-gray.jpg',
+        'a18-ghost-lumen': 'case-images/ghost-a16.jpg',
+        'a18-rugged': 'case-images/a17-rugged.jpg',
+        'a18-ultra-aramid': 'case-images/sf8-aramid.png',
+        'a17-aramid': 'case-images/a17-aramid.jpg',
+        'a17-shockproof': 'case-images/a17-shockproof-black.png',
+        'a17-vegan-leather': 'case-images/a17-vegan-leather-white.jpg',
+        'a17-frosted': 'case-images/a17-frosted-gray.png',
+        'a17-rugged': 'case-images/a17-rugged.jpg',
+        'sf8-aramid': 'case-images/sf8-aramid.png',
+        'sf8w-aramid': 'case-images/sf8-aramid.png',
+        's26-aramid': 'case-images/s26-aramid.png',
+        's26-frosted': 'case-images/s26-frosted-gray.jpg',
     };
 
     // Case material mapping for visual rendering
@@ -1667,31 +1660,50 @@
         's26-frosted': 'frosted',
     };
 
-    // Color variants per case
+    // Color variants per case — ONLY official Aulumu colors
     const caseColors = {
+        // A18 series (iPhone 18 Pro / Pro Max) — using A16 photos
         'a18-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
-        'a18-ultra-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
-        'a18-aramid-gradient': [{ name: 'Ombre Black/Gray', hex: '#2a2a2a' }],
-        'a18-aramid-particle': [{ name: 'Blue/Black', hex: '#1a1a2a' }],
-        'a18-armor-shock': [{ name: 'Black', hex: '#1c1c1c' }],
-        'a18-shockproof': [{ name: 'Dark Blue', hex: '#1a1a2e' }, { name: 'White', hex: '#e0e0e0' }],
-        'a18-vegan-leather': [
-            { name: 'Black', hex: '#1a1a1a' }, { name: 'White', hex: '#e0e0e0' },
-            { name: 'Gray', hex: '#3a3a3a' }, { name: 'Dark Blue', hex: '#1a1a2e' },
-            { name: 'Dark Cherry', hex: '#2a0a0a' }
+        'a18-aramid-gradient': [{ name: 'Black', hex: '#1a1a1a' }],
+        'a18-aramid-particle': [{ name: 'Black', hex: '#1a1a1a' }],
+        'a18-armor-shock': [{ name: 'Black', hex: '#1a1a1a' }],
+        'a18-shockproof': [
+            { name: 'Black', hex: '#1a1a1a' },
+            { name: 'White', hex: '#e0e0e0' },
+            { name: 'Yellowish-brown', hex: '#c4a060' },
         ],
-        'a18-frosted': [{ name: 'Translucent Gray', hex: '#2a2a2a' }, { name: 'White', hex: '#e0e0e0' }],
-        'a18-ghost-lumen': [{ name: 'Transparent', hex: '#e0e0e0' }, { name: 'Yellow Lemon', hex: '#c5a059' }],
+        'a18-vegan-leather': [
+            { name: 'White', hex: '#e0e0e0' },
+            { name: 'Black', hex: '#1a1a1a' },
+        ],
+        'a18-frosted': [
+            { name: 'Translucent Gray', hex: '#2a2a2a' },
+            { name: 'Translucent White', hex: '#d0d0d0' },
+        ],
+        'a18-ghost-lumen': [{ name: 'Transparent', hex: '#e0e0e0' }],
         'a18-rugged': [{ name: 'Translucent Gray', hex: '#2a2a2a' }],
+        'a18-ultra-aramid': [{ name: 'Coming Soon', hex: '#1a1a1a' }],
         'a17-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
-        'a17-shockproof': [{ name: 'Black', hex: '#1a1a1a' }, { name: 'White', hex: '#e0e0e0' }],
-        'a17-vegan-leather': [{ name: 'Black', hex: '#1a1a1a' }, { name: 'White', hex: '#e0e0e0' }],
-        'a17-frosted': [{ name: 'Translucent Gray', hex: '#2a2a2a' }, { name: 'White', hex: '#e0e0e0' }],
+        'a17-shockproof': [
+            { name: 'Black', hex: '#1a1a1a' },
+            { name: 'White', hex: '#e0e0e0' },
+        ],
+        'a17-vegan-leather': [
+            { name: 'White', hex: '#e0e0e0' },
+            { name: 'Black', hex: '#1a1a1a' },
+        ],
+        'a17-frosted': [
+            { name: 'Translucent Gray', hex: '#2a2a2a' },
+            { name: 'Translucent White', hex: '#d0d0d0' },
+        ],
         'a17-rugged': [{ name: 'Translucent Gray', hex: '#2a2a2a' }],
         'sf8-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
         'sf8w-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
         's26-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
-        's26-frosted': [{ name: 'Translucent Gray', hex: '#2a2a2a' }],
+        's26-frosted': [
+            { name: 'Translucent Gray', hex: '#2a2a2a' },
+            { name: 'Translucent White', hex: '#d0d0d0' },
+        ],
     };
 
     // State
