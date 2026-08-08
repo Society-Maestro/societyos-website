@@ -1960,15 +1960,18 @@
             `;
 
             card.addEventListener('click', () => selectOption(step, opt, card));
-            // Step 2: live preview on hover — morph case in
+            // Step 2: live preview on hover — ONLY when no case is selected yet
             if (step === 2) {
                 card.addEventListener('mouseenter', () => {
+                    // Do nothing if a case has already been selected
+                    if (selections.case) return;
                     if (!card.classList.contains('selected')) {
                         renderCaseInPreview(opt);
                     }
                 });
                 card.addEventListener('mouseleave', () => {
-                    // Only morph back if this card isn't the selected one
+                    // Do nothing if a case has already been selected
+                    if (selections.case) return;
                     if (!card.classList.contains('selected')) {
                         morphPhoneBack();
                     }
