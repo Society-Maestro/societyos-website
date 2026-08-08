@@ -1580,6 +1580,47 @@
         's26': ['s26-aramid', 's26-frosted'],
     };
 
+
+    // Case color → actual product photo mapping
+    const caseColorImageMap = {
+        'a18-vegan-leather': {
+            'Black': 'case-images/a18-vegan-leather-black.jpg',
+            'White': 'case-images/a18-vegan-leather-white.jpg',
+            'Gray': 'case-images/a18-vegan-leather-white.jpg',
+            'Dark Blue': 'case-images/a18-vegan-leather-black.jpg',
+            'Dark Cherry': 'case-images/a18-vegan-leather-black.jpg',
+        },
+        'a18-shockproof': {
+            'Black': 'case-images/a18-shockproof-black.jpg',
+            'White': 'case-images/a18-shockproof-white.jpg',
+            'Dark Blue': 'case-images/a18-shockproof-black.jpg',
+        },
+        'a18-frosted': {
+            'Translucent Gray': 'case-images/a18-frosted-gray.jpg',
+            'White': 'case-images/a18-frosted-white.jpg',
+        },
+        'a18-ghost-lumen': {
+            'Transparent': 'case-images/ghost-a16.jpg',
+            'Yellow Lemon': 'case-images/ghost-a16.jpg',
+        },
+        'a17-vegan-leather': {
+            'Black': 'case-images/vegan-leather-black.png',
+            'White': 'case-images/vegan-leather-white.png',
+        },
+        'a17-shockproof': {
+            'Black': 'case-images/shockproof-black-a17.png',
+            'White': 'case-images/shockproof-white-a17.png',
+        },
+        'a17-frosted': {
+            'Translucent Gray': 'case-images/frosted-gray-a17.png',
+            'Translucent White': 'case-images/frosted-white-a17.png',
+        },
+        's26-frosted': {
+            'Translucent Gray': 'case-images/s26-frosted-gray.jpg',
+            'Translucent White': 'case-images/s26-frosted-white.jpg',
+        },
+    };
+
     // Case → product image mapping
     const caseImageMap = {
         "a18-aramid": "case-images/a16-aramid.jpg",
@@ -2500,7 +2541,7 @@
 
         // Load the case image into the case layer
         caseLayer.style.display = 'block';
-        caseLayer.innerHTML = `<img src="${imgSrc}" alt="${caseOpt.label}" /><div class="color-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:inherit;pointer-events:none;mix-blend-mode:overlay;opacity:0;transition:opacity 0.4s ease;background:transparent;"></div>`;
+        caseLayer.innerHTML = `<img src="${imgSrc}" alt="${caseOpt.label}" />`;
 
         // Trigger the morph: phone shrinks & rotates out, case image grows & rotates in
         phoneLayer.classList.add('morphing-out');
@@ -2539,67 +2580,29 @@
                 ${colorwayHTML}
             `;
             
-            // Wire up colorway pills — apply color overlay to case image
+            // Wire up colorway pills — swap to actual color variant photo
             info.querySelectorAll('.colorway-pill').forEach(pill => {
                 pill.addEventListener('click', function() {
                     info.querySelectorAll('.colorway-pill').forEach(p => p.classList.remove('selected'));
                     this.classList.add('selected');
                     
                     const colorName = this.dataset.color;
-                    const hex = this.dataset.hex;
                     const img = caseLayer.querySelector('img');
-                    const overlay = caseLayer.querySelector('.color-overlay');
+                    if (!img) return;
                     
-                    if (!img || !overlay) return;
+                    // Find the real color variant photo
+                    const colorImages = caseColorImageMap[caseOpt.id] || {};
+                    const newSrc = colorImages[colorName];
                     
-                    // Fade overlay out, change color, fade back in
-                    overlay.style.opacity = '0';
-                    img.classList.add('swapping');
-                    
-                    setTimeout(() => {
-                        // Reset image filter
-                        img.style.filter = '';
-                        
-                        // Set overlay color based on selected color
-                        if (colorName === 'Black' || colorName === 'Translucent Gray') {
-                            overlay.style.background = '#1a1a1a';
-                            overlay.style.opacity = '0.15';
-                            overlay.style.mixBlendMode = 'multiply';
-                        } else if (colorName === 'White' || colorName === 'Translucent White') {
-                            overlay.style.background = '#f0f0f0';
-                            overlay.style.opacity = '0.35';
-                            overlay.style.mixBlendMode = 'screen';
-                        } else if (colorName === 'Gray') {
-                            overlay.style.background = '#808080';
-                            overlay.style.opacity = '0.2';
-                            overlay.style.mixBlendMode = 'overlay';
-                        } else if (colorName === 'Dark Blue' || colorName === 'Blue/Black') {
-                            overlay.style.background = '#1a2a6e';
-                            overlay.style.opacity = '0.4';
-                            overlay.style.mixBlendMode = 'color';
-                        } else if (colorName === 'Dark Cherry') {
-                            overlay.style.background = '#8b1a1a';
-                            overlay.style.opacity = '0.4';
-                            overlay.style.mixBlendMode = 'color';
-                        } else if (colorName === 'Ombre Black/Gray') {
-                            overlay.style.background = 'linear-gradient(135deg, #1a1a1a, #3a3a3a)';
-                            overlay.style.opacity = '0.2';
-                            overlay.style.mixBlendMode = 'multiply';
-                        } else if (colorName === 'Yellow Lemon') {
-                            overlay.style.background = '#e5d020';
-                            overlay.style.opacity = '0.35';
-                            overlay.style.mixBlendMode = 'color';
-                        } else if (colorName === 'Transparent') {
-                            overlay.style.background = 'transparent';
-                            overlay.style.opacity = '0';
-                        } else {
-                            overlay.style.background = hex;
-                            overlay.style.opacity = '0.3';
-                            overlay.style.mixBlendMode = 'color';
-                        }
-                        
-                        img.classList.remove('swapping');
-                    }, 200);
+                    if (newSrc) {
+                        // Real photo swap — fade out, change src, fade in
+                        img.classList.add('swapping');
+                        setTimeout(() => {
+                            img.src = newSrc;
+                            img.style.filter = '';
+                            img.classList.remove('swapping');
+                        }, 200);
+                    }
                 });
             });
         }
