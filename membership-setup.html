@@ -2500,7 +2500,7 @@
 
         // Load the case image into the case layer
         caseLayer.style.display = 'block';
-        caseLayer.innerHTML = `<img src="${imgSrc}" alt="${caseOpt.label}" />`;
+        caseLayer.innerHTML = `<img src="${imgSrc}" alt="${caseOpt.label}" /><div class="color-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:inherit;pointer-events:none;mix-blend-mode:overlay;opacity:0;transition:opacity 0.4s ease;background:transparent;"></div>`;
 
         // Trigger the morph: phone shrinks & rotates out, case image grows & rotates in
         phoneLayer.classList.add('morphing-out');
@@ -2539,47 +2539,67 @@
                 ${colorwayHTML}
             `;
             
-            // Wire up colorway pills — apply color tint to case image
+            // Wire up colorway pills — apply color overlay to case image
             info.querySelectorAll('.colorway-pill').forEach(pill => {
                 pill.addEventListener('click', function() {
                     info.querySelectorAll('.colorway-pill').forEach(p => p.classList.remove('selected'));
                     this.classList.add('selected');
                     
-                    // Apply a CSS color filter to simulate the case color variant
                     const colorName = this.dataset.color;
                     const hex = this.dataset.hex;
                     const img = caseLayer.querySelector('img');
-                    if (img) {
-                        img.classList.add('swapping');
+                    const overlay = caseLayer.querySelector('.color-overlay');
+                    
+                    if (!img || !overlay) return;
+                    
+                    // Fade overlay out, change color, fade back in
+                    overlay.style.opacity = '0';
+                    img.classList.add('swapping');
+                    
+                    setTimeout(() => {
+                        // Reset image filter
+                        img.style.filter = '';
                         
-                        // Calculate filter values based on color
-                        let filter = '';
+                        // Set overlay color based on selected color
                         if (colorName === 'Black' || colorName === 'Translucent Gray') {
-                            filter = 'brightness(0.7) contrast(1.1)';
+                            overlay.style.background = '#1a1a1a';
+                            overlay.style.opacity = '0.15';
+                            overlay.style.mixBlendMode = 'multiply';
                         } else if (colorName === 'White' || colorName === 'Translucent White') {
-                            filter = 'brightness(1.3) contrast(0.9) saturate(0.5)';
+                            overlay.style.background = '#f0f0f0';
+                            overlay.style.opacity = '0.35';
+                            overlay.style.mixBlendMode = 'screen';
                         } else if (colorName === 'Gray') {
-                            filter = 'brightness(0.9) saturate(0.5)';
+                            overlay.style.background = '#808080';
+                            overlay.style.opacity = '0.2';
+                            overlay.style.mixBlendMode = 'overlay';
                         } else if (colorName === 'Dark Blue' || colorName === 'Blue/Black') {
-                            filter = 'brightness(0.8) hue-rotate(210deg) saturate(1.2)';
+                            overlay.style.background = '#1a2a6e';
+                            overlay.style.opacity = '0.4';
+                            overlay.style.mixBlendMode = 'color';
                         } else if (colorName === 'Dark Cherry') {
-                            filter = 'brightness(0.8) hue-rotate(340deg) saturate(1.3)';
+                            overlay.style.background = '#8b1a1a';
+                            overlay.style.opacity = '0.4';
+                            overlay.style.mixBlendMode = 'color';
                         } else if (colorName === 'Ombre Black/Gray') {
-                            filter = 'brightness(0.85) contrast(1.1)';
+                            overlay.style.background = 'linear-gradient(135deg, #1a1a1a, #3a3a3a)';
+                            overlay.style.opacity = '0.2';
+                            overlay.style.mixBlendMode = 'multiply';
                         } else if (colorName === 'Yellow Lemon') {
-                            filter = 'brightness(1.1) hue-rotate(50deg) saturate(1.5)';
+                            overlay.style.background = '#e5d020';
+                            overlay.style.opacity = '0.35';
+                            overlay.style.mixBlendMode = 'color';
                         } else if (colorName === 'Transparent') {
-                            filter = 'brightness(1.1) contrast(0.95) opacity(0.85)';
+                            overlay.style.background = 'transparent';
+                            overlay.style.opacity = '0';
                         } else {
-                            // Generic fallback — tint using the hex color
-                            filter = `brightness(0.9)`;
+                            overlay.style.background = hex;
+                            overlay.style.opacity = '0.3';
+                            overlay.style.mixBlendMode = 'color';
                         }
                         
-                        setTimeout(() => {
-                            img.style.filter = filter;
-                            img.classList.remove('swapping');
-                        }, 200);
-                    }
+                        img.classList.remove('swapping');
+                    }, 200);
                 });
             });
         }
