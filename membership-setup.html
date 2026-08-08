@@ -1572,7 +1572,7 @@
 
     // Case series → case IDs
     const caseSeriesMap = {
-        'a18': ['a18-aramid', 'a18-shockproof', 'a18-vegan-leather', 'a18-frosted', 'a18-ghost-lumen', 'a18-rugged'],
+        'a18': ['a18-aramid', 'a18-aramid-gradient', 'a18-aramid-particle', 'a18-armor-shock', 'a18-shockproof', 'a18-vegan-leather', 'a18-frosted', 'a18-ghost-lumen', 'a18-rugged'],
         'a18-foldable': ['a18-ultra-aramid'],  // iPhone Ultra foldable — Aramid only
         'a17': ['a17-aramid', 'a17-shockproof', 'a17-vegan-leather', 'a17-frosted', 'a17-rugged'],
         'sf8': ['sf8-aramid'],
@@ -1617,6 +1617,9 @@
     // Case → product image mapping
     const caseImageMap = {
         'a18-aramid': 'case-images/a18-aramid.jpg',
+        'a18-aramid-gradient': 'case-images/coming-soon.png',
+        'a18-aramid-particle': 'case-images/coming-soon.png',
+        'a18-armor-shock': 'case-images/coming-soon.png',
         'a18-shockproof': 'case-images/a18-shockproof-black.jpg',
         'a18-vegan-leather': 'case-images/a18-vegan-leather-white.jpg',
         'a18-frosted': 'case-images/a18-frosted-gray.jpg',
@@ -1658,6 +1661,9 @@
     const caseColors = {
         // A18 series (iPhone 18 Pro / Pro Max) — using A16 photos
         'a18-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
+        'a18-aramid-gradient': [{ name: 'Coming Soon', hex: '#1a1a1a' }],
+        'a18-aramid-particle': [{ name: 'Coming Soon', hex: '#1a1a1a' }],
+        'a18-armor-shock': [{ name: 'Coming Soon', hex: '#1a1a1a' }],
         'a18-shockproof': [
             { name: 'Black', hex: '#1a1a1a' },
             { name: 'White', hex: '#e0e0e0' },
@@ -1737,6 +1743,10 @@
             options: [
                 // A18 Series (iPhone 18 Pro / Pro Max)
                 { id: 'a18-aramid', label: 'Aramid Fiber', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light', material: 'aramid', series: 'a18', hasMagsafe: true },
+                { id: 'a18-aramid-gradient', label: 'Gradient Aramid', subtitle: 'Coming Soon', type: 'raven-gold', lifestyle: 'Trendsetter · Color-Shifting', material: 'aramid-gradient', series: 'a18', hasMagsafe: true },
+                { id: 'a18-aramid-particle', label: 'Particle Aramid', subtitle: 'Coming Soon', type: 'clear', lifestyle: 'Cyberpunk · Statement Piece', material: 'aramid-particle', series: 'a18', hasMagsafe: true },
+                { id: 'a18-armor-shock', label: 'Armor Shockproof', subtitle: 'Coming Soon', type: 'leather', lifestyle: 'Adventurer · Maximum Protection', material: 'armor', series: 'a18', hasMagsafe: true },
+
                 { id: 'a18-shockproof', label: 'Shock Proof', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Practical · Dual-Layer Defense', material: 'shockproof', series: 'a18', hasMagsafe: true },
                 { id: 'a18-vegan-leather', label: 'Vegan Leather', subtitle: 'Included with membership', type: 'leather', lifestyle: 'Professional · Classic Style', material: 'leather', series: 'a18', hasMagsafe: true },
                 { id: 'a18-frosted', label: 'Hyper Frosted', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Night Owl · Glow-in-Dark', material: 'frosted', series: 'a18', hasMagsafe: true },
