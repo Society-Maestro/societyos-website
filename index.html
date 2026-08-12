@@ -877,6 +877,275 @@
             .section { padding: 4rem 1rem; }
             .hero { padding: 6rem 1rem 3rem; }
         }
+
+        /* ═══════════════════════════════════════════════════
+           SOS — SocietyOS Assistant System
+           Floating button + panel with 4 assistant modes
+           ═══════════════════════════════════════════════════ */
+
+        .sos-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            font-family: var(--font-display);
+        }
+
+        .sos-button {
+            background: linear-gradient(135deg, var(--society-gold) 0%, var(--society-gold-light) 100%);
+            color: #0d1f2d;
+            border: none;
+            border-radius: 50px;
+            padding: 14px 28px;
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(197, 160, 89, 0.4), 0 0 0 1px rgba(197, 160, 89, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sos-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px rgba(197, 160, 89, 0.55), 0 0 0 1px rgba(197, 160, 89, 0.5);
+        }
+
+        .sos-button .sos-pulse {
+            width: 8px;
+            height: 8px;
+            background: #0d1f2d;
+            border-radius: 50%;
+            animation: sos-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes sos-pulse {
+            0%, 100% { opacity: 0.4; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .sos-panel {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 380px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0,0,0.5), 0 0 0 1px rgba(197, 160, 89, 0.15);
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .sos-panel.open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .sos-header {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-elevated));
+            padding: 20px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sos-header img {
+            height: 36px;
+            width: auto;
+            filter: brightness(1.2);
+        }
+
+        .sos-header h3 {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .sos-header p {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+            margin: 2px 0 0;
+        }
+
+        .sos-modes {
+            padding: 12px;
+        }
+
+        .sos-mode {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            margin-bottom: 6px;
+        }
+
+        .sos-mode:hover {
+            background: rgba(197, 160, 89, 0.08);
+            border-color: rgba(197, 160, 89, 0.2);
+        }
+
+        .sos-mode-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .sos-mode-icon.sales { background: rgba(46, 204, 113, 0.12); }
+        .sos-mode-icon.info { background: rgba(52, 152, 219, 0.12); }
+        .sos-mode-icon.troubleshoot { background: rgba(231, 76, 60, 0.12); }
+        .sos-mode-icon.human { background: rgba(197, 160, 89, 0.12); }
+
+        .sos-mode-content h4 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 4px;
+        }
+
+        .sos-mode-content p {
+            font-size: 0.82rem;
+            color: var(--text-tertiary);
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .sos-mode-badge {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: rgba(197, 160, 89, 0.15);
+            color: var(--society-gold-light);
+            font-family: var(--font-body);
+            letter-spacing: 0.03em;
+            margin-left: auto;
+            white-space: nowrap;
+        }
+
+        .sos-mode-badge.free {
+            background: rgba(46, 204, 113, 0.12);
+            color: #2ecc71;
+        }
+
+        .sos-chat {
+            display: none;
+            padding: 16px;
+            max-height: 400px;
+            flex-direction: column;
+        }
+
+        .sos-chat.active { display: flex; }
+
+        .sos-chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 280px;
+            margin-bottom: 12px;
+            padding-right: 4px;
+        }
+
+        .sos-msg {
+            padding: 10px 14px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            max-width: 85%;
+        }
+
+        .sos-msg.bot {
+            background: rgba(255,255,255,0.06);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .sos-msg.user {
+            background: rgba(197, 160, 89, 0.15);
+            color: var(--society-gold-light);
+            margin-left: auto;
+        }
+
+        .sos-chat-input {
+            display: flex;
+            gap: 8px;
+        }
+
+        .sos-chat-input input {
+            flex: 1;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 0.88rem;
+            outline: none;
+        }
+
+        .sos-chat-input input:focus {
+            border-color: rgba(197, 160, 89, 0.4);
+        }
+
+        .sos-chat-input button {
+            background: var(--society-gold);
+            color: #0d1f2d;
+            border: none;
+            border-radius: 10px;
+            padding: 0 16px;
+            font-family: var(--font-display);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .sos-chat-input button:hover {
+            background: var(--society-gold-light);
+        }
+
+        .sos-back {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .sos-back:hover { color: var(--text-primary); }
+
+        .sos-footer-note {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-subtle);
+            font-size: 0.72rem;
+            color: var(--text-tertiary);
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .sos-panel { width: calc(100vw - 48px); }
+            .sos-button { padding: 12px 20px; font-size: 1rem; }
+        }
     </style>
 </head>
 <body>
@@ -1335,7 +1604,7 @@
     <div class="footer-inner">
         <div class="footer-grid">
             <div class="footer-brand">
-                <img src="assets/societyos-wordmark-white.png" alt="SocietyOS" style="height: 32px; width: auto; margin-bottom: 0.75rem;" />
+                <img src="assets/societyos-logo-light.png" alt="SocietyOS" style="height: 48px; width: auto; margin-bottom: 0.75rem; filter: brightness(1.2);" />
                 <h4>SocietyOS</h4>
                 <p>
                     The Operating System for the Sovereign. Designed by The Nyx & Raven Ranch.
@@ -1376,6 +1645,188 @@
         </div>
     </div>
 </footer>
+
+<!-- ═══════════════════════════════════════════════════
+     SOS — SocietyOS Assistant System
+     4 modes: Sales, Info, Troubleshoot, Human Support
+     ═══════════════════════════════════════════════════ -->
+<div class="sos-container">
+    <div class="sos-panel" id="sosPanel">
+        <div class="sos-header">
+            <img src="assets/societyos-logo-light.png" alt="SocietyOS" />
+            <div>
+                <h3>SOS</h3>
+                <p>SocietyOS Assistant — How can we help?</p>
+            </div>
+        </div>
+
+        <!-- Mode Selection -->
+        <div class="sos-modes" id="sosModes">
+            <div class="sos-mode" onclick="sosOpenChat('sales')">
+                <div class="sos-mode-icon sales">🛒</div>
+                <div class="sos-mode-content">
+                    <h4>Sales</h4>
+                    <p>Purchase cases, box sets, memberships, and Society TV subscriptions.</p>
+                </div>
+                <span class="sos-mode-badge free">Free</span>
+            </div>
+
+            <div class="sos-mode" onclick="sosOpenChat('info')">
+                <div class="sos-mode-icon info">ℹ️</div>
+                <div class="sos-mode-content">
+                    <h4>Information</h4>
+                    <p>Learn about SocietyOS, membership tiers, Ambassador Nodes, and LEARN events.</p>
+                </div>
+                <span class="sos-mode-badge free">Free</span>
+            </div>
+
+            <div class="sos-mode" onclick="sosOpenChat('troubleshoot')">
+                <div class="sos-mode-icon troubleshoot">🔧</div>
+                <div class="sos-mode-content">
+                    <h4>Troubleshoot</h4>
+                    <p>Technical support for Society TV, streaming, cases, and account issues.</p>
+                </div>
+                <span class="sos-mode-badge free">Free</span>
+            </div>
+
+            <div class="sos-mode" onclick="sosOpenChat('human')">
+                <div class="sos-mode-icon human">👤</div>
+                <div class="sos-mode-content">
+                    <h4>Human Support</h4>
+                    <p>Schedule a call with our team. Verification required for paid members.</p>
+                </div>
+                <span class="sos-mode-badge">Members</span>
+            </div>
+        </div>
+
+        <!-- Chat View (hidden by default) -->
+        <div class="sos-chat" id="sosChat">
+            <div class="sos-back" onclick="sosBackToModes()">← Back to assistants</div>
+            <div class="sos-chat-messages" id="sosMessages"></div>
+            <div class="sos-chat-input">
+                <input type="text" id="sosInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter')sosSend()" />
+                <button onclick="sosSend()">Send</button>
+            </div>
+        </div>
+
+        <div class="sos-footer-note">
+            SocietyOS Support System · Designed by The Nyx & Raven Ranch
+        </div>
+    </div>
+
+    <button class="sos-button" onclick="sosToggle()">
+        <span class="sos-pulse"></span>
+        SOS
+    </button>
+</div>
+
+<script>
+    let sosCurrentMode = null;
+
+    const SOS_BOTS = {
+        sales: {
+            name: 'Sales Assistant',
+            greeting: 'Hello! I\'m your SocietyOS Sales Assistant. I can help you purchase Aulumu cases, box sets, Tangem wallets, Society TV subscriptions, and memberships. What are you interested in today?',
+            responses: {
+                case: 'We offer Aulumu cases for iPhone 18 Pro/Pro Max and Samsung S25/S26 Ultra. Aramid Fiber cases start at $65.98 MSRP, Vegan Leather at $45.98, and Armor Shockproof at $79.98. Would you like to see the full catalog?',
+                membership: 'Our membership tiers: Carbon (free), Onyx ($9.99/mo or $99/yr), and GOLD ($19.99/mo or $199/yr). GOLD members get LEARN event eligibility and Ambassador Node access. Which tier interests you?',
+                tv: 'Society TV gives you access to 19,000+ live channels, 500K+ VOD titles, and 7,800+ series. Pricing starts at $15/mo or $150/yr. Would you like to subscribe?',
+                box: 'Our Aulumu box sets include premium cases packaged for gifting or resale. Box sets start at $110/set. For bulk orders (200+), cost is $22-25k with shipping. Are you interested in individual or bulk?',
+                ambassador: 'The Ambassador Node Program is exclusive: only 100 nodes per 36-month cycle, each capping at 3,000 customers. You must be a paid GOLD member to apply. Would you like to start a GOLD membership?',
+                default: 'I can help with: cases, box sets, memberships (Carbon/Onyx/GOLD), Society TV subscriptions, Tangem wallets, and Ambassador Node reservations. What would you like to know more about?'
+            }
+        },
+        info: {
+            name: 'Information Assistant',
+            greeting: 'Hello! I\'m your SocietyOS Information Assistant. I can tell you about our platform, membership tiers, Ambassador Nodes, LEARN events, and The Nyx & Raven Ranch. What would you like to know?',
+            responses: {
+                societyos: 'SocietyOS is The Operating System for the Sovereign — an AI-powered command center with absolute data sovereignty. It includes Maestro Assistant, Society TV, Tangem Wallet, and extension services connecting digital life to real life.',
+                ambassador: 'Ambassador Nodes are exclusive partnership territories. Only 100 are available per 36-month cycle. Each node caps at 3,000 customers. Ambassadors receive: custom branded box set, custom PC, ONYX Khadas package, and a new mobile device with case. They must be paid GOLD members.',
+                learn: 'LEARN events are 3-day, 2-night experiences at The Nyx & Raven Ranch or themed locations. Held monthly (up to 3x per month). Ambassadors meet the team, train, network with other node owners, and meet vendors. GOLD members can reserve seats; non-members attend first come first served.',
+                ranch: 'The Nyx & Raven Ranch is the parent company of SocietyOS — a luxury eco sanctuary building the future of sovereign technology and entertainment. Visit nyxandraven.com for more.',
+                membership: 'Membership tiers: Carbon (free, community access), Onyx ($9.99/mo, Society TV + marketplace discounts), GOLD ($19.99/mo, everything + LEARN eligibility + Ambassador path). Annual plans available at a discount.',
+                default: 'I can tell you about: SocietyOS, Ambassador Nodes, LEARN events, membership tiers, The Nyx & Raven Ranch, Society TV, or our partnerships. What interests you?'
+            }
+        },
+        troubleshoot: {
+            name: 'Troubleshoot Assistant',
+            greeting: 'Hello! I\'m your SocietyOS Troubleshoot Assistant. I can help with Society TV streaming issues, account problems, case fitment, and technical questions. What issue are you experiencing?',
+            responses: {
+                stream: 'For Society TV streaming issues: (1) Check your internet speed — minimum 10Mbps for HD, 25Mbps for 4K. (2) Try a different server from the panel. (3) Clear your player cache. (4) If using a VPN, try switching servers. Still having issues? Describe what you see.',
+                account: 'For account issues: (1) Try resetting your password via the panel. (2) Check if your subscription is active. (3) Verify your connection count isn\'t exceeded. If you need a password reset, I can guide you through it.',
+                case: 'For case issues: (1) Verify your phone model matches the case SKU. (2) Aulumu Aramid Fiber cases are ultra-slim — check for proper alignment. (3) Vegan Leather cases have a break-in period of 2-3 days. (4) Armor Shockproof requires proper installation — press firmly on all corners. What specific issue?',
+                panel: 'For panel access issues: (1) Ensure you\'re using the correct portal URL. (2) Check your username/password. (3) Clear browser cookies. (4) Try a different browser. If your account is locked, I can escalate to human support.',
+                default: 'I can help with: streaming issues, account problems, case fitment, panel access, payment issues, or Society TV setup. What\'s going on?'
+            }
+        },
+        human: {
+            name: 'Human Support Scheduler',
+            greeting: 'Hello! I can schedule a call with our human support team. To protect our members, verification is required. Are you a current paid member (Onyx or GOLD)?',
+            responses: {
+                yes: 'Great! Please provide your membership email and we\'ll verify your account. Once verified, I\'ll show you available call slots. Our team is available Monday-Friday, 9 AM - 6 PM Eastern.',
+                no: 'Human support is available for paid members (Onyx or GOLD). For free support, please use our Information or Troubleshoot assistants, or join our Discord community. Would you like to upgrade to Onyx ($9.99/mo) or GOLD ($19.99/mo) to access human support?',
+                gold: 'Excellent! As a GOLD member, you get priority scheduling. Please provide your membership email and preferred time. Our team will confirm within 2 hours during business hours.',
+                default: 'To schedule human support, I need to verify your membership. Are you a paid Onyx or GOLD member? Reply "yes" or "no".'
+            }
+        }
+    };
+
+    function sosToggle() {
+        const panel = document.getElementById('sosPanel');
+        panel.classList.toggle('open');
+    }
+
+    function sosOpenChat(mode) {
+        sosCurrentMode = mode;
+        const bot = SOS_BOTS[mode];
+        document.getElementById('sosModes').style.display = 'none';
+        const chat = document.getElementById('sosChat');
+        chat.classList.add('active');
+        document.getElementById('sosMessages').innerHTML = '';
+        sosAddMessage('bot', bot.greeting);
+        document.getElementById('sosInput').focus();
+    }
+
+    function sosBackToModes() {
+        sosCurrentMode = null;
+        document.getElementById('sosModes').style.display = 'block';
+        document.getElementById('sosChat').classList.remove('active');
+        document.getElementById('sosMessages').innerHTML = '';
+    }
+
+    function sosAddMessage(sender, text) {
+        const messages = document.getElementById('sosMessages');
+        const msg = document.createElement('div');
+        msg.className = 'sos-msg ' + sender;
+        msg.textContent = text;
+        messages.appendChild(msg);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function sosSend() {
+        const input = document.getElementById('sosInput');
+        const text = input.value.trim();
+        if (!text || !sosCurrentMode) return;
+        sosAddMessage('user', text);
+        input.value = '';
+
+        const bot = SOS_BOTS[sosCurrentMode];
+        const lower = text.toLowerCase();
+        let response = bot.responses.default;
+
+        for (const key in bot.responses) {
+            if (key === 'default') continue;
+            if (lower.includes(key)) {
+                response = bot.responses[key];
+                break;
+            }
+        }
+
+        setTimeout(() => {
+            sosAddMessage('bot', response);
+        }, 600);
+    }
+</script>
 
 </body>
 </html>
