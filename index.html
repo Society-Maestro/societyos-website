@@ -27,7 +27,7 @@
     <!-- Theme Color -->
     <meta name="theme-color" content="#0d1f2d">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=EB+Garamond:wght@400;500;600;700&display=swap');
         /* ═══════════════════════════════════════════════════
            SOCIETYOS — UNIVERSAL UI DESIGN SYSTEM
            This CSS is the single source of truth for all
@@ -74,8 +74,8 @@
             --text-tertiary: #6a7a8a;
             
             /* ── Typography ── */
-            --font-display: 'Montserrat', 'SF Pro Display', 'Inter', -apple-system, sans-serif;
-            --font-body: 'Inter', 'SF Pro Text', -apple-system, sans-serif;
+            --font-display: 'Cormorant Garamond', 'EB Garamond', 'Garamond', 'Times New Roman', serif;
+            --font-body: 'EB Garamond', 'Garamond', 'Times New Roman', serif;
             --font-mono: 'SF Mono', 'JetBrains Mono', monospace;
             
             /* ── Spacing ── */
@@ -159,7 +159,7 @@
             font-size: 1.1rem;
         }
         .nav-logo-img {
-            height: 64px;
+            height: 96px;
             width: auto;
             object-fit: contain;
             filter: brightness(1.2);
@@ -271,7 +271,7 @@
             50% { opacity: 0.3; }
         }
         .hero h1 {
-            font-family: 'Montserrat', var(--font-display);
+            font-family: var(--font-display);
             font-size: clamp(2.5rem, 6vw, 5rem);
             font-weight: 800;
             line-height: 1.05;
@@ -335,7 +335,7 @@
             margin-bottom: 1rem;
         }
         .section-title {
-            font-family: 'Montserrat', var(--font-display);
+            font-family: var(--font-display);
             font-size: clamp(2rem, 4vw, 3.5rem);
             font-weight: 700;
             letter-spacing: -0.02em;
@@ -405,7 +405,7 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
         .tangem-card-brand {
-            font-family: 'Montserrat', var(--font-display);
+            font-family: var(--font-display);
             font-weight: 700;
             font-size: 1.1rem;
             color: var(--text-primary);
@@ -586,7 +586,7 @@
             margin-bottom: 1.5rem;
         }
         .feature-card h3 {
-            font-family: 'Montserrat', var(--font-display);
+            font-family: var(--font-display);
             font-size: 1.3rem;
             font-weight: 600;
             margin-bottom: 0.75rem;
@@ -640,7 +640,7 @@
             border-radius: 50%;
             background: linear-gradient(135deg, var(--society-gold), var(--society-gold));
             display: flex; align-items: center; justify-content: center;
-            font-family: 'Montserrat', var(--font-display);
+            font-family: var(--font-display);
             font-weight: 800;
             font-size: 1.5rem;
             color: white;
@@ -727,14 +727,14 @@
         }
         .pricing-card:hover { transform: translateY(-4px); }
         .pricing-tier {
-            font-family: 'Montserrat', var(--font-display);
+            font-family: var(--font-display);
             font-size: 1.1rem;
             font-weight: 600;
             color: var(--society-gold-light);
             margin-bottom: 0.5rem;
         }
         .pricing-price {
-            font-family: 'Montserrat', var(--font-display);
+            font-family: var(--font-display);
             font-size: 3rem;
             font-weight: 800;
             margin-bottom: 0.25rem;
@@ -774,7 +774,7 @@
             background: linear-gradient(180deg, transparent, var(--bg-secondary), transparent);
         }
         .brand-connection h3 {
-            font-family: 'Montserrat', var(--font-display);
+            font-family: var(--font-display);
             font-size: 1.75rem;
             font-weight: 600;
             margin-bottom: 1rem;
@@ -818,7 +818,7 @@
             .footer-grid { grid-template-columns: 1fr 1fr; }
         }
         .footer-brand h4 {
-            font-family: 'Montserrat', var(--font-display);
+            font-family: var(--font-display);
             font-size: 1.25rem;
             margin-bottom: 0.75rem;
         }
