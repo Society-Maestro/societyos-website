@@ -1145,6 +1145,235 @@
         @media (max-width: 480px) {
             .sos-panel { width: calc(100vw - 48px); }
             .sos-button { padding: 12px 20px; font-size: 1rem; }
+
+        }
+
+        /* ═══════════════════════════════════════════════════
+           LIQUID GLASS MORPHING CASE SELECTOR (SocietyOS Protocol)
+           ═══════════════════════════════════════════════════ */
+
+        .case-selector {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .case-selector-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            text-align: center;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .case-selector-subtitle {
+            text-align: center;
+            color: var(--text-tertiary);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .case-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .liquid-glass-case {
+            width: 280px;
+            height: 400px;
+            position: relative;
+            border-radius: 24px;
+            background: linear-gradient(135deg,
+                rgba(197, 160, 89, 0.08) 0%,
+                rgba(100, 150, 200, 0.05) 50%,
+                rgba(197, 160, 89, 0.08) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(197, 160, 89, 0.15);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 0 60px rgba(197, 160, 89, 0.1);
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: glass-breathe 4s ease-in-out infinite;
+        }
+
+        @keyframes glass-breathe {
+            0%, 100% {
+                box-shadow:
+                    0 8px 32px rgba(0, 0, 0, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                    0 0 60px rgba(197, 160, 89, 0.1);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow:
+                    0 8px 40px rgba(0, 0, 0, 0.4),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                    0 0 80px rgba(197, 160, 89, 0.2);
+                transform: scale(1.02);
+            }
+        }
+
+        .liquid-glass-case::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(197, 160, 89, 0.08) 50%,
+                transparent 70%
+            );
+            animation: glass-shimmer 6s linear infinite;
+        }
+
+        @keyframes glass-shimmer {
+            0% { transform: translate(-30%, -30%) rotate(0deg); }
+            100% { transform: translate(-30%, -30%) rotate(360deg); }
+        }
+
+        .liquid-glass-case::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(
+                ellipse at 30% 20%,
+                rgba(255, 255, 255, 0.12) 0%,
+                transparent 50%
+            );
+            pointer-events: none;
+        }
+
+        .glass-case-label {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-family: var(--font-display);
+            color: var(--society-gold-light);
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            opacity: 0.9;
+            z-index: 2;
+        }
+
+        .glass-case-material {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-family: var(--font-body);
+            color: var(--text-tertiary);
+            font-size: 0.75rem;
+            letter-spacing: 0.03em;
+            z-index: 2;
+        }
+
+        .case-device-picker {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .case-device-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 10px 18px;
+            color: var(--text-secondary);
+            font-family: var(--font-display);
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .case-device-btn:hover {
+            border-color: rgba(197, 160, 89, 0.3);
+            color: var(--text-primary);
+        }
+
+        .case-device-btn.active {
+            background: rgba(197, 160, 89, 0.12);
+            border-color: var(--society-gold);
+            color: var(--society-gold-light);
+        }
+
+        .case-info-panel {
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .case-info-name {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .case-info-price {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            color: var(--society-gold-light);
+            margin-bottom: 1rem;
+        }
+
+        .case-info-features {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .case-feature-tag {
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(197, 160, 89, 0.08);
+            color: var(--text-secondary);
+            border: 1px solid rgba(197, 160, 89, 0.12);
+        }
+
+        .case-color-picker {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .case-color-swatch {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .case-color-swatch:hover { transform: scale(1.15); }
+        .case-color-swatch.active { border-color: var(--society-gold); }
+
+        .case-protocol-badge {
+            position: fixed;
+            bottom: 80px;
+            right: 24px;
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            font-family: var(--font-body);
+            opacity: 0.5;
+            z-index: 9998;
         }
     </style>
 </head>
@@ -1586,6 +1815,41 @@
 <!-- ═══════════════════════════════════════════════════
      BRAND CONNECTION
      ═══════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════
+     SOCIETYOS CASE SELECTOR — Liquid Glass Morphing
+     Protocol-driven: SocietyOS (liquid glass) or Aulumu (product photos)
+     ═══════════════════════════════════════════════════ -->
+<section class="section" id="cases">
+    <div class="case-selector">
+        <h2 class="case-selector-title" id="caseSelectorTitle">Sovereign Protection</h2>
+        <p class="case-selector-subtitle" id="caseSelectorSubtitle">Select your device — the case morphs to life</p>
+
+        <div class="case-display">
+            <!-- Liquid Glass Case -->
+            <div class="liquid-glass-case" id="liquidGlassCase">
+                <div class="glass-case-material" id="glassCaseMaterial">Woven Aramid Fiber</div>
+                <div class="glass-case-label" id="glassCaseLabel">SocietyOS Sovereign Case</div>
+            </div>
+
+            <!-- Device Picker -->
+            <div class="case-device-picker" id="caseDevicePicker">
+                <button class="case-device-btn active" onclick="selectCaseDevice('Fold 8 Ultra', this)">Fold 8 Ultra</button>
+                <button class="case-device-btn" onclick="selectCaseDevice('Fold 7', this)">Fold 7</button>
+                <button class="case-device-btn" onclick="selectCaseDevice('iPhone 18 Pro', this)">iPhone 18 Pro</button>
+                <button class="case-device-btn" onclick="selectCaseDevice('iPhone Ultra', this)">iPhone Ultra</button>
+            </div>
+
+            <!-- Case Info -->
+            <div class="case-info-panel">
+                <div class="case-info-name" id="caseInfoName">SocietyOS Sovereign Case — Aramid Fiber</div>
+                <div class="case-info-price" id="caseInfoPrice">$89.99</div>
+                <div class="case-info-features" id="caseInfoFeatures"></div>
+                <div class="case-color-picker" id="caseColorPicker"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <div class="brand-connection">
     <h3>A Brand of The Nyx & Raven Ranch</h3>
     <p>
@@ -1826,6 +2090,110 @@
             sosAddMessage('bot', response);
         }, 600);
     }
+</script>
+
+<!-- Protocol Config + Liquid Glass Case Selector -->
+<script src="assets/protocol-config.js"></script>
+<script>
+    // Color maps for swatches
+    const COLOR_HEX = {
+        'Obsidian Black': '#0a0a0a',
+        'Graphite Gray': '#4a4a4a',
+        'Society Gold': '#c5a059',
+        'Midnight Blue': '#0d1f2d',
+        'Black': '#0a0a0a',
+        'Gray': '#6a6a6a',
+        'White': '#f0f0f0',
+        'Dark Cherry': '#4a1a2a',
+        'Dark Blue': '#1a2a4a',
+        'Ombre Black / Ombre Gray': 'linear-gradient(135deg, #1a1a1a, #5a5a5a)'
+    };
+
+    let currentDevice = 'Fold 8 Ultra';
+
+    function renderCaseSelector() {
+        const protocol = getActiveProtocol();
+        const cases = protocol.cases;
+
+        // Update titles
+        document.getElementById('caseSelectorTitle').textContent = protocol.brand === 'SocietyOS' ? 'Sovereign Protection' : 'Premium Cases by Aulumu';
+        document.getElementById('caseSelectorSubtitle').textContent = protocol.brand === 'SocietyOS'
+            ? 'Select your device — the case morphs to life'
+            : 'Premium Aulumu cases — a SocietyOS partner';
+
+        // Find case for current device
+        const caseData = cases.find(c => c.device.includes(currentDevice)) || cases[0];
+
+        // Update glass case
+        document.getElementById('glassCaseMaterial').textContent = caseData.material;
+        document.getElementById('glassCaseLabel').textContent = caseData.name;
+
+        // Update info panel
+        document.getElementById('caseInfoName').textContent = caseData.name;
+        document.getElementById('caseInfoPrice').textContent = '$' + caseData.price.toFixed(2);
+
+        // Features
+        const featuresEl = document.getElementById('caseInfoFeatures');
+        featuresEl.innerHTML = '';
+        (caseData.features || []).forEach(f => {
+            const tag = document.createElement('span');
+            tag.className = 'case-feature-tag';
+            tag.textContent = f;
+            featuresEl.appendChild(tag);
+        });
+
+        // Colors
+        const colorEl = document.getElementById('caseColorPicker');
+        colorEl.innerHTML = '';
+        (caseData.colors || []).forEach((c, i) => {
+            const swatch = document.createElement('div');
+            swatch.className = 'case-color-swatch' + (i === 0 ? ' active' : '');
+            const bg = COLOR_HEX[c];
+            if (bg && bg.includes('gradient')) {
+                swatch.style.background = bg;
+            } else {
+                swatch.style.background = bg || '#333';
+            }
+            swatch.title = c;
+            swatch.onclick = function() {
+                document.querySelectorAll('.case-color-swatch').forEach(s => s.classList.remove('active'));
+                this.classList.add('active');
+                // Shift the glass glow color
+                const glassCase = document.getElementById('liquidGlassCase');
+                glassCase.style.setProperty('--glass-tint', bg || '#c5a059');
+            };
+            colorEl.appendChild(swatch);
+        });
+
+        // Update protocol badge
+        let badge = document.querySelector('.case-protocol-badge');
+        if (!badge) {
+            badge = document.createElement('div');
+            badge.className = 'case-protocol-badge';
+            document.body.appendChild(badge);
+        }
+        badge.textContent = 'Active Protocol: ' + protocol.name;
+    }
+
+    function selectCaseDevice(device, btn) {
+        currentDevice = device;
+        document.querySelectorAll('.case-device-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Morph animation — glass case pulses and reshapes
+        const glassCase = document.getElementById('liquidGlassCase');
+        glassCase.style.transform = 'scale(0.92) rotateY(8deg)';
+        glassCase.style.opacity = '0.4';
+
+        setTimeout(() => {
+            renderCaseSelector();
+            glassCase.style.transform = '';
+            glassCase.style.opacity = '';
+        }, 400);
+    }
+
+    // Initialize on load
+    renderCaseSelector();
 </script>
 
 </body>
