@@ -64,18 +64,6 @@ const SOCIETYOS_PROTOCOLS = {
         renderStyle: "liquid-glass"
       },
       {
-        id: "sos-armor-fold8",
-        name: "SocietyOS Sovereign Case — Armor Shockproof",
-        device: "Samsung Galaxy Fold 8 Ultra",
-        material: "TPU Blend with Aramid Fiber",
-        features: ["Recessed Locking MagSafe", "Full Front Panel Protection", "Dual-Layer Shockproof", "Hinge Coverage"],
-        colors: ["Black", "Dark Blue", "White"],
-        price: 99.99,
-        msrp: 99.99,
-        sku: "SOS-AR-F8U",
-        renderStyle: "liquid-glass"
-      },
-      {
         id: "sos-aramid-iphone-ultra",
         name: "SocietyOS Sovereign Case — Aramid Fiber",
         device: "iPhone Ultra (Foldable)",
@@ -130,20 +118,6 @@ const SOCIETYOS_PROTOCOLS = {
         renderStyle: "product-photo"
       },
       {
-        id: "a18-aft-bk-pm",
-        name: "A18 Armor Shockproof Aramid Fiber Case",
-        device: "iPhone 18 Pro Max",
-        material: "TPU Blend with Aramid Fiber",
-        features: ["Full-coverage protection", "Shockproof", "Upgraded aramid fiber"],
-        colors: ["Black"],
-        price: 79.98,
-        msrp: 79.98,
-        sku: "A18-AFT-BK-PM",
-        retailerPrice: 45.89,
-        distributorPrice: 33.99,
-        renderStyle: "product-photo"
-      },
-      {
         id: "a18-pu-bk-pm",
         name: "A18 Particle Vegan Leather Case",
         device: "iPhone 18 Pro Max",
@@ -157,20 +131,6 @@ const SOCIETYOS_PROTOCOLS = {
         distributorPrice: 20.69,
         renderStyle: "product-photo"
       },
-      {
-        id: "a18-sp-db-pm",
-        name: "A18 Armor Slim Shockproof Case",
-        device: "iPhone 18 Pro Max",
-        material: "Dual-layer PC + TPU",
-        features: ["Dual-layer protection", "Outer PC shell", "Internal TPU"],
-        colors: ["Dark Blue", "White"],
-        price: 59.98,
-        msrp: 59.98,
-        sku: "A18-SP-DB-PM",
-        retailerPrice: 35.48,
-        distributorPrice: 25.29,
-        renderStyle: "product-photo"
-      }
     ]
   }
 };
