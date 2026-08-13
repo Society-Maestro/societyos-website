@@ -118,6 +118,20 @@ const SOCIETYOS_PROTOCOLS = {
         renderStyle: "product-photo"
       },
       {
+        id: "a18-aft-bk-pm",
+        name: "A18 Armor Shockproof Aramid Fiber Case",
+        device: "iPhone 18 Pro Max",
+        material: "TPU Blend with Aramid Fiber",
+        features: ["Full-coverage protection", "Shockproof", "Upgraded aramid fiber"],
+        colors: ["Black"],
+        price: 79.98,
+        msrp: 79.98,
+        sku: "A18-AFT-BK-PM",
+        retailerPrice: 45.89,
+        distributorPrice: 33.99,
+        renderStyle: "product-photo"
+      },
+      {
         id: "a18-pu-bk-pm",
         name: "A18 Particle Vegan Leather Case",
         device: "iPhone 18 Pro Max",
@@ -130,7 +144,7 @@ const SOCIETYOS_PROTOCOLS = {
         retailerPrice: 27.59,
         distributorPrice: 20.69,
         renderStyle: "product-photo"
-      },
+      }
     ]
   }
 };
