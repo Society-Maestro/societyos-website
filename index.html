@@ -1953,6 +1953,15 @@
                 <span class="sos-mode-badge free">Free</span>
             </div>
 
+            <div class="sos-mode" onclick="sosOpenChat('legal')">
+                <div class="sos-mode-icon" style="background: rgba(100, 100, 200, 0.12);">⚖️</div>
+                <div class="sos-mode-content">
+                    <h4>Legal (Athena)</h4>
+                    <p>Legal information across all US law — federal, state, corporate, criminal, immigration, estate, AI/tech law.</p>
+                </div>
+                <span class="sos-mode-badge free">Free</span>
+            </div>
+
             <div class="sos-mode" onclick="sosOpenChat('human')">
                 <div class="sos-mode-icon human">👤</div>
                 <div class="sos-mode-content">
@@ -2031,6 +2040,27 @@
                 no: 'Human support is available for paid members (Onyx or GOLD). For free support, please use our Information or Troubleshoot assistants, or join our Discord community. Would you like to upgrade to Onyx ($9.99/mo) or GOLD ($19.99/mo) to access human support?',
                 gold: 'Excellent! As a GOLD member, you get priority scheduling. Please provide your membership email and preferred time. Our team will confirm within 2 hours during business hours.',
                 default: 'To schedule human support, I need to verify your membership. Are you a paid Onyx or GOLD member? Reply "yes" or "no".'
+            }
+        },
+        legal: {
+            name: 'Athena — Legal Information',
+            greeting: 'Hello. I am Athena, SocietyOS\'s legal information system. I provide information across all US law — federal and state, from traffic tickets to corporate litigation. I do NOT provide legal advice or represent you in court. For legal advice, consult a licensed attorney. How can I help you today?',
+            responses: {
+                llc: 'To form an LLC, you generally need to: (1) Choose a unique business name. (2) File Articles of Organization with your state\'s Secretary of State (filing fees range from $40-$500 depending on state). (3) Appoint a registered agent. (4) Create an Operating Agreement (recommended even in states that don\'t require it). (5) Obtain an EIN from the IRS. (6) File any required state licenses/permits. Each state has specific requirements — which state are you forming in?',
+                contract: 'A valid contract requires: (1) Offer and acceptance (mutual agreement). (2) Consideration (something of value exchanged). (3) Legal purpose. (4) Capacity (parties must be of legal age and sound mind). (5) Some contracts must be in writing under the Statute of Frauds (real estate, contracts over $500, contracts that can\'t be performed within one year). Would you like me to outline a specific contract type?',
+                dui: 'DUI/DWI consequences vary by state but generally include: license suspension (90 days to 1 year for first offense), fines ($500-$2,500+), possible jail time (48 hours to 6 months for first offense), mandatory DUI education classes, ignition interlock device, and increased insurance rates. Some states impose enhanced penalties for high BAC (.15+). What state did this occur in?',
+                immigration: 'US immigration visa types include: H-1B (specialty occupations), L-1 (intracompany transfers), O-1 (extraordinary ability), EB-5 (investor visa — $800K-$1M investment), F-1 (student), K-1 (fiancé), and family-based petitions. Green card paths: employment-based (EB-1 through EB-5), family-based, diversity lottery, asylum/refugee. What specific immigration question do you have?',
+                will: 'A valid will generally requires: (1) Testator must be 18+ and of sound mind. (2) Must be in writing. (3) Must be signed by the testator. (4) Must be witnessed (usually 2 witnesses, varies by state). (5) Some states allow holographic (handwritten) wills. Some states recognize notarized wills as self-proving. Without a will, your estate goes through intestate succession under state law. Would you like information on trusts as well?',
+                ai: 'AI law is rapidly evolving. Key areas: (1) Federal — proposed AI Act, NIST AI Risk Management Framework, executive orders on AI safety. (2) State — California SB 53, Colorado AI Act, Utah AI Policy Act, Texas Responsible AI Governance Act. (3) Key issues: algorithmic discrimination, AI liability, deepfake regulation, automated decision-making transparency, AI in employment (EEOC guidance). (4) Section 230 reform discussions. What specific AI law question do you have?',
+                crypto: 'Cryptocurrency regulation involves multiple agencies: SEC (securities — Howey Test, Ripple ruling), CFTC (commodities — Bitcoin, Ether as commodities), FinCEN (AML/KYC for exchanges), IRS (taxation — crypto as property, capital gains on disposal), state regulators (NY BitLicense, etc.). Key issues: exchange registration, DeFi regulation, NFTs as securities, stablecoin regulation, custody requirements. What specific crypto question do you have?',
+                traffic: 'Traffic violations vary by state. Common violations: speeding (points vary by state, typically 1-6 points), running red light, reckless driving (often a misdemeanor), DUI/DWI, driving without insurance, driving with suspended license. Most states allow online traffic school to reduce points or dismiss tickets. Some states have camera enforcement. What state and what violation?',
+                corporate: 'Corporate law covers: entity formation (LLC, S-Corp, C-Corp, partnership), governance (board of directors, officers, fiduciary duties — duty of care, duty of loyalty), securities law (SEC compliance if issuing stock), M&A (merger vs acquisition, due diligence, stock purchase vs asset purchase), employment law, intellectual property protection. What specific corporate law question do you have?',
+                criminal: 'Criminal defense rights upon arrest: (1) Miranda rights must be read before custodial interrogation. (2) 4th Amendment protection against unreasonable search and seizure. (3) Right to remain silent. (4) Right to an attorney (6th Amendment). (5) Right to a speedy trial. (6) Right to confront witnesses. (7) Right to bail (8th Amendment — excessive bail prohibited). (8) Presumption of innocence. What specific criminal law question do you have?',
+                trust: 'Trusts: A revocable living trust allows you to: (1) Avoid probate. (2) Manage assets during your lifetime. (3) Designate beneficiaries. (4) Appoint a successor trustee. (5) Maintain privacy (unlike wills, trusts are not public record). Irrevocable trusts offer asset protection and tax benefits but cannot be easily changed. Both require a trustee, beneficiaries, and trust assets. Would you like more detail?',
+                employment: 'Employment law covers: at-will employment (most states), wrongful termination, discrimination (Title VII — race, color, religion, sex, national origin; ADA — disability; ADEA — age 40+), harassment, wage and hour (FLSA — minimum wage, overtime, exemptions), FMLA (12 weeks unpaid leave), independent contractor vs employee classification, non-compete enforceability (varies by state — California bans most). What specific employment question do you have?',
+                tenant: 'Landlord-tenant law varies by state but generally covers: security deposit limits and return timelines, eviction process (notice period, court filing, sheriff execution), habitability requirements (heat, water, structural safety), rent control (some states/cities), lease types (fixed-term, month-to-month), tenant privacy rights (landlord entry notice). What state is the property in?',
+                patent: 'Patents: Three types — utility (machines, processes, compositions — 20 years from filing), design (ornamental design — 15 years from grant), plant (new plant varieties — 20 years). Requirements: novel, non-obvious, useful. Filed with USPTO. Patent pending status after filing. Provisional patent gives 1 year to file full application. Patent infringement remedies: injunctions, damages. Would you like more detail?',
+                default: 'I can provide legal information on: LLC formation, contracts, DUI/DWI, immigration, wills and trusts, AI law, cryptocurrency regulation, traffic law, corporate law, criminal defense, employment law, landlord-tenant, patents/trademarks/copyrights, real estate, family law, federal civil procedure, or any other US legal topic. What area can I help you with?'
             }
         }
     };
