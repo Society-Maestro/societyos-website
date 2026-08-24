@@ -1527,87 +1527,89 @@
         'framework': [],
     };
 
-    // Case series → case IDs
+    // Case series → case IDs (Raptic products)
     const caseSeriesMap = {
-        'a18': ['a18-aramid', 'a18-aramid-gradient', 'a18-aramid-particle', 'a18-armor-shock', 'a18-shockproof', 'a18-vegan-leather', 'a18-frosted', 'a18-ghost-lumen', 'a18-rugged'],
-        'a18-foldable': ['a18-ultra-aramid'],  // iPhone Ultra foldable — Aramid only
-        'a17': ['a17-aramid', 'a17-shockproof', 'a17-vegan-leather', 'a17-frosted', 'a17-rugged'],
-        'sf8': ['sf8-aramid'],
-        'sf8w': ['sf8w-aramid'], // Fold8 Wide — dedicated wide fold case
-        's26': ['s26-aramid', 's26-frosted'],
+        'a18': ['raptic-ip18pm-cs'],
+        'a18-foldable': ['raptic-ip-ultra-cs'],
+        'a17': ['raptic-ip17pm-aramid-rise', 'raptic-ip17pm-aramid-sky', 'raptic-ip17pm-aramid-ocean', 'raptic-ip17pm-aramid-profound', 'raptic-ip17pm-aramid-humble', 'raptic-ip17pm-aramid-bionic-snake', 'raptic-ip17pm-aramid-dual-600d', 'raptic-ip17pm-aramid-geotik-mondrian', 'raptic-ip17pm-shield-black', 'raptic-ip17pm-shield-iridescent', 'raptic-ip17pm-air-clear-clear', 'raptic-ip17pm-air-clear-black'],
+        'sf8': ['raptic-fold8-slim-serenity-amber', 'raptic-fold8-ultra-thin-mondrian', 'raptic-fold8-ultra-thin-blue-gold'],
+        'sf8w': ['raptic-fold8-ultra-thin-mondrian'],
+        's26': ['raptic-s26u-shield-black', 'raptic-s26u-shield-iridescent', 'raptic-s26u-clear-air-stand', 'raptic-s26u-aramid-fortune-black'],
     };
 
-    // Case → product image mapping
+    // Case → product image mapping (real Raptic product photos)
     const caseImageMap = {
-        "a18-aramid": "case-images/a16-aramid.jpg",
-        "a18-aramid-gradient": "case-images/a16-aramid.jpg",
-        "a18-aramid-particle": "case-images/a16-aramid.jpg",
-        "a18-armor-shock": "case-images/a16-aramid.jpg",
-        "a18-shockproof": "case-images/a16-shockproof.jpg",
-        "a18-vegan-leather": "case-images/a16-vegan-leather.jpg",
-        "a18-frosted": "case-images/a16-frosted.jpg",
-        "a18-ghost-lumen": "case-images/ghost-a16.jpg",
-        "a18-rugged": "case-images/rugged-a17.jpg",
-        "a18-ultra-aramid": "case-images/aramid-fold.png",
-        "a17-aramid": "case-images/aramid-a17.jpg",
-        "a17-shockproof": "case-images/shockproof-a17.png",
-        "a17-vegan-leather": "case-images/vegan-leather-a17.png",
-        "a17-frosted": "case-images/frosted-a17.png",
-        "a17-rugged": "case-images/rugged-a17.jpg",
-        "sf8-aramid": "case-images/aramid-fold.png",
-        "sf8w-aramid": "case-images/aramid-fold.png",
-        "s26-aramid": "case-images/s26-aramid.png",
-        "s26-frosted": "case-images/s26-frosted.png"
+        "raptic-ip18pm-cs": "case-images/coming-soon.png",
+        "raptic-ip-ultra-cs": "case-images/coming-soon.png",
+        "raptic-ip17pm-aramid-rise": "case-images/raptic-ip17pm-aramid-skin-rise.jpg",
+        "raptic-ip17pm-aramid-sky": "case-images/raptic-ip17pm-aramid-skin-sky.jpg",
+        "raptic-ip17pm-aramid-ocean": "case-images/raptic-ip17pm-aramid-skin-ocean.jpg",
+        "raptic-ip17pm-aramid-profound": "case-images/raptic-ip17pm-aramid-skin-profound.jpg",
+        "raptic-ip17pm-aramid-humble": "case-images/raptic-ip17pm-aramid-skin-humble.jpg",
+        "raptic-ip17pm-aramid-bionic-snake": "case-images/raptic-ip17pm-aramid-skin-bionic-snake.jpg",
+        "raptic-ip17pm-aramid-dual-600d": "case-images/raptic-ip17pm-aramid-dual-600d.jpg",
+        "raptic-ip17pm-aramid-geotik-mondrian": "case-images/raptic-ip17pm-aramid-geotik-mondrian.jpg",
+        "raptic-ip17pm-shield-black": "case-images/raptic-ip17pm-shield-classic-black.jpg",
+        "raptic-ip17pm-shield-iridescent": "case-images/raptic-ip17pm-shield-classic-iridescent.jpg",
+        "raptic-ip17pm-air-clear-clear": "case-images/raptic-ip17pm-air-clear-clear.jpg",
+        "raptic-ip17pm-air-clear-black": "case-images/raptic-ip17pm-air-clear-black.jpg",
+        "raptic-fold8-slim-serenity-amber": "case-images/raptic-fold8-slim-aramid-serenity-amber.jpg",
+        "raptic-fold8-ultra-thin-mondrian": "case-images/raptic-fold8-ultra-thin-mondrian.jpg",
+        "raptic-fold8-ultra-thin-blue-gold": "case-images/raptic-fold8-ultra-thin-blue-gold.jpg",
+        "raptic-s26u-shield-black": "case-images/raptic-s26u-shield-magnetic-black.jpg",
+        "raptic-s26u-shield-iridescent": "case-images/raptic-s26u-shield-magnetic-black.jpg",
+        "raptic-s26u-clear-air-stand": "case-images/raptic-s26u-clear-with-air-stand.jpg",
+        "raptic-s26u-aramid-fortune-black": "case-images/raptic-s26u-aramid-skin-fortune-black.jpg",
     };
 
     // Case material mapping for visual rendering
     const caseMaterialMap = {
-        'a18-aramid': 'aramid',
-        'a18-ultra-aramid': 'aramid',
-        'a18-aramid-gradient': 'aramid-gradient',
-        'a18-aramid-particle': 'aramid-particle',
-        'a18-armor-shock': 'armor',
-        'a18-shockproof': 'shockproof',
-        'a18-vegan-leather': 'leather',
-        'a18-frosted': 'frosted',
-        'a18-ghost-lumen': 'ghost',
-        'a18-rugged': 'rugged',
-        'a17-aramid': 'aramid',
-        'a17-shockproof': 'shockproof',
-        'a17-vegan-leather': 'leather',
-        'a17-frosted': 'frosted',
-        'a17-rugged': 'rugged',
-        'sf8-aramid': 'aramid',
-        'sf8w-aramid': 'aramid',
-        's26-aramid': 'aramid',
-        's26-frosted': 'frosted',
+        'raptic-ip18pm-cs': 'aramid',
+        'raptic-ip-ultra-cs': 'aramid',
+        'raptic-ip17pm-aramid-rise': 'aramid',
+        'raptic-ip17pm-aramid-sky': 'aramid',
+        'raptic-ip17pm-aramid-ocean': 'aramid',
+        'raptic-ip17pm-aramid-profound': 'aramid',
+        'raptic-ip17pm-aramid-humble': 'aramid',
+        'raptic-ip17pm-aramid-bionic-snake': 'aramid',
+        'raptic-ip17pm-aramid-dual-600d': 'aramid',
+        'raptic-ip17pm-aramid-geotik-mondrian': 'aramid',
+        'raptic-ip17pm-shield-black': 'shield',
+        'raptic-ip17pm-shield-iridescent': 'shield',
+        'raptic-ip17pm-air-clear-clear': 'clear',
+        'raptic-ip17pm-air-clear-black': 'clear',
+        'raptic-fold8-slim-serenity-amber': 'aramid',
+        'raptic-fold8-ultra-thin-mondrian': 'aramid',
+        'raptic-fold8-ultra-thin-blue-gold': 'aramid',
+        'raptic-s26u-shield-black': 'shield',
+        'raptic-s26u-shield-iridescent': 'shield',
+        'raptic-s26u-clear-air-stand': 'clear',
+        'raptic-s26u-aramid-fortune-black': 'aramid',
     };
 
-    // Color variants per case
+    // Color variants per case (real Raptic colors)
     const caseColors = {
-        'a18-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
-        'a18-ultra-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
-        'a18-aramid-gradient': [{ name: 'Ombre Black/Gray', hex: '#2a2a2a' }],
-        'a18-aramid-particle': [{ name: 'Blue/Black', hex: '#1a1a2a' }],
-        'a18-armor-shock': [{ name: 'Black', hex: '#1c1c1c' }],
-        'a18-shockproof': [{ name: 'Dark Blue', hex: '#1a1a2e' }, { name: 'White', hex: '#e0e0e0' }],
-        'a18-vegan-leather': [
-            { name: 'Black', hex: '#1a1a1a' }, { name: 'White', hex: '#e0e0e0' },
-            { name: 'Gray', hex: '#3a3a3a' }, { name: 'Dark Blue', hex: '#1a1a2e' },
-            { name: 'Dark Cherry', hex: '#2a0a0a' }
-        ],
-        'a18-frosted': [{ name: 'Translucent Gray', hex: '#2a2a2a' }, { name: 'White', hex: '#e0e0e0' }],
-        'a18-ghost-lumen': [{ name: 'Transparent', hex: '#e0e0e0' }, { name: 'Yellow Lemon', hex: '#c5a059' }],
-        'a18-rugged': [{ name: 'Translucent Gray', hex: '#2a2a2a' }],
-        'a17-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
-        'a17-shockproof': [{ name: 'Black', hex: '#1a1a1a' }, { name: 'White', hex: '#e0e0e0' }],
-        'a17-vegan-leather': [{ name: 'Black', hex: '#1a1a1a' }, { name: 'White', hex: '#e0e0e0' }],
-        'a17-frosted': [{ name: 'Translucent Gray', hex: '#2a2a2a' }, { name: 'White', hex: '#e0e0e0' }],
-        'a17-rugged': [{ name: 'Translucent Gray', hex: '#2a2a2a' }],
-        'sf8-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
-        'sf8w-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
-        's26-aramid': [{ name: 'Black', hex: '#1a1a1a' }],
-        's26-frosted': [{ name: 'Translucent Gray', hex: '#2a2a2a' }],
+        'raptic-ip18pm-cs': [{ name: 'Coming Soon', hex: '#c5a059' }],
+        'raptic-ip-ultra-cs': [{ name: 'Coming Soon', hex: '#c5a059' }],
+        'raptic-ip17pm-aramid-rise': [{ name: 'Rise', hex: '#c5a059' }],
+        'raptic-ip17pm-aramid-sky': [{ name: 'Sky', hex: '#4a90d9' }],
+        'raptic-ip17pm-aramid-ocean': [{ name: 'Ocean', hex: '#1a5276' }],
+        'raptic-ip17pm-aramid-profound': [{ name: 'Profound', hex: '#2a2a2a' }],
+        'raptic-ip17pm-aramid-humble': [{ name: 'Humble', hex: '#8b7355' }],
+        'raptic-ip17pm-aramid-bionic-snake': [{ name: 'Snake', hex: '#3a3a3a' }],
+        'raptic-ip17pm-aramid-dual-600d': [{ name: '600D', hex: '#2a2a2a' }],
+        'raptic-ip17pm-aramid-geotik-mondrian': [{ name: 'Mondrian', hex: '#d63031' }],
+        'raptic-ip17pm-shield-black': [{ name: 'Black', hex: '#1a1a1a' }],
+        'raptic-ip17pm-shield-iridescent': [{ name: 'Iridescent', hex: '#a29bfe' }],
+        'raptic-ip17pm-air-clear-clear': [{ name: 'Clear', hex: '#e0e0e0' }],
+        'raptic-ip17pm-air-clear-black': [{ name: 'Black', hex: '#1a1a1a' }],
+        'raptic-fold8-slim-serenity-amber': [{ name: 'Serenity Amber', hex: '#c5a059' }],
+        'raptic-fold8-ultra-thin-mondrian': [{ name: 'Mondrian', hex: '#d63031' }],
+        'raptic-fold8-ultra-thin-blue-gold': [{ name: 'Blue & Gold', hex: '#1a5276' }],
+        'raptic-s26u-shield-black': [{ name: 'Black', hex: '#1a1a1a' }],
+        'raptic-s26u-shield-iridescent': [{ name: 'Iridescent', hex: '#a29bfe' }],
+        'raptic-s26u-clear-air-stand': [{ name: 'Clear', hex: '#e0e0e0' }],
+        'raptic-s26u-aramid-fortune-black': [{ name: 'Fortune/Black', hex: '#1a1a1a' }],
     };
 
     // State
@@ -1646,32 +1648,35 @@
         },
         2: {
             prompt: 'Choose your case',
-            subtitle: 'Select the case that fits your lifestyle — powered by Aulumu',
+            subtitle: 'Select the case that fits your lifestyle — powered by Raptic',
             options: [
-                // A18 Series (iPhone 18 Pro / Pro Max)
-                { id: 'a18-aramid', label: 'Aramid Fiber', subtitle: 'A18 · $65.98', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light', material: 'aramid', series: 'a18', hasMagsafe: true },
-                { id: 'a18-aramid-gradient', label: 'Gradient Aramid', subtitle: 'A18 · $69.98', type: 'raven-gold', lifestyle: 'Trendsetter · Color-Shifting', material: 'aramid-gradient', series: 'a18', hasMagsafe: true },
-                { id: 'a18-aramid-particle', label: 'Particle Aramid', subtitle: 'A18 · $69.98', type: 'clear', lifestyle: 'Cyberpunk · Statement Piece', material: 'aramid-particle', series: 'a18', hasMagsafe: true },
-                { id: 'a18-armor-shock', label: 'Armor Shockproof', subtitle: 'A18 · $79.98', type: 'leather', lifestyle: 'Adventurer · Maximum Protection', material: 'armor', series: 'a18', hasMagsafe: true },
-                { id: 'a18-shockproof', label: 'Shock Proof', subtitle: 'A18 · $59.98', type: 'magsafe', lifestyle: 'Practical · Dual-Layer Defense', material: 'shockproof', series: 'a18', hasMagsafe: true },
-                { id: 'a18-vegan-leather', label: 'Vegan Leather', subtitle: 'A18 · $45.98', type: 'leather', lifestyle: 'Professional · Classic Style', material: 'leather', series: 'a18', hasMagsafe: true },
-                { id: 'a18-frosted', label: 'Hyper Frosted', subtitle: 'A18 · $39.98', type: 'clear', lifestyle: 'Night Owl · Glow-in-Dark', material: 'frosted', series: 'a18', hasMagsafe: true },
-                { id: 'a18-ghost-lumen', label: 'Ghost Lumen', subtitle: 'A18 · $39.98', type: 'clear', lifestyle: 'Showcase · Nearly Invisible', material: 'ghost', series: 'a18', hasMagsafe: true },
-                { id: 'a18-rugged', label: 'Rugged', subtitle: 'A18 · $25.98', type: 'raven-gold', lifestyle: 'Outdoors · Budget Tough', material: 'rugged', series: 'a18', hasMagsafe: true },
-                // A18 Ultra (iPhone Ultra foldable — Aramid only)
-                { id: 'a18-ultra-aramid', label: 'Aramid Fiber', subtitle: 'A18 Ultra · $69.98', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light Foldable', material: 'aramid', series: 'a18-foldable', hasMagsafe: true },
-                // A17 Series (iPhone 17 / Pro / Pro Max / Air)
-                { id: 'a17-aramid', label: 'Aramid Fiber', subtitle: 'A17 · $64.98', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light', material: 'aramid', series: 'a17', hasMagsafe: true },
-                { id: 'a17-shockproof', label: 'Shock Proof', subtitle: 'A17 · $59.98', type: 'magsafe', lifestyle: 'Practical · Dual-Layer Defense', material: 'shockproof', series: 'a17', hasMagsafe: true },
-                { id: 'a17-vegan-leather', label: 'Vegan Leather', subtitle: 'A17 · $45.98', type: 'leather', lifestyle: 'Professional · Classic Style', material: 'leather', series: 'a17', hasMagsafe: true },
-                { id: 'a17-frosted', label: 'Frosted IMD', subtitle: 'A17 · $39.98', type: 'clear', lifestyle: 'Night Owl · CoolHyper', material: 'frosted', series: 'a17', hasMagsafe: true },
-                { id: 'a17-rugged', label: 'Rugged', subtitle: 'A17 · $25.98', type: 'raven-gold', lifestyle: 'Outdoors · Budget Tough', material: 'rugged', series: 'a17', hasMagsafe: true },
-                // SF8 (Samsung Z Fold8)
-                { id: 'sf8-aramid', label: 'Fold8 Aramid Fiber', subtitle: 'SF8 · $75.98', type: 'magsafe', lifestyle: 'Foldable · Cooling System', material: 'aramid', series: 'sf8', hasMagsafe: true },
-                { id: 'sf8w-aramid', label: 'Fold8 Wide Aramid Fiber', subtitle: 'SF8 Wide · $75.98', type: 'magsafe', lifestyle: 'Foldable Wide · Cooling System', material: 'aramid', series: 'sf8w', hasMagsafe: true },
-                // S26 (Samsung S26 Ultra)
-                { id: 's26-aramid', label: 'S26 Aramid Fiber', subtitle: 'S26 · $69.98', type: 'magsafe', lifestyle: 'Minimalist · Temp Sensor', material: 'aramid', series: 's26', hasMagsafe: true },
-                { id: 's26-frosted', label: 'S26 Frosted', subtitle: 'S26 · $35.98', type: 'clear', lifestyle: 'Night Owl · Glow Lines', material: 'frosted', series: 's26', hasMagsafe: true },
+                // iPhone 18 Pro Max — Coming Soon
+                { id: 'raptic-ip18pm-cs', label: 'Coming Soon', subtitle: 'iPhone 18 Pro Max · Raptic', type: 'magsafe', lifestyle: 'Aramid Series · Burgundy · Shield · Air Clear', material: 'aramid', series: 'a18', hasMagsafe: true },
+                // iPhone Ultra (Foldable) — Coming Soon
+                { id: 'raptic-ip-ultra-cs', label: 'Coming Soon', subtitle: 'iPhone Ultra · Raptic', type: 'magsafe', lifestyle: 'Aramid Series · Foldable Protection', material: 'aramid', series: 'a18-foldable', hasMagsafe: true },
+                // iPhone 17 Pro Max — Raptic Aramid Series
+                { id: 'raptic-ip17pm-aramid-rise', label: 'Aramid Skin — Rise', subtitle: 'i17 Pro Max · $59.90', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true },
+                { id: 'raptic-ip17pm-aramid-sky', label: 'Aramid Skin — Sky', subtitle: 'i17 Pro Max · $57.99', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true },
+                { id: 'raptic-ip17pm-aramid-ocean', label: 'Aramid Skin — Ocean', subtitle: 'i17 Pro Max · $57.99', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true },
+                { id: 'raptic-ip17pm-aramid-profound', label: 'Aramid Skin — Profound', subtitle: 'i17 Pro Max · $57.99', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true },
+                { id: 'raptic-ip17pm-aramid-humble', label: 'Aramid Skin — Humble', subtitle: 'i17 Pro Max · $57.99', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true },
+                { id: 'raptic-ip17pm-aramid-bionic-snake', label: 'Aramid Bionic — Snake', subtitle: 'i17 Pro Max · $57.99', type: 'raven-gold', lifestyle: 'Statement · Bionic Design', material: 'aramid', series: 'a17', hasMagsafe: true },
+                { id: 'raptic-ip17pm-aramid-dual-600d', label: 'Aramid Dual — 600D', subtitle: 'i17 Pro Max · $57.99', type: 'magsafe', lifestyle: 'Dual-Layer · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true },
+                { id: 'raptic-ip17pm-aramid-geotik-mondrian', label: 'Aramid Geotik — Mondrian', subtitle: 'i17 Pro Max · $57.99', type: 'raven-gold', lifestyle: 'Trendsetter · Geometric Design', material: 'aramid', series: 'a17', hasMagsafe: true },
+                // iPhone 17 Pro Max — Raptic Shield & Air
+                { id: 'raptic-ip17pm-shield-black', label: 'Shield Classic — Black', subtitle: 'i17 Pro Max · $29.99', type: 'magsafe', lifestyle: 'Military-Grade · Drop Protection', material: 'shield', series: 'a17', hasMagsafe: true },
+                { id: 'raptic-ip17pm-shield-iridescent', label: 'Shield Classic — Iridescent', subtitle: 'i17 Pro Max · $29.99', type: 'clear', lifestyle: 'Military-Grade · Iridescent', material: 'shield', series: 'a17', hasMagsafe: true },
+                { id: 'raptic-ip17pm-air-clear-clear', label: 'Air Clear — Clear', subtitle: 'i17 Pro Max · $23.99', type: 'clear', lifestyle: 'Showcase · Non-Yellowing', material: 'clear', series: 'a17', hasMagsafe: true },
+                { id: 'raptic-ip17pm-air-clear-black', label: 'Air Clear — Black', subtitle: 'i17 Pro Max · $25.99', type: 'magsafe', lifestyle: 'Showcase · Black Bumper', material: 'clear', series: 'a17', hasMagsafe: true },
+                // Samsung Z Fold 8 Ultra — Raptic Aramid
+                { id: 'raptic-fold8-slim-serenity-amber', label: 'Slim Aramid — Serenity Amber', subtitle: 'Fold8 Ultra · $59.99', type: 'raven-gold', lifestyle: 'Foldable · Magnetic · MagSafe', material: 'aramid', series: 'sf8', hasMagsafe: true },
+                { id: 'raptic-fold8-ultra-thin-mondrian', label: 'Ultra-Thin Aramid — Mondrian', subtitle: 'Fold8 Ultra · $49.99', type: 'raven-gold', lifestyle: 'Ultra-Thin · Magnetic · 0.04in', material: 'aramid', series: 'sf8', hasMagsafe: true },
+                { id: 'raptic-fold8-ultra-thin-blue-gold', label: 'Ultra-Thin Aramid — Blue & Gold', subtitle: 'Fold8 Ultra · $59.99', type: 'magsafe', lifestyle: 'Foldable · Blue & Gold Weave', material: 'aramid', series: 'sf8', hasMagsafe: true },
+                // Samsung S26 Ultra — Raptic Shield & Aramid
+                { id: 'raptic-s26u-shield-black', label: 'Shield Magnetic — Black', subtitle: 'S26 Ultra · $29.99', type: 'magsafe', lifestyle: 'Military-Grade · 23ft Drop', material: 'shield', series: 's26', hasMagsafe: true },
+                { id: 'raptic-s26u-shield-iridescent', label: 'Shield Magnetic — Iridescent', subtitle: 'S26 Ultra · $29.99', type: 'clear', lifestyle: 'Military-Grade · Iridescent', material: 'shield', series: 's26', hasMagsafe: true },
+                { id: 'raptic-s26u-clear-air-stand', label: 'Clear w/ Air Stand', subtitle: 'S26 Ultra · $25.99', type: 'clear', lifestyle: 'Kickstand · 10ft Drop Protection', material: 'clear', series: 's26', hasMagsafe: true },
+                { id: 'raptic-s26u-aramid-fortune-black', label: 'Aramid Skin — Fortune/Black', subtitle: 'S26 Ultra · $59.99', type: 'magsafe', lifestyle: 'Ultra-Slim · Aero Woven Aramid', material: 'aramid', series: 's26', hasMagsafe: true },
             ]
         },
         3: {
@@ -2175,9 +2180,9 @@
     }
 
     // ── Full-size SVG case designs rendered on the phone mockup ──
-    // Based on actual Aulumu product photography analysis
+    // Based on actual Raptic product photography analysis
     const caseDesignSVGs = {
-        // Aramid Fiber — 2x2 twill carbon weave, camera bump with lenses, AULUMU branding
+        // Aramid Fiber — 2x2 twill carbon weave, camera bump with lenses, RAPTIC branding
         aramid: (isFold, isHorizontal) => {
             const w = 100, h = isFold ? (isHorizontal ? 100 : 200) : 200;
             const cam = isFold ? '' : `
@@ -2206,7 +2211,7 @@
                 <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="none" stroke="#2a2a2a" stroke-width="1.5"/>
                 <rect x="2" y="2" width="${w-4}" height="${h-4}" rx="14" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
                 ${cam}
-                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="#3a3a3a" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="#3a3a3a" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">RAPTIC</text>
             </svg>`;
         },
 
@@ -2239,7 +2244,7 @@
                 <line x1="20" y1="0" x2="${w}" y2="${h*0.7}" stroke="rgba(212,168,67,0.06)" stroke-width="0.5"/>
                 <line x1="50" y1="0" x2="${w}" y2="${h*0.5}" stroke="rgba(212,168,67,0.04)" stroke-width="0.5"/>
                 ${cam}
-                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="#4a4a4a" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="#4a4a4a" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">RAPTIC</text>
             </svg>`;
         },
 
@@ -2265,7 +2270,7 @@
                 <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="none" stroke="#1a1a2a" stroke-width="1.5"/>
                 ${dots}
                 ${cam}
-                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="#2a2a3a" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="#2a2a3a" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">RAPTIC</text>
             </svg>`;
         },
 
@@ -2293,7 +2298,7 @@
                 <line x1="0" y1="${h*0.35}" x2="${w}" y2="${h*0.35}" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/>
                 <line x1="0" y1="${h*0.65}" x2="${w}" y2="${h*0.65}" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/>
                 ${cam}
-                <text x="${w*0.5}" y="${h-10}" text-anchor="middle" fill="#333" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+                <text x="${w*0.5}" y="${h-10}" text-anchor="middle" fill="#333" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">RAPTIC</text>
             </svg>`;
         },
 
@@ -2318,7 +2323,7 @@
                 <rect x="0" y="30" width="4" height="${h-60}" rx="2" fill="#2a2a3e" opacity="0.6"/>
                 <rect x="${w-4}" y="30" width="4" height="${h-60}" rx="2" fill="#2a2a3e" opacity="0.6"/>
                 ${cam}
-                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="#3a3a4e" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="#3a3a4e" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">RAPTIC</text>
             </svg>`;
         },
 
@@ -2349,7 +2354,7 @@
                 <rect x="0" y="0" width="${w}" height="${h}" rx="16" fill="none" stroke="#3a2a1a" stroke-width="1.5"/>
                 <rect x="5" y="5" width="${w-10}" height="${h-10}" rx="12" fill="none" stroke="rgba(212,168,67,0.3)" stroke-width="0.8" stroke-dasharray="3 2"/>
                 ${cam}
-                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="#4a3a2a" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="#4a3a2a" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">RAPTIC</text>
             </svg>`;
         },
 
@@ -2378,7 +2383,7 @@
                 <circle cx="${w*0.5}" cy="${h*0.5}" r="10" fill="none" stroke="rgba(0,217,255,0.1)" stroke-width="0.5"/>
                 <circle cx="${w*0.5}" cy="${h*0.5}" r="1.5" fill="rgba(0,217,255,0.3)"/>
                 ${cam}
-                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="rgba(0,217,255,0.2)" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="rgba(0,217,255,0.2)" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">RAPTIC</text>
             </svg>`;
         },
 
@@ -2397,7 +2402,7 @@
                 <circle cx="${w*0.5}" cy="${h*0.55}" r="14" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
                 <circle cx="${w*0.5}" cy="${h*0.55}" r="8" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)" stroke-width="0.3"/>
                 ${cam}
-                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="rgba(255,255,255,0.08)" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+                <text x="${w*0.5}" y="${h-8}" text-anchor="middle" fill="rgba(255,255,255,0.08)" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">RAPTIC</text>
             </svg>`;
         },
 
@@ -2430,7 +2435,7 @@
                 <rect x="0" y="0" width="${w}" height="${h}" rx="18" fill="none" stroke="#2a2a2a" stroke-width="2.5"/>
                 ${vents}
                 ${cam}
-                <text x="${w*0.5}" y="${h-10}" text-anchor="middle" fill="#333" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">AULUMU</text>
+                <text x="${w*0.5}" y="${h-10}" text-anchor="middle" fill="#333" font-size="4" font-weight="700" letter-spacing="1.5" font-family="sans-serif">RAPTIC</text>
             </svg>`;
         },
     };
@@ -2450,7 +2455,7 @@
         
         if (!phoneLayer || !caseLayer) return;
 
-        const imgSrc = caseImageMap[caseOpt.id] || caseImageMap['a18-aramid'];
+        const imgSrc = caseImageMap[caseOpt.id] || caseImageMap['raptic-ip17pm-aramid-rise'];
 
         // Load the case image into the case layer
         caseLayer.style.display = 'block';
