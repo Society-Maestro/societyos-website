@@ -729,7 +729,19 @@
             align-items: flex-start;
             justify-content: center;
         }
-        .step2-grid-side { flex: 1; min-width: 0; }
+        .step2-grid-side { flex: 1; min-width: 0; overflow: visible; }
+        .step2-preview-side {
+            width: 300px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 1rem;
+        }
+        /* Hide preview panel below 1024px — give grid full width */
+        @media (max-width: 1024px) {
+            .step2-layout { flex-direction: column; gap: 0; }
+            .step2-preview-side { display: none; }
+            .step2-grid-side { width: 100%; max-width: 100%; }
+        }
         .step2-grid-side.has-single-case .selection-grid {
             grid-template-columns: 1fr;
             max-width: 340px;
@@ -751,12 +763,6 @@
         .step2-grid-side.has-single-case .selection-card:hover .case-silhouette,
         .step2-grid-side.has-single-case .selection-card.selected .case-silhouette {
             transform: translate(-50%, -50%) scale(1.3);
-        }
-        .step2-preview-side {
-            width: 300px;
-            flex-shrink: 0;
-            position: sticky;
-            top: 1rem;
         }
         .case-preview-panel {
             background: var(--bg-card);
@@ -1247,27 +1253,7 @@
             .header h1 { font-size: 1.5rem; }
             .selection-grid { grid-template-columns: repeat(2, 1fr); }
             .step-label { display: none; }
-            /* Step 2 on mobile: remove split layout, hide preview, full width grid */
-            .step2-layout {
-                flex-direction: column !important;
-                gap: 0 !important;
-            }
-            .step2-grid-side {
-                width: 100% !important;
-                max-width: 100% !important;
-            }
-            .step2-preview-side {
-                display: none !important;
-            }
-            .stage {
-                max-width: 100% !important;
-                min-height: auto !important;
-            }
-            .selection-grid {
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 0.75rem !important;
-                max-width: 100% !important;
-            }
+            .stage { max-width: 100%; }
         }
 
         /* Case card product image — clean, single image */
