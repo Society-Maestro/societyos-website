@@ -1745,9 +1745,9 @@
         },
         4: {
             prompt: 'Set up Society TV',
-            subtitle: 'Powered by FreeCast — 500+ channels, 500K+ movies, 90 days free',
+            subtitle: 'Powered by FreeCast — Premium Channels provided for SocietyOS Members',
             options: [
-                { id: 'freecast-activate', label: 'Activate Society TV', subtitle: '90-Day Free Trial · FreeCast Powered', logo: 'societyos', type: 'tv' },
+                { id: 'freecast-activate', label: 'Activate Society TV', subtitle: 'Premium Channels · FreeCast Powered', logo: 'societyos', type: 'tv' },
                 { id: 'freecast-browse', label: 'Browse First', subtitle: 'Explore channels before signing up', logo: 'societyos', type: 'tv' },
                 { id: 'skip-tv', label: 'Add Later', subtitle: 'Can activate anytime', logo: 'skip', type: 'skip' },
             ]
@@ -2151,10 +2151,7 @@
         if (step === 3) selections.wallet = opt;
         if (step === 4) {
             selections.societyTV = opt;
-            // If they chose to activate or browse, open FreeCast
-            if (opt.id === 'freecast-activate') {
-                window.open('https://freecast.com/register?p=societyos&o=default-90-days-free-value', '_blank');
-            } else if (opt.id === 'freecast-browse') {
+            if (opt.id === 'freecast-activate' || opt.id === 'freecast-browse') {
                 window.open('https://freecast.com/societyos', '_blank');
             }
         }
