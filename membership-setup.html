@@ -1747,9 +1747,9 @@
             prompt: 'Set up Society TV',
             subtitle: 'Premium Channels provided for SocietyOS Members',
             options: [
-                { id: 'freecast-activate', label: 'Society TV — Carbon', subtitle: 'FreeCast base channels + local TV', logo: 'societyos', type: 'tv' },
-                { id: 'bestpanel-sports-movies', label: 'Society TV — Onyx', subtitle: 'Carbon + Sports+ + Movies+ via bestpanel.xyz', logo: 'societyos', type: 'tv' },
-                { id: 'bestpanel-premium', label: 'Society TV — GOLD', subtitle: 'Onyx + Premium packages + 4K via bestpanel.xyz', logo: 'societyos', type: 'tv' },
+                { id: 'freecast-activate', label: 'Society TV — Carbon', subtitle: 'Base channels + local TV + on-demand', logo: 'societyos', type: 'tv' },
+                { id: 'bestpanel-sports-movies', label: 'Society TV — Onyx', subtitle: 'Carbon + Sports+ + Movies+ packages', logo: 'societyos', type: 'tv' },
+                { id: 'bestpanel-premium', label: 'Society TV — GOLD', subtitle: 'Onyx + Premium packages + 4K', logo: 'societyos', type: 'tv' },
                 { id: 'skip-tv', label: 'Add Later', subtitle: 'Can activate anytime', logo: 'skip', type: 'skip' },
             ]
         },
@@ -2152,11 +2152,8 @@
         if (step === 3) selections.wallet = opt;
         if (step === 4) {
             selections.societyTV = opt;
-            if (opt.id === 'freecast-activate') {
-                window.open('https://freecast.com/societyos', '_blank');
-            } else if (opt.id === 'bestpanel-sports-movies' || opt.id === 'bestpanel-premium') {
-                window.open('https://bestpanel.xyz/lines', '_blank');
-            }
+            // No external links — the panel handles provisioning behind the scenes
+            // bestpanel.xyz is admin-only; members receive credentials by email after payment
         }
         if (step === 5) selections.membership = opt;
 
