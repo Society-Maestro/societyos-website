@@ -244,9 +244,19 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 8rem 2rem 4rem;
+            padding: 2rem 2rem 4rem;
         }
         .hero-inner { max-width: 900px; }
+        .hero-badge-outer {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding-top: 5rem;
+            padding-bottom: 0;
+        }
+        @media (max-width: 768px) {
+            .hero-badge-outer { padding-top: 4rem; }
+        }
         .hero-badge {
             display: inline-flex;
             align-items: center;
@@ -875,7 +885,7 @@
             .nav-links { display: none; }
             .nav-inner { padding: 1rem; }
             .section { padding: 4rem 1rem; }
-            .hero { padding: 4rem 1rem 3rem; }
+            .hero { padding: 1rem 1rem 3rem; }
         }
 
         /* ═══════════════════════════════════════════════════
@@ -1405,12 +1415,14 @@
 <!-- ═══════════════════════════════════════════════════
      HERO
      ═══════════════════════════════════════════════════ -->
+<div class="hero-badge-outer">
+    <div class="hero-badge">
+        <span class="pulse"></span>
+        Now in Development — Join the Founding Circle
+    </div>
+</div>
 <section class="hero">
     <div class="hero-inner">
-        <div class="hero-badge">
-            <span class="pulse"></span>
-            Now in Development — Join the Founding Circle
-        </div>
         <h1>
             The Operating System<br>
             for the <span class="gradient">Sovereign</span>
