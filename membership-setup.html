@@ -1745,10 +1745,11 @@
         },
         4: {
             prompt: 'Set up Society TV',
-            subtitle: 'Powered by FreeCast — Premium Channels provided for SocietyOS Members',
+            subtitle: 'Premium Channels provided for SocietyOS Members',
             options: [
-                { id: 'freecast-activate', label: 'Activate Society TV', subtitle: 'Premium Channels · FreeCast Powered', logo: 'societyos', type: 'tv' },
-                { id: 'freecast-browse', label: 'Browse First', subtitle: 'Explore channels before signing up', logo: 'societyos', type: 'tv' },
+                { id: 'freecast-activate', label: 'Society TV — Carbon', subtitle: 'FreeCast base channels + local TV', logo: 'societyos', type: 'tv' },
+                { id: 'bestpanel-sports-movies', label: 'Society TV — Onyx', subtitle: 'Carbon + Sports+ + Movies+ via bestpanel.xyz', logo: 'societyos', type: 'tv' },
+                { id: 'bestpanel-premium', label: 'Society TV — GOLD', subtitle: 'Onyx + Premium packages + 4K via bestpanel.xyz', logo: 'societyos', type: 'tv' },
                 { id: 'skip-tv', label: 'Add Later', subtitle: 'Can activate anytime', logo: 'skip', type: 'skip' },
             ]
         },
@@ -1756,9 +1757,9 @@
             prompt: 'Choose your membership',
             subtitle: 'Your sovereign journey begins',
             options: [
-                { id: 'society-tv', label: 'Society TV', subtitle: '$59.95/mo · Streaming', logo: 'societyos', type: 'tier' },
-                { id: 'premium', label: 'Premium Socialite', subtitle: '$299/mo · Full SocietyOS', logo: 'societyos', type: 'tier' },
-                { id: 'founding-nodes', label: 'Founding NODES', subtitle: '$2,499 lifetime · Everything', logo: 'solana', type: 'tier' },
+                { id: 'society-tv', label: 'Carbon', subtitle: '$59.95/mo · Society TV + Maestro', logo: 'societyos', type: 'tier' },
+                { id: 'premium', label: 'Onyx', subtitle: '$9.99/mo · Carbon + Sports+ + Movies+', logo: 'societyos', type: 'tier' },
+                { id: 'founding-nodes', label: 'GOLD', subtitle: '$19.99/mo · Onyx + Premium + Athena + Vault', logo: 'solana', type: 'tier' },
             ]
         }
     };
@@ -2151,8 +2152,10 @@
         if (step === 3) selections.wallet = opt;
         if (step === 4) {
             selections.societyTV = opt;
-            if (opt.id === 'freecast-activate' || opt.id === 'freecast-browse') {
+            if (opt.id === 'freecast-activate') {
                 window.open('https://freecast.com/societyos', '_blank');
+            } else if (opt.id === 'bestpanel-sports-movies' || opt.id === 'bestpanel-premium') {
+                window.open('https://bestpanel.xyz/lines', '_blank');
             }
         }
         if (step === 5) selections.membership = opt;
