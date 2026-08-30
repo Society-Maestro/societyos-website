@@ -1490,6 +1490,11 @@
         <div class="step-line" id="line-3"></div>
         <div class="step" id="step-4">
             <div class="step-dot">4</div>
+            <span class="step-label">Society TV</span>
+        </div>
+        <div class="step-line" id="line-4"></div>
+        <div class="step" id="step-5">
+            <div class="step-dot">5</div>
             <span class="step-label">Membership</span>
         </div>
     </div>
@@ -1540,6 +1545,10 @@
             <div class="summary-row">
                 <span class="summary-label">Wallet</span>
                 <span class="summary-value" id="sum-wallet">—</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Society TV</span>
+                <span class="summary-value" id="sum-societytv">—</span>
             </div>
             <div class="summary-row">
                 <span class="summary-label">Membership</span>
@@ -1735,10 +1744,19 @@
             ]
         },
         4: {
+            prompt: 'Set up Society TV',
+            subtitle: 'Powered by FreeCast — 500+ channels, 500K+ movies, 90 days free',
+            options: [
+                { id: 'freecast-activate', label: 'Activate Society TV', subtitle: '90-Day Free Trial · FreeCast Powered', logo: 'societyos', type: 'tv' },
+                { id: 'freecast-browse', label: 'Browse First', subtitle: 'Explore channels before signing up', logo: 'societyos', type: 'tv' },
+                { id: 'skip-tv', label: 'Add Later', subtitle: 'Can activate anytime', logo: 'skip', type: 'skip' },
+            ]
+        },
+        5: {
             prompt: 'Choose your membership',
             subtitle: 'Your sovereign journey begins',
             options: [
-                { id: 'society-tv', label: 'Society TV', subtitle: '$99/mo · Streaming', logo: 'societyos', type: 'tier' },
+                { id: 'society-tv', label: 'Society TV', subtitle: '$59.95/mo · Streaming', logo: 'societyos', type: 'tier' },
                 { id: 'premium', label: 'Premium Socialite', subtitle: '$299/mo · Full SocietyOS', logo: 'societyos', type: 'tier' },
                 { id: 'founding-nodes', label: 'Founding NODES', subtitle: '$2,499 lifetime · Everything', logo: 'solana', type: 'tier' },
             ]
@@ -1952,25 +1970,29 @@
 
         // Update steps
         const hasCases = deviceHasCases(selections.device?.id);
-        for (let i = 1; i <= 4; i++) {
+        for (let i = 1; i <= 5; i++) {
             const stepEl = document.getElementById(`step-${i}`);
-            stepEl.classList.remove('active', 'completed', 'skipped');
-            // If device has no cases, step 2 is visually skipped
-            if (!hasCases && i === 2) {
-                stepEl.classList.add('skipped');
-            } else if (i < step) {
-                stepEl.classList.add('completed');
-            } else if (i === step) {
-                stepEl.classList.add('active');
+            if (stepEl) {
+                stepEl.classList.remove('active', 'completed', 'skipped');
+                // If device has no cases, step 2 is visually skipped
+                if (!hasCases && i === 2) {
+                    stepEl.classList.add('skipped');
+                } else if (i < step) {
+                    stepEl.classList.add('completed');
+                } else if (i === step) {
+                    stepEl.classList.add('active');
+                }
             }
         }
-        for (let i = 1; i <= 3; i++) {
+        for (let i = 1; i <= 4; i++) {
             const line = document.getElementById(`line-${i}`);
-            // If step 2 is skipped, treat line-1 and line-2 as completed when past step 2
-            if (!hasCases && i <= 2) {
-                line.classList.toggle('completed', step > 2);
-            } else {
-                line.classList.toggle('completed', i < step);
+            if (line) {
+                // If step 2 is skipped, treat line-1 and line-2 as completed when past step 2
+                if (!hasCases && i <= 2) {
+                    line.classList.toggle('completed', step > 2);
+                } else {
+                    line.classList.toggle('completed', i < step);
+                }
             }
         }
 
@@ -2127,7 +2149,16 @@
         if (step === 1) selections.device = opt;
         if (step === 2) { selections.case = opt; window.__caseLocked = true; document.getElementById('selection-grid').classList.add('case-locked'); }
         if (step === 3) selections.wallet = opt;
-        if (step === 4) selections.membership = opt;
+        if (step === 4) {
+            selections.societyTV = opt;
+            // If they chose to activate or browse, open FreeCast
+            if (opt.id === 'freecast-activate') {
+                window.open('https://freecast.com/register?p=societyos&o=default-90-days-free-value', '_blank');
+            } else if (opt.id === 'freecast-browse') {
+                window.open('https://freecast.com/societyos', '_blank');
+            }
+        }
+        if (step === 5) selections.membership = opt;
 
         // Morph the bubble
         morphBubble(step, opt);
@@ -2145,7 +2176,7 @@
 
         btnNext.disabled = false;
 
-        if (step === 4) {
+        if (step === 5) {
             showSummary();
         }
     }
@@ -2173,6 +2204,8 @@
         } else if (step === 3) {
             bubble.querySelector('.ai-bubble-mark').innerHTML = logos[opt.logo] ? logos[opt.logo].replace(/width="\d+"/, 'width="32"').replace(/height="\d+"/, 'height="32"') : '✓';
         } else if (step === 4) {
+            bubble.querySelector('.ai-bubble-mark').innerHTML = logos[opt.logo] ? logos[opt.logo].replace(/width="\d+"/, 'width="32"').replace(/height="\d+"/, 'height="32"') : '✓';
+        } else if (step === 5) {
             bubble.querySelector('.ai-bubble-mark').innerHTML = logos[opt.logo] ? logos[opt.logo].replace(/width="\d+"/, 'width="32"').replace(/height="\d+"/, 'height="32"') : '✓';
             if (opt.id === 'founding-nodes') {
                 bubble.style.boxShadow = '0 0 60px var(--society-gold-glow-2), inset 0 0 40px rgba(197, 160, 89, 0.08)';
@@ -2679,6 +2712,7 @@
         document.getElementById('sum-device').textContent = selections.device?.label || '—';
         document.getElementById('sum-case').textContent = selections.case?.label || (deviceHasCases(selections.device?.id) ? '—' : 'No case available');
         document.getElementById('sum-wallet').textContent = selections.wallet?.label || '—';
+        document.getElementById('sum-societytv').textContent = selections.societyTV?.label || '—';
         document.getElementById('sum-membership').textContent = selections.membership?.label || '—';
 
         // Change button to gold if founding member
@@ -2689,7 +2723,7 @@
     }
 
     function goNext() {
-        if (currentStep < 4) {
+        if (currentStep < 5) {
             currentStep++;
             // Skip step 2 (case selection) if device has no compatible cases
             if (currentStep === 2 && !deviceHasCases(selections.device?.id)) {
