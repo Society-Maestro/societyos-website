@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Society TV — SocietyOS</title>
+    <meta name="description" content="Society TV — 500+ streaming channels, 500K+ movies and TV shows, live local TV. Powered by FreeCast. 90-day free trial for SocietyOS members.">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="apple-touch-icon" href="assets/societyos-ares-4.png">
+    <meta property="og:title" content="Society TV — SocietyOS">
+    <meta property="og:description" content="500+ streaming channels. 500K+ movies and TV shows. Powered by FreeCast.">
+    <meta property="og:image" content="assets/societyos-ares-1.jpg">
+    <meta property="og:url" content="https://societyos.world/society-tv.html">
+    <meta name="theme-color" content="#0d1f2d">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=EB+Garamond:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-primary: #0d1f2d;
+            --bg-secondary: #122844;
+            --bg-elevated: #1a3358;
+            --bg-card: #152a45;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-glow: rgba(197, 160, 89, 0.3);
+            --society-gold: #c5a059;
+            --society-gold-light: #d4b876;
+            --text-primary: #f0f0f5;
+            --text-secondary: #b0b8c8;
+            --text-muted: #6a7a8a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'EB Garamond', serif;
+            min-height: 100vh;
+        }
+
+        /* Nav */
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(13, 31, 45, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1rem 2rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .nav-logo {
+            display: flex; align-items: center; gap: 1rem;
+            text-decoration: none;
+        }
+        .nav-logo img {
+            width: 160px; height: auto;
+        }
+        .nav-badge {
+            font-size: 0.7rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 9999px;
+            background: rgba(197, 160, 89, 0.1);
+            color: var(--society-gold);
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .nav-link:hover { color: var(--society-gold); }
+
+        /* Hero */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem 2rem;
+        }
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--society-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+        .stat {
+            text-align: left;
+        }
+        .stat-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--society-gold);
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.3rem;
+        }
+
+        /* CTA Buttons */
+        .cta-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.9rem 2rem;
+            border-radius: 12px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .btn-gold {
+            background: var(--society-gold);
+            color: var(--bg-primary);
+        }
+        .btn-gold:hover {
+            background: var(--society-gold-light);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(197, 160, 89, 0.3);
+        }
+        .btn-outline {
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            color: var(--society-gold);
+        }
+        .btn-outline:hover {
+            border-color: var(--society-gold);
+            background: rgba(197, 160, 89, 0.05);
+        }
+
+        /* FreeCast Embed */
+        .embed-section {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .embed-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .embed-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .embed-header h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .embed-header .icon {
+            font-size: 1.5rem;
+        }
+        .embed-frame {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: none;
+            display: block;
+        }
+
+        /* Feature Cards */
+        .features {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: border-color 0.2s ease;
+        }
+        .feature-card:hover {
+            border-color: var(--border-glow);
+        }
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .feature-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .feature-card p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Partnership Banner */
+        .partnership {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+        .partnership-card {
+            background: rgba(197, 160, 89, 0.05);
+            border: 1px solid rgba(197, 160, 89, 0.15);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+        .partnership-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--society-gold);
+            margin-bottom: 0.8rem;
+        }
+        .partnership-card p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+        .partnership-card .footnote {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 1rem;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border-subtle);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .footer a {
+            color: var(--society-gold);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .hero-stats { gap: 1.5rem; }
+            .stat-num { font-size: 2rem; }
+            .nav-logo img { width: 120px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Nav -->
+    <nav class="nav">
+        <a href="/" class="nav-logo">
+            <img src="assets/societyos-ares-4.png" alt="SocietyOS">
+            <span class="nav-badge">FreeCast Powered</span>
+        </a>
+        <a href="/" class="nav-link">← Back to SocietyOS</a>
+    </nav>
+
+    <!-- Hero -->
+    <div class="hero">
+        <h1>Society TV</h1>
+        <p>500+ streaming channels. 500K+ movies and TV shows. Live local TV.
+           All in one place. No cable. No fees. Powered by FreeCast.</p>
+
+        <div class="hero-stats">
+            <div class="stat">
+                <div class="stat-num">500+</div>
+                <div class="stat-label">Free Channels</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">500K+</div>
+                <div class="stat-label">Movies & Shows</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">90</div>
+                <div class="stat-label">Days Free Trial</div>
+            </div>
+        </div>
+
+        <div class="cta-row">
+            <a href="https://freecast.com/register?p=societyos&o=default-90-days-free-value"
+               target="_blank" rel="noopener noreferrer" class="btn btn-gold">
+                ▶ Start 90-Day Free Trial
+            </a>
+            <a href="https://freecast.com/societyos"
+               target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+                Browse All Content →
+            </a>
+        </div>
+    </div>
+
+    <!-- FreeCast Embed -->
+    <div class="embed-section">
+        <div class="embed-card">
+            <div class="embed-header">
+                <span class="icon">📺</span>
+                <h2>Now Streaming on Society TV</h2>
+            </div>
+            <iframe
+                src="https://freecast.com/societyos"
+                title="Society TV — FreeCast"
+                class="embed-frame"
+                allow="autoplay; fullscreen; encrypted-media"
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+
+    <!-- Feature Cards -->
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">📺</div>
+            <h3>SmartGuide</h3>
+            <p>Unified search across 700+ free streaming channels and all your
+               subscriptions. Find anything in one search — no switching apps.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💳</div>
+            <h3>MediaPay</h3>
+            <p>Unified billing for all your streaming subscriptions. One monthly
+               bill. Manage everything from SocietyOS. Pay with Tangem wallet.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>Every Device</h3>
+            <p>Apple TV, Roku, Fire TV, Android, iOS, web — Society TV works on
+               every device you already own. No new hardware required.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📡</div>
+            <h3>Local Channels</h3>
+            <p>CBS, FOX, NBC, ABC — your local broadcast channels streaming
+               live. No antenna required. Available through FreeCast.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🏈</div>
+            <h3>Live Sports</h3>
+            <p>Every NFL, NBA, MLB, NHL game. Plus college sports, combat sports,
+               and international leagues. All through Society TV.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🎬</div>
+            <h3>Society Cinema</h3>
+            <p>Movie premieres and cinema content. Powered by our Epic Theatres
+               partnership. Society Cinema is a content category on Society TV.</p>
+        </div>
+    </div>
+
+    <!-- Partnership Banner -->
+    <div class="partnership">
+        <div class="partnership-card">
+            <h3>SocietyOS × FreeCast Partnership</h3>
+            <p>Society TV is powered by FreeCast (NASDAQ: CAST) — the streaming
+               aggregation platform that unifies live TV, local channels, and
+               on-demand content. SocietyOS members get 90 days free through our
+               co-branded portal at freecast.com/societyos.</p>
+            <p>Connect your Maestro AI wallet and SocietyOS ecosystem for the
+               full experience — streaming, payments, AI assistant, and more.</p>
+            <p class="footnote">FreeCast, Inc. — 6901 TPC Dr #100, Orlando, FL 32822 — NASDAQ: CAST — 407-374-1607 — support@freecast.com — Contact: randy@freecast.com</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>© 2026 The Nyx & Raven Ranch · SocietyOS · Society Cinema — All Rights Reserved</p>
+        <p style="margin-top: 0.5rem;">
+            <a href="/">SocietyOS</a> ·
+            <a href="https://freecast.com/societyos">Society TV on FreeCast</a> ·
+            <a href="https://freecast.com/register?p=societyos&o=default-90-days-free-value">Start Free Trial</a>
+        </p>
+    </div>
+</body>
+</html>
