@@ -1247,19 +1247,27 @@
             .header h1 { font-size: 1.5rem; }
             .selection-grid { grid-template-columns: repeat(2, 1fr); }
             .step-label { display: none; }
-            /* Step 2: hide preview side on mobile, give grid full width */
-            .step2-layout { flex-direction: column; }
-            .step2-grid-side { width: 100%; }
-            .step2-preview-side { display: none; }
-            /* Allow case grid to scroll if it overflows */
-            .step2-grid-side .selection-grid {
-                grid-template-columns: repeat(2, 1fr);
-                max-width: 100%;
+            /* Step 2 on mobile: remove split layout, hide preview, full width grid */
+            .step2-layout {
+                flex-direction: column !important;
+                gap: 0 !important;
             }
-        }
-        @media (max-width: 480px) {
-            .selection-grid { grid-template-columns: 1fr; }
-            .step2-grid-side .selection-grid { grid-template-columns: repeat(2, 1fr); }
+            .step2-grid-side {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            .step2-preview-side {
+                display: none !important;
+            }
+            .stage {
+                max-width: 100% !important;
+                min-height: auto !important;
+            }
+            .selection-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 0.75rem !important;
+                max-width: 100% !important;
+            }
         }
 
         /* Case card product image — clean, single image */
