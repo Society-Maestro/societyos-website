@@ -1571,6 +1571,7 @@
     </div>
 </div>
 
+<script src="assets/protocol-config.js?v=20260901a"></script>
 <script>
 
     // Phone → compatible case series mapping
@@ -2164,7 +2165,13 @@
             // No external links — the panel handles provisioning behind the scenes
             // bestpanel.xyz is admin-only; members receive credentials by email after payment
         }
-        if (step === 5) selections.membership = opt;
+        if (step === 5) {
+            selections.membership = opt;
+            // Re-render accessories with tier discount
+            if (selections.case) {
+                renderPairedAccessories(selections.case);
+            }
+        }
 
         // Morph the bubble
         morphBubble(step, opt);
@@ -2530,6 +2537,124 @@
         return fn(isFoldable, isHorizontal);
     }
 
+    // ── Complete the Set — Paired Accessories ──
+    var currentSetupTier = 'carbon';
+
+    function getCurrentSetupTier() {
+        // Determine tier from membership selection (step 5) or default to carbon
+        if (typeof selections !== 'undefined' && selections.membership) {
+            var mid = selections.membership.id;
+            if (mid && mid.indexOf('gold') !== -1) return 'gold';
+            if (mid && mid.indexOf('onyx') !== -1) return 'onyx';
+        }
+        return 'carbon';
+    }
+
+    function renderPairedAccessories(caseOpt) {
+        var grid = document.getElementById('accessoryGrid');
+        if (!grid) return;
+
+        // Determine the case series from the case option
+        // caseOpt may have .series or we derive from the label/type
+        var series = caseOpt.series || deriveSeriesFromCase(caseOpt);
+        var isClear = isClearCase(caseOpt);
+
+        // Build a mock case object for getPairedAccessories
+        var mockCase = {
+            series: series,
+            material: caseOpt.material || '',
+            type: caseOpt.type || ''
+        };
+
+        var tier = getCurrentSetupTier();
+        var paired = [];
+        try {
+            if (typeof getPairedAccessories === 'function') {
+                paired = getPairedAccessories(mockCase, tier);
+            }
+        } catch(e) {
+            console.log('Accessory pairing error:', e);
+        }
+
+        grid.innerHTML = '';
+
+        if (paired.length === 0) {
+            grid.innerHTML = '<p style="font-family: \'EB Garamond\', serif; color: #666; font-size: 0.8rem;">Accessories coming soon for this case.</p>';
+            return;
+        }
+
+        var headerMsg = isClear
+            ? 'Clear case — all SocietyOS Verified MagSafe accessories are compatible:'
+            : 'Pairs with ' + series + ' series — match the design and color:';
+
+        var headerEl = document.createElement('div');
+        headerEl.style.cssText = 'grid-column: 1 / -1; margin-bottom: 0.25rem;';
+        headerEl.innerHTML = '<p style="font-family: \'EB Garamond\', serif; font-size: 0.75rem; color: #c5a059; margin: 0;">' + headerMsg + '</p>';
+        grid.appendChild(headerEl);
+
+        paired.forEach(function(item) {
+            var acc = item.accessory;
+            var tierPrice = item.tierPrice;
+            var hasDiscount = tier !== 'carbon' && tierPrice < acc.price;
+
+            var typeIcon = acc.type === 'ring-stand' ? '🔄' : acc.type === 'wallet-stand' ? '💳' : acc.type === 'bundle' ? '📦' : '✨';
+            var typeLabel = acc.type === 'ring-stand' ? 'Ring Stand' : acc.type === 'wallet-stand' ? 'Wallet Stand' : acc.type === 'bundle' ? 'Bundle' : 'Accessory';
+
+            var card = document.createElement('div');
+            card.style.cssText = 'padding: 0.75rem; border: 1px solid rgba(197,160,89,0.12); border-radius: 8px; background: rgba(20,20,30,0.3); transition: all 0.3s ease;';
+
+            var priceHTML = hasDiscount
+                ? '<span style="text-decoration: line-through; color: #555; font-size: 0.75rem; font-family: \'EB Garamond\', serif;">$' + acc.price.toFixed(2) + '</span> ' +
+                  '<span style="color: #c5a059; font-size: 1rem; font-family: \'Cormorant Garamond\', serif; font-weight: 600;">$' + tierPrice.toFixed(2) + '</span>'
+                : '<span style="color: #c5a059; font-size: 1rem; font-family: \'Cormorant Garamond\', serif; font-weight: 600;">$' + tierPrice.toFixed(2) + '</span>';
+
+            card.innerHTML =
+                '<div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">' +
+                    '<span style="font-size: 1rem;">' + typeIcon + '</span>' +
+                    '<span style="font-size: 0.6rem; color: #c5a059; text-transform: uppercase; letter-spacing: 0.05em;">' + typeLabel + '</span>' +
+                    '<span style="font-size: 0.55rem; padding: 1px 5px; border-radius: 3px; background: rgba(197,160,89,0.1); color: #c5a059; margin-left: auto;">Verified MagSafe</span>' +
+                '</div>' +
+                '<div style="font-family: \'Cormorant Garamond\', serif; font-size: 0.9rem; color: #ddd; line-height: 1.3; margin-bottom: 0.3rem;">' + acc.name + '</div>' +
+                '<div style="display: flex; align-items: baseline; gap: 0.3rem;">' + priceHTML + '</div>';
+
+            grid.appendChild(card);
+        });
+    }
+
+    function deriveSeriesFromCase(caseOpt) {
+        // Derive series from case label or type
+        var label = (caseOpt.label || '').toLowerCase();
+        var type = caseOpt.type || '';
+
+        if (label.indexOf('grid') !== -1) return 'Grid';
+        if (label.indexOf('serenity') !== -1) return 'Serenity';
+        if (label.indexOf('mondrian') !== -1) return 'Mondrian';
+        if (label.indexOf('scepter') !== -1) return 'Scepter';
+        if (label.indexOf('rise') !== -1) return 'Rise';
+        if (label.indexOf('origin') !== -1) return 'Origin';
+        if (label.indexOf('nano') !== -1) return 'Urban Nano';
+        if (label.indexOf('nav') !== -1) return 'Urban Nav';
+        if (label.indexOf('folio') !== -1) return 'Urban';
+        if (label.indexOf('shield') !== -1) return 'Shield';
+        if (type === 'clear' || label.indexOf('air') !== -1) return 'Air';
+
+        // Default: check material
+        if (caseOpt.material && caseOpt.material.toLowerCase().indexOf('clear') !== -1) return 'Air';
+        if (caseOpt.material && caseOpt.material.toLowerCase().indexOf('aramid') !== -1) return 'Grid';
+
+        return 'Grid';
+    }
+
+    function isClearCase(caseOpt) {
+        var type = caseOpt.type || '';
+        var material = (caseOpt.material || '').toLowerCase();
+        var label = (caseOpt.label || '').toLowerCase();
+        if (type === 'clear') return true;
+        if (material.indexOf('clear') !== -1) return true;
+        if (label.indexOf('air clear') !== -1 || label.indexOf('air stand') !== -1) return true;
+        return false;
+    }
+
     function renderCaseInPreview(caseOpt) {
         const area = document.getElementById('case-preview-device-area');
         if (!area) return;
@@ -2581,7 +2706,15 @@
                 <div class="case-preview-lifestyle">${caseOpt.lifestyle || ''}</div>
                 <div class="case-preview-price" style="color: var(--accent-green);">${caseOpt.subtitle}</div>
                 ${colorwayHTML}
+                <div class="complete-the-set-container" id="completeTheSetContainer" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(197,160,89,0.15);">
+                    <div style="font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: #c5a059; margin-bottom: 0.5rem;">Complete the Set</div>
+                    <div style="font-family: 'EB Garamond', serif; font-size: 0.8rem; color: #888; margin-bottom: 0.75rem;">SocietyOS Verified MagSafe Accessories — matched to your case</div>
+                    <div id="accessoryGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem;"></div>
+                </div>
             `;
+            
+            // Render paired accessories
+            renderPairedAccessories(caseOpt);
             
             // Wire up colorway pills — swap to actual color variant photo
             info.querySelectorAll('.colorway-pill').forEach(pill => {
