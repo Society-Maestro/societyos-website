@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SocietyOS — Accessory Test</title>
+<style>
+body { background: #0a0a0f; color: #e0e0e0; font-family: 'EB Garamond', serif; padding: 2rem; }
+h2 { color: #c5a059; font-family: 'Cormorant Garamond', serif; }
+.accessory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 1rem; }
+.test-btn { padding: 0.5rem 1rem; margin: 0.25rem; border: 1px solid rgba(197,160,89,0.3); border-radius: 6px; background: transparent; color: #c5a059; cursor: pointer; font-family: 'EB Garamond', serif; }
+.test-btn:hover { background: rgba(197,160,89,0.1); }
+#result { margin-top: 1rem; padding: 1rem; border: 1px solid rgba(197,160,89,0.2); border-radius: 8px; background: rgba(10,10,15,0.6); }
+.acc-card { padding: 0.75rem; border: 1px solid rgba(197,160,89,0.12); border-radius: 8px; background: rgba(20,20,30,0.3); cursor: pointer; transition: all 0.25s ease; }
+.acc-card:hover { border-color: rgba(197,160,89,0.4); transform: translateY(-2px); }
+.acc-card.selected { border-color: rgba(197,160,89,0.6) !important; background: rgba(197,160,89,0.08) !important; }
+.acc-name { font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; color: #ccc; margin-bottom: 0.3rem; }
+.acc-price { color: #c5a059; font-family: 'Cormorant Garamond', serif; font-weight: 600; }
+.acc-type { font-size: 0.6rem; color: #c5a059; text-transform: uppercase; letter-spacing: 0.05em; }
+.total-bar { grid-column: 1 / -1; margin-top: 0.5rem; padding: 0.6rem 0.75rem; background: rgba(197,160,89,0.06); border-radius: 8px; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<h2>SocietyOS — Complete the Set Test</h2>
+<p>Select a case series to see matched accessories:</p>
+<div>
+<button class="test-btn" onclick="testCase('Grid')">Grid Valor (Aramid)</button>
+<button class="test-btn" onclick="testCase('Serenity')">Serenity Amber</button>
+<button class="test-btn" onclick="testCase('Mondrian')">Mondrian</button>
+<button class="test-btn" onclick="testCase('Air')">Air Clear (Clear Case)</button>
+<button class="test-btn" onclick="testCase('Shield')">Shield Evo</button>
+</div>
+<div>
+<button class="test-btn" onclick="testTier('carbon')">Tier: Carbon</button>
+<button class="test-btn" onclick="testTier('onyx')">Tier: Onyx (-10%)</button>
+<button class="test-btn" onclick="testTier('gold')">Tier: Gold (-20%)</button>
+</div>
+
+<div id="result">
+<div class="accessory-grid" id="accGrid"></div>
+</div>
+
+<script src="assets/protocol-config.js?v=20260901a"></script>
+<script>
+var currentTestTier = 'carbon';
+var selectedAccs = [];
+
+function testTier(tier) {
+    currentTestTier = tier;
+    document.querySelectorAll('.test-btn').forEach(function(b) {
+        if (b.textContent.indexOf('Tier:') !== -1) b.style.opacity = '0.5';
+    });
+    event.target.style.opacity = '1';
+    // re-render last case
+}
+
+function getTierPrice(price) {
+    var discount = 0;
+    if (currentTestTier === 'onyx') discount = 0.10;
+    if (currentTestTier === 'gold') discount = 0.20;
+    return price * (1 - discount);
+}
+
+function testCase(series) {
+    var isClear = (series === 'Air' || series === 'Shield');
+    var allAcc = [];
+    try { allAcc = getProtocolAccessories(); } catch(e) { console.log('Error:', e); }
+
+    var seriesMatched = [];
+    var universalAccessories = [];
+    for (var i = 0; i < allAcc.length; i++) {
+        var acc = allAcc[i];
+        if (acc.pairingRule === 'any-magsafe') {
+            universalAccessories.push(acc);
+        } else if (acc.pairingRule === 'series' && acc.series && acc.series.indexOf(series) !== -1) {
+            seriesMatched.push(acc);
+        }
+    }
+
+    var grid = document.getElementById('accGrid');
+    grid.innerHTML = '';
+    selectedAccs = [];
+
+    // Header
+    var header = document.createElement('div');
+    header.style.gridColumn = '1 / -1';
+    header.innerHTML = '<p style="color: #c5a059; font-size: 0.8rem; margin: 0;">' +
+        (isClear ? 'Clear case — all SocietyOS Verified MagSafe accessories shown. Tap to add:' :
+         'Matched accessories for ' + series + ' series — tap to add to your set:') + '</p>';
+    grid.appendChild(header);
+
+    // Series matched
+    seriesMatched.forEach(function(acc) {
+        grid.appendChild(makeCard(acc, false));
+    });
+
+    // Clear case universal
+    if (isClear && universalAccessories.length > 0) {
+        var div = document.createElement('div');
+        div.style.gridColumn = '1 / -1';
+        div.style.borderTop = '1px solid rgba(197,160,89,0.1)';
+        div.style.paddingTop = '0.5rem';
+        div.style.marginTop = '0.5rem';
+        div.innerHTML = '<p style="color: #888; font-size: 0.7rem; margin: 0;">SocietyOS Verified MagSafe Accessories — compatible with all clear cases:</p>';
+        grid.appendChild(div);
+        universalAccessories.forEach(function(acc) {
+            grid.appendChild(makeCard(acc, true));
+        });
+    }
+
+    // Bundle
+    if (seriesMatched.length >= 2) {
+        var bundle = document.createElement('div');
+        bundle.style.gridColumn = '1 / -1';
+        bundle.style.cssText += 'border: 1px dashed rgba(197,160,89,0.25); border-radius: 8px; text-align: center; cursor: pointer; padding: 0.75rem; margin-top: 0.5rem;';
+        var bp = getTierPrice(99.99);
+        bundle.innerHTML = '<span style="color: #c5a059; font-family: \'Cormorant Garamond\', serif;">📦 Complete the full set — bundle & save — $' + bp.toFixed(2) + '</span>';
+        bundle.onclick = function() {
+            seriesMatched.forEach(function(a) {
+                if (selectedAccs.indexOf(a.id) === -1) selectedAccs.push(a.id);
+            });
+            grid.querySelectorAll('.acc-card').forEach(function(c) {
+                c.classList.add('selected');
+            });
+            updateTotal();
+        };
+        grid.appendChild(bundle);
+    }
+
+    if (seriesMatched.length === 0 && universalAccessories.length === 0) {
+        grid.innerHTML = '<p style="color: #666;">No accessories found.</p>';
+    }
+
+    console.log('Series:', series, '| Matched:', seriesMatched.length, '| Universal:', universalAccessories.length);
+}
+
+function makeCard(acc, isUniversal) {
+    var tp = getTierPrice(acc.price);
+    var hasDiscount = currentTestTier !== 'carbon' && tp < acc.price;
+    var icon = acc.type === 'ring-stand' ? '🔄' : acc.type === 'wallet-stand' ? '💳' : acc.type === 'bundle' ? '📦' : '✨';
+    var label = acc.type === 'ring-stand' ? 'Ring Stand' : acc.type === 'wallet-stand' ? 'Wallet Stand' : 'Bundle';
+
+    var card = document.createElement('div');
+    card.className = 'acc-card';
+    card.setAttribute('data-acc-id', acc.id);
+    card.onclick = function() {
+        if (card.classList.contains('selected')) {
+            card.classList.remove('selected');
+            selectedAccs = selectedAccs.filter(function(id) { return id !== acc.id; });
+        } else {
+            card.classList.add('selected');
+            selectedAccs.push(acc.id);
+        }
+        updateTotal();
+    };
+
+    var priceHTML = hasDiscount
+        ? '<span style="text-decoration: line-through; color: #555; font-size: 0.7rem;">$' + acc.price.toFixed(2) + '</span> <span class="acc-price">$' + tp.toFixed(2) + '</span>'
+        : '<span class="acc-price">$' + tp.toFixed(2) + '</span>';
+
+    card.innerHTML =
+        '<div><span>' + icon + '</span> <span class="acc-type">' + label + '</span> <span style="font-size: 0.5rem; color: #c5a059; float: right;">MagSafe</span></div>' +
+        '<div class="acc-name">' + acc.name + '</div>' +
+        '<div>' + priceHTML + ' <span style="font-size: 0.6rem; color: #666;">' + (isUniversal ? 'Universal · Add +' : 'Matched · Add +') + '</span></div>';
+    return card;
+}
+
+function updateTotal() {
+    var grid = document.getElementById('accGrid');
+    var existing = grid.querySelector('.total-bar');
+    if (existing) existing.remove();
+    if (selectedAccs.length === 0) return;
+
+    var total = 0;
+    try {
+        var allAcc = getProtocolAccessories();
+        selectedAccs.forEach(function(id) {
+            var f = allAcc.find(function(a) { return a.id === id; });
+            if (f) total += getTierPrice(f.price);
+        });
+    } catch(e) {}
+
+    var bar = document.createElement('div');
+    bar.className = 'total-bar';
+    bar.innerHTML = '<span style="color: #c5a059;">' + selectedAccs.length + ' accessories added</span><span style="color: #c5a059; font-weight: 600;">+$' + total.toFixed(2) + '</span>';
+    grid.appendChild(bar);
+}
+
+// Auto-test on load
+setTimeout(function() {
+    console.log('protocol-config loaded:', typeof SOCIETYOS_PROTOCOLS !== 'undefined');
+    console.log('getProtocolAccessories:', typeof getProtocolAccessories);
+    try {
+        var accs = getProtocolAccessories();
+        console.log('Total accessories:', accs.length);
+        accs.forEach(function(a) { console.log('  -', a.id, a.name, a.pairingRule, a.series); });
+    } catch(e) { console.log('Error:', e); }
+    testCase('Grid');
+}, 500);
+</script>
+</body>
+</html>
