@@ -2,7 +2,7 @@
 // Controls which case brand is displayed across all SocietyOS surfaces
 // Switch by changing ACTIVE_PROTOCOL below or via Maestro command
 
-const SOCIETYOS_PROTOCOLS = {
+var SOCIETYOS_PROTOCOLS = {
 
   // ═══════════════════════════════════════════════════
   // RAPTIC PROTOCOL — Real Raptic products (PRIMARY)
@@ -1306,7 +1306,7 @@ const SOCIETYOS_PROTOCOLS = {
 };
 
 // Active protocol — Raptic is the live distributor protocol
-let ACTIVE_PROTOCOL = "raptic";
+var ACTIVE_PROTOCOL = "raptic";
 
 function getActiveProtocol() {
   return SOCIETYOS_PROTOCOLS[ACTIVE_PROTOCOL];
