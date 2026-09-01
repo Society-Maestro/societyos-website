@@ -1592,8 +1592,8 @@
 
     // Case series → case IDs (Raptic products)
     const caseSeriesMap = {
-        'a18': ['raptic-ip18pm-cs'],
-        'a18-foldable': ['raptic-ip-ultra-cs'],
+        'a18': ['raptic-i18p-dual-ultra-valor', 'raptic-i18p-dual-ultra-scepter', 'raptic-i18p-dual-ultra-amber', 'raptic-i18p-dual-ultra-emerald', 'raptic-i18p-skin-valor', 'raptic-i18p-skin-wisdom', 'raptic-i18p-skin-amber', 'raptic-i18p-skin-emerald', 'raptic-i18p-skin-mondrian', 'raptic-i18p-dual-valor', 'raptic-i18p-dual-wisdom', 'raptic-i18p-nano-cherry', 'raptic-i18p-nano-black', 'raptic-i18p-nano-white', 'raptic-i18p-folio-black', 'raptic-i18p-air-stand-clear', 'raptic-i18p-air-stand-burgundy', 'raptic-i18p-air-clear-clear', 'raptic-i18p-air-clear-burgundy', 'raptic-i18p-shield-evo-starfall', 'raptic-i18p-shield-evo-gold', 'raptic-i18p-shield-evo-onyx'],
+        'a18-foldable': ['raptic-ifold-skinpro-valor', 'raptic-ifold-skinpro-wisdom', 'raptic-ifold-skinpro-rise', 'raptic-ifold-skinpro-amber', 'raptic-ifold-skinpro-emerald', 'raptic-ifold-skinpro-mondrian', 'raptic-ifold-nano-cherry', 'raptic-ifold-nano-black', 'raptic-ifold-nav-cherry', 'raptic-ifold-nav-dark', 'raptic-ifold-air-stand-clear', 'raptic-ifold-air-clear-clear'],
         'a17': ['raptic-ip17pm-aramid-rise', 'raptic-ip17pm-aramid-sky', 'raptic-ip17pm-aramid-ocean', 'raptic-ip17pm-aramid-profound', 'raptic-ip17pm-aramid-humble', 'raptic-ip17pm-aramid-bionic-snake', 'raptic-ip17pm-aramid-dual-600d', 'raptic-ip17pm-aramid-geotik-mondrian', 'raptic-ip17pm-shield-black', 'raptic-ip17pm-shield-iridescent', 'raptic-ip17pm-air-clear-clear', 'raptic-ip17pm-air-clear-black'],
         'sf8': ['raptic-fold8-slim-serenity-amber', 'raptic-fold8-ultra-thin-mondrian', 'raptic-fold8-ultra-thin-blue-gold'],
         'sf8w': ['raptic-fold8-ultra-thin-mondrian'],
@@ -1602,8 +1602,40 @@
 
     // Case → product image mapping (real Raptic product photos)
     const caseImageMap = {
-        "raptic-ip18pm-cs": "case-images/coming-soon.png",
-        "raptic-ip-ultra-cs": "case-images/coming-soon.png",
+        "raptic-i18p-dual-ultra-valor": "case-images/coming-soon.png",
+        "raptic-i18p-dual-ultra-scepter": "case-images/coming-soon.png",
+        "raptic-i18p-dual-ultra-amber": "case-images/coming-soon.png",
+        "raptic-i18p-dual-ultra-emerald": "case-images/coming-soon.png",
+        "raptic-i18p-skin-valor": "case-images/coming-soon.png",
+        "raptic-i18p-skin-wisdom": "case-images/coming-soon.png",
+        "raptic-i18p-skin-amber": "case-images/coming-soon.png",
+        "raptic-i18p-skin-emerald": "case-images/coming-soon.png",
+        "raptic-i18p-skin-mondrian": "case-images/coming-soon.png",
+        "raptic-i18p-dual-valor": "case-images/coming-soon.png",
+        "raptic-i18p-dual-wisdom": "case-images/coming-soon.png",
+        "raptic-i18p-nano-cherry": "case-images/coming-soon.png",
+        "raptic-i18p-nano-black": "case-images/coming-soon.png",
+        "raptic-i18p-nano-white": "case-images/coming-soon.png",
+        "raptic-i18p-folio-black": "case-images/coming-soon.png",
+        "raptic-i18p-air-stand-clear": "case-images/coming-soon.png",
+        "raptic-i18p-air-stand-burgundy": "case-images/coming-soon.png",
+        "raptic-i18p-air-clear-clear": "case-images/coming-soon.png",
+        "raptic-i18p-air-clear-burgundy": "case-images/coming-soon.png",
+        "raptic-i18p-shield-evo-starfall": "case-images/coming-soon.png",
+        "raptic-i18p-shield-evo-gold": "case-images/coming-soon.png",
+        "raptic-i18p-shield-evo-onyx": "case-images/coming-soon.png",
+        "raptic-ifold-skinpro-valor": "case-images/coming-soon.png",
+        "raptic-ifold-skinpro-wisdom": "case-images/coming-soon.png",
+        "raptic-ifold-skinpro-rise": "case-images/coming-soon.png",
+        "raptic-ifold-skinpro-amber": "case-images/coming-soon.png",
+        "raptic-ifold-skinpro-emerald": "case-images/coming-soon.png",
+        "raptic-ifold-skinpro-mondrian": "case-images/coming-soon.png",
+        "raptic-ifold-nano-cherry": "case-images/coming-soon.png",
+        "raptic-ifold-nano-black": "case-images/coming-soon.png",
+        "raptic-ifold-nav-cherry": "case-images/coming-soon.png",
+        "raptic-ifold-nav-dark": "case-images/coming-soon.png",
+        "raptic-ifold-air-stand-clear": "case-images/coming-soon.png",
+        "raptic-ifold-air-clear-clear": "case-images/coming-soon.png",
         "raptic-ip17pm-aramid-rise": "case-images/raptic-ip17pm-aramid-skin-rise.jpg",
         "raptic-ip17pm-aramid-sky": "case-images/raptic-ip17pm-aramid-skin-sky.jpg",
         "raptic-ip17pm-aramid-ocean": "case-images/raptic-ip17pm-aramid-skin-ocean.jpg",
@@ -1713,33 +1745,75 @@
             prompt: 'Choose your complimentary case',
             subtitle: 'Included with your membership — powered by Raptic',
             options: [
-                // iPhone 18 Pro Max — Coming Soon
-                { id: 'raptic-ip18pm-cs', label: 'Coming Soon', subtitle: 'iPhone 18 Pro Max · Raptic', type: 'magsafe', lifestyle: 'Aramid Series · Burgundy · Shield · Air Clear', material: 'aramid', series: 'a18', hasMagsafe: true },
-                // iPhone Ultra (Foldable) — Coming Soon
-                { id: 'raptic-ip-ultra-cs', label: 'Coming Soon', subtitle: 'iPhone Ultra · Raptic', type: 'magsafe', lifestyle: 'Aramid Series · Foldable Protection', material: 'aramid', series: 'a18-foldable', hasMagsafe: true },
-                // iPhone 17 Pro Max — Raptic Aramid Series
-                { id: 'raptic-ip17pm-aramid-rise', label: 'Aramid Skin — Rise', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true },
-                { id: 'raptic-ip17pm-aramid-sky', label: 'Aramid Skin — Sky', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true },
-                { id: 'raptic-ip17pm-aramid-ocean', label: 'Aramid Skin — Ocean', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true },
-                { id: 'raptic-ip17pm-aramid-profound', label: 'Aramid Skin — Profound', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true },
-                { id: 'raptic-ip17pm-aramid-humble', label: 'Aramid Skin — Humble', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true },
-                { id: 'raptic-ip17pm-aramid-bionic-snake', label: 'Aramid Bionic — Snake', subtitle: 'Included with membership', type: 'raven-gold', lifestyle: 'Statement · Bionic Design', material: 'aramid', series: 'a17', hasMagsafe: true },
-                { id: 'raptic-ip17pm-aramid-dual-600d', label: 'Aramid Dual — 600D', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Dual-Layer · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true },
-                { id: 'raptic-ip17pm-aramid-geotik-mondrian', label: 'Aramid Geotik — Mondrian', subtitle: 'Included with membership', type: 'raven-gold', lifestyle: 'Trendsetter · Geometric Design', material: 'aramid', series: 'a17', hasMagsafe: true },
+                // ── iPhone 18 Pro — Aramid Dual Ultra (Premium) ──
+                { id: 'raptic-i18p-dual-ultra-valor', label: 'Aramid Dual Ultra — Grid Valor', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Full Aramid · Tactile Woven · Narrow Camera Rim', material: 'aramid', series: 'a18', hasMagsafe: true, rapticSeries: 'Grid' },
+                { id: 'raptic-i18p-dual-ultra-scepter', label: 'Aramid Dual Ultra — Scepter', subtitle: 'Included with membership', type: 'raven-gold', lifestyle: 'Full Aramid · 24K Matte Gold Plating', material: 'aramid', series: 'a18', hasMagsafe: true, rapticSeries: 'Scepter' },
+                { id: 'raptic-i18p-dual-ultra-amber', label: 'Aramid Dual Ultra — Serenity Amber', subtitle: 'Included with membership', type: 'raven-gold', lifestyle: 'KeZhi Weaving · Metal Camera Lens Frame', material: 'aramid', series: 'a18', hasMagsafe: true, rapticSeries: 'Serenity' },
+                { id: 'raptic-i18p-dual-ultra-emerald', label: 'Aramid Dual Ultra — Serenity Emerald', subtitle: 'Included with membership', type: 'raven-gold', lifestyle: 'KeZhi Weaving · Metal Camera Lens Frame', material: 'aramid', series: 'a18', hasMagsafe: true, rapticSeries: 'Serenity' },
+                // ── iPhone 18 Pro — Aramid Skin ──
+                { id: 'raptic-i18p-skin-valor', label: 'Aramid Skin — Grid Valor', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Ultra-Thin · Gold Thread Weaving', material: 'aramid', series: 'a18', hasMagsafe: true, rapticSeries: 'Grid' },
+                { id: 'raptic-i18p-skin-wisdom', label: 'Aramid Skin — Grid Wisdom', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Ultra-Thin · KeZhi Weaving', material: 'aramid', series: 'a18', hasMagsafe: true, rapticSeries: 'Grid' },
+                { id: 'raptic-i18p-skin-amber', label: 'Aramid Skin — Serenity Amber', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Ultra-Thin · KeZhi Weaving', material: 'aramid', series: 'a18', hasMagsafe: true, rapticSeries: 'Serenity' },
+                { id: 'raptic-i18p-skin-emerald', label: 'Aramid Skin — Serenity Emerald', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Ultra-Thin · KeZhi Weaving', material: 'aramid', series: 'a18', hasMagsafe: true, rapticSeries: 'Serenity' },
+                { id: 'raptic-i18p-skin-mondrian', label: 'Aramid Skin — Mondrian', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Ultra-Thin · Minimalist Aesthetics', material: 'aramid', series: 'a18', hasMagsafe: true, rapticSeries: 'Mondrian' },
+                // ── iPhone 18 Pro — Aramid Dual ──
+                { id: 'raptic-i18p-dual-valor', label: 'Aramid Dual — Grid Valor', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Four-Corner Drop Protection · Soft Bumper', material: 'aramid', series: 'a18', hasMagsafe: true, rapticSeries: 'Grid' },
+                { id: 'raptic-i18p-dual-wisdom', label: 'Aramid Dual — Grid Wisdom', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Four-Corner Drop Protection · Soft Bumper', material: 'aramid', series: 'a18', hasMagsafe: true, rapticSeries: 'Grid' },
+                // ── iPhone 18 Pro — Urban Nano (Leather) ──
+                { id: 'raptic-i18p-nano-cherry', label: 'Urban Nano — Dark Cherry', subtitle: 'Included with membership', type: 'leather', lifestyle: 'Ultra-Slim 1.6mm · Premium PU Leather', material: 'leather', series: 'a18', hasMagsafe: true, rapticSeries: 'Urban Nano' },
+                { id: 'raptic-i18p-nano-black', label: 'Urban Nano — Stellar Black', subtitle: 'Included with membership', type: 'leather', lifestyle: 'Ultra-Slim 1.6mm · Premium PU Leather', material: 'leather', series: 'a18', hasMagsafe: true, rapticSeries: 'Urban Nano' },
+                { id: 'raptic-i18p-nano-white', label: 'Urban Nano — Plume White', subtitle: 'Included with membership', type: 'leather', lifestyle: 'Ultra-Slim 1.6mm · Premium PU Leather', material: 'leather', series: 'a18', hasMagsafe: true, rapticSeries: 'Urban Nano' },
+                // ── iPhone 18 Pro — Urban Folio ──
+                { id: 'raptic-i18p-folio-black', label: 'Urban Folio — Black', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Military-Grade · Slim Front Cover', material: 'shield', series: 'a18', hasMagsafe: true, rapticSeries: 'Urban' },
+                // ── iPhone 18 Pro — Air Stand (Clear) ──
+                { id: 'raptic-i18p-air-stand-clear', label: 'Air Stand — Clear', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Military-Grade · 360° Kickstand', material: 'clear', series: 'a18', hasMagsafe: true, rapticSeries: 'Air' },
+                { id: 'raptic-i18p-air-stand-burgundy', label: 'Air Stand — Burgundy', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Military-Grade · Burgundy Bumper', material: 'clear', series: 'a18', hasMagsafe: true, rapticSeries: 'Air' },
+                // ── iPhone 18 Pro — Air Clear (Transparent) ──
+                { id: 'raptic-i18p-air-clear-clear', label: 'Air Clear — Clear', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Quad-Corner Airbag · >95% Transmittance', material: 'clear', series: 'a18', hasMagsafe: true, rapticSeries: 'Air' },
+                { id: 'raptic-i18p-air-clear-burgundy', label: 'Air Clear — Burgundy', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Quad-Corner Airbag · Burgundy Accents', material: 'clear', series: 'a18', hasMagsafe: true, rapticSeries: 'Air' },
+                // ── iPhone 18 Pro — Shield Evo (Rugged) ──
+                { id: 'raptic-i18p-shield-evo-starfall', label: 'Shield Evo — Starfall', subtitle: 'Included with membership', type: 'magsafe', lifestyle: '3m Military-Grade · Multi-Ap Tech', material: 'shield', series: 'a18', hasMagsafe: true, rapticSeries: 'Shield' },
+                { id: 'raptic-i18p-shield-evo-gold', label: 'Shield Evo — Titan Gold', subtitle: 'Included with membership', type: 'magsafe', lifestyle: '3m Military-Grade · Metal Buttons', material: 'shield', series: 'a18', hasMagsafe: true, rapticSeries: 'Shield' },
+                { id: 'raptic-i18p-shield-evo-onyx', label: 'Shield Evo — Onyx', subtitle: 'Included with membership', type: 'magsafe', lifestyle: '3m Military-Grade · Metal Buttons', material: 'shield', series: 'a18', hasMagsafe: true, rapticSeries: 'Shield' },
+                // ── iPhone Fold (Ultra) — Aramid Skin-Pro (Hinge Protection) ──
+                { id: 'raptic-ifold-skinpro-valor', label: 'Aramid Skin-Pro — Grid Valor', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Leather Hinge Protection · Magnetic Adsorption', material: 'aramid', series: 'a18-foldable', hasMagsafe: true, rapticSeries: 'Grid' },
+                { id: 'raptic-ifold-skinpro-wisdom', label: 'Aramid Skin-Pro — Grid Wisdom', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Leather Hinge Protection · KeZhi Weaving', material: 'aramid', series: 'a18-foldable', hasMagsafe: true, rapticSeries: 'Grid' },
+                { id: 'raptic-ifold-skinpro-rise', label: 'Aramid Skin-Pro — Rise', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Leather Hinge Protection · Gold Thread', material: 'aramid', series: 'a18-foldable', hasMagsafe: true, rapticSeries: 'Rise' },
+                { id: 'raptic-ifold-skinpro-amber', label: 'Aramid Skin-Pro — Serenity Amber', subtitle: 'Included with membership', type: 'raven-gold', lifestyle: 'Leather Hinge Protection · KeZhi Weaving', material: 'aramid', series: 'a18-foldable', hasMagsafe: true, rapticSeries: 'Serenity' },
+                { id: 'raptic-ifold-skinpro-emerald', label: 'Aramid Skin-Pro — Serenity Emerald', subtitle: 'Included with membership', type: 'raven-gold', lifestyle: 'Leather Hinge Protection · KeZhi Weaving', material: 'aramid', series: 'a18-foldable', hasMagsafe: true, rapticSeries: 'Serenity' },
+                { id: 'raptic-ifold-skinpro-mondrian', label: 'Aramid Skin-Pro — Mondrian', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Leather Hinge Protection · Minimalist', material: 'aramid', series: 'a18-foldable', hasMagsafe: true, rapticSeries: 'Mondrian' },
+                // ── iPhone Fold — Urban Nano (Leather) ──
+                { id: 'raptic-ifold-nano-cherry', label: 'Urban Nano — Dark Cherry', subtitle: 'Included with membership', type: 'leather', lifestyle: 'Ultra-Slim 1.6mm · Full Genuine Leather', material: 'leather', series: 'a18-foldable', hasMagsafe: true, rapticSeries: 'Urban Nano' },
+                { id: 'raptic-ifold-nano-black', label: 'Urban Nano — Stellar Black', subtitle: 'Included with membership', type: 'leather', lifestyle: 'Ultra-Slim 1.6mm · Full Genuine Leather', material: 'leather', series: 'a18-foldable', hasMagsafe: true, rapticSeries: 'Urban Nano' },
+                // ── iPhone Fold — Urban Nav (3D Leather + Gold) ──
+                { id: 'raptic-ifold-nav-cherry', label: 'Urban Nav — Dark Cherry', subtitle: 'Included with membership', type: 'leather', lifestyle: '3D Leather · 18K Gold Plating · Ceramic Button', material: 'leather', series: 'a18-foldable', hasMagsafe: true, rapticSeries: 'Urban Nav' },
+                { id: 'raptic-ifold-nav-dark', label: 'Urban Nav — Dark', subtitle: 'Included with membership', type: 'leather', lifestyle: '3D Leather · 18K Gold Plating · Ceramic Button', material: 'leather', series: 'a18-foldable', hasMagsafe: true, rapticSeries: 'Urban Nav' },
+                // ── iPhone Fold — Air Stand & Air Clear ──
+                { id: 'raptic-ifold-air-stand-clear', label: 'Air Stand — Clear', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Military-Grade · Built-in Kickstand', material: 'clear', series: 'a18-foldable', hasMagsafe: true, rapticSeries: 'Air' },
+                { id: 'raptic-ifold-air-clear-clear', label: 'Air Clear — Clear', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Quad-Corner Airbag · >95% Transmittance', material: 'clear', series: 'a18-foldable', hasMagsafe: true, rapticSeries: 'Air' },
+                // ── iPhone 17 Pro Max — Raptic Aramid Series ──
+                { id: 'raptic-ip17pm-aramid-rise', label: 'Aramid Skin — Rise', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true, rapticSeries: 'Grid' },
+                { id: 'raptic-ip17pm-aramid-sky', label: 'Aramid Skin — Sky', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true, rapticSeries: 'Origin' },
+                { id: 'raptic-ip17pm-aramid-ocean', label: 'Aramid Skin — Ocean', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true, rapticSeries: 'Origin' },
+                { id: 'raptic-ip17pm-aramid-profound', label: 'Aramid Skin — Profound', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true, rapticSeries: 'Origin' },
+                { id: 'raptic-ip17pm-aramid-humble', label: 'Aramid Skin — Humble', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Minimalist · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true, rapticSeries: 'Origin' },
+                { id: 'raptic-ip17pm-aramid-bionic-snake', label: 'Aramid Bionic — Snake', subtitle: 'Included with membership', type: 'raven-gold', lifestyle: 'Statement · Bionic Design', material: 'aramid', series: 'a17', hasMagsafe: true, rapticSeries: 'Origin' },
+                { id: 'raptic-ip17pm-aramid-dual-600d', label: 'Aramid Dual — 600D', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Dual-Layer · Ultra-Light · MagSafe', material: 'aramid', series: 'a17', hasMagsafe: true, rapticSeries: 'Mondrian' },
+                { id: 'raptic-ip17pm-aramid-geotik-mondrian', label: 'Aramid Geotik — Mondrian', subtitle: 'Included with membership', type: 'raven-gold', lifestyle: 'Trendsetter · Geometric Design', material: 'aramid', series: 'a17', hasMagsafe: true, rapticSeries: 'Mondrian' },
                 // iPhone 17 Pro Max — Raptic Shield & Air
-                { id: 'raptic-ip17pm-shield-black', label: 'Shield Classic — Black', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Military-Grade · Drop Protection', material: 'shield', series: 'a17', hasMagsafe: true },
-                { id: 'raptic-ip17pm-shield-iridescent', label: 'Shield Classic — Iridescent', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Military-Grade · Iridescent', material: 'shield', series: 'a17', hasMagsafe: true },
-                { id: 'raptic-ip17pm-air-clear-clear', label: 'Air Clear — Clear', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Showcase · Non-Yellowing', material: 'clear', series: 'a17', hasMagsafe: true },
-                { id: 'raptic-ip17pm-air-clear-black', label: 'Air Clear — Black', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Showcase · Black Bumper', material: 'clear', series: 'a17', hasMagsafe: true },
+                { id: 'raptic-ip17pm-shield-black', label: 'Shield Classic — Black', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Military-Grade · Drop Protection', material: 'shield', series: 'a17', hasMagsafe: true, rapticSeries: 'Shield' },
+                { id: 'raptic-ip17pm-shield-iridescent', label: 'Shield Classic — Iridescent', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Military-Grade · Iridescent', material: 'shield', series: 'a17', hasMagsafe: true, rapticSeries: 'Shield' },
+                { id: 'raptic-ip17pm-air-clear-clear', label: 'Air Clear — Clear', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Showcase · Non-Yellowing', material: 'clear', series: 'a17', hasMagsafe: true, rapticSeries: 'Air' },
+                { id: 'raptic-ip17pm-air-clear-black', label: 'Air Clear — Black', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Showcase · Black Bumper', material: 'clear', series: 'a17', hasMagsafe: true, rapticSeries: 'Air' },
                 // Samsung Z Fold 8 Ultra — Raptic Aramid
-                { id: 'raptic-fold8-slim-serenity-amber', label: 'Slim Aramid — Serenity Amber', subtitle: 'Included with membership', type: 'raven-gold', lifestyle: 'Foldable · Magnetic · MagSafe', material: 'aramid', series: 'sf8', hasMagsafe: true },
-                { id: 'raptic-fold8-ultra-thin-mondrian', label: 'Ultra-Thin Aramid — Mondrian', subtitle: 'Included with membership', type: 'raven-gold', lifestyle: 'Ultra-Thin · Magnetic · 0.04in', material: 'aramid', series: 'sf8', hasMagsafe: true },
-                { id: 'raptic-fold8-ultra-thin-blue-gold', label: 'Ultra-Thin Aramid — Blue & Gold', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Foldable · Blue & Gold Weave', material: 'aramid', series: 'sf8', hasMagsafe: true },
+                { id: 'raptic-fold8-slim-serenity-amber', label: 'Slim Aramid — Serenity Amber', subtitle: 'Included with membership', type: 'raven-gold', lifestyle: 'Foldable · Magnetic · MagSafe', material: 'aramid', series: 'sf8', hasMagsafe: true, rapticSeries: 'Serenity' },
+                { id: 'raptic-fold8-ultra-thin-mondrian', label: 'Ultra-Thin Aramid — Mondrian', subtitle: 'Included with membership', type: 'raven-gold', lifestyle: 'Ultra-Thin · Magnetic · 0.04in', material: 'aramid', series: 'sf8', hasMagsafe: true, rapticSeries: 'Mondrian' },
+                { id: 'raptic-fold8-ultra-thin-blue-gold', label: 'Ultra-Thin Aramid — Blue & Gold', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Foldable · Blue & Gold Weave', material: 'aramid', series: 'sf8', hasMagsafe: true, rapticSeries: 'Grid' },
                 // Samsung S26 Ultra — Raptic Shield & Aramid
-                { id: 'raptic-s26u-shield-black', label: 'Shield Magnetic — Black', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Military-Grade · 23ft Drop', material: 'shield', series: 's26', hasMagsafe: true },
-                { id: 'raptic-s26u-shield-iridescent', label: 'Shield Magnetic — Iridescent', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Military-Grade · Iridescent', material: 'shield', series: 's26', hasMagsafe: true },
-                { id: 'raptic-s26u-clear-air-stand', label: 'Clear w/ Air Stand', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Kickstand · 10ft Drop Protection', material: 'clear', series: 's26', hasMagsafe: true },
-                { id: 'raptic-s26u-aramid-fortune-black', label: 'Aramid Skin — Fortune/Black', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Ultra-Slim · Aero Woven Aramid', material: 'aramid', series: 's26', hasMagsafe: true },
+                { id: 'raptic-s26u-shield-black', label: 'Shield Magnetic — Black', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Military-Grade · 23ft Drop', material: 'shield', series: 's26', hasMagsafe: true, rapticSeries: 'Shield' },
+                { id: 'raptic-s26u-shield-iridescent', label: 'Shield Magnetic — Iridescent', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Military-Grade · Iridescent', material: 'shield', series: 's26', hasMagsafe: true, rapticSeries: 'Shield' },
+                { id: 'raptic-s26u-clear-air-stand', label: 'Clear w/ Air Stand', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Kickstand · 10ft Drop Protection', material: 'clear', series: 's26', hasMagsafe: true, rapticSeries: 'Air' },
+                { id: 'raptic-s26u-aramid-fortune-black', label: 'Aramid Skin — Fortune/Black', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Ultra-Slim · Aero Woven Aramid', material: 'aramid', series: 's26', hasMagsafe: true, rapticSeries: 'Grid' },
             ]
         },
         3: {
@@ -2539,120 +2613,205 @@
 
     // ── Complete the Set — Paired Accessories ──
     var currentSetupTier = 'carbon';
+    var selectedAccessories = [];
 
     function getCurrentSetupTier() {
-        // Determine tier from membership selection (step 5) or default to carbon
         if (typeof selections !== 'undefined' && selections.membership) {
             var mid = selections.membership.id;
             if (mid && mid.indexOf('gold') !== -1) return 'gold';
             if (mid && mid.indexOf('onyx') !== -1) return 'onyx';
+            if (mid && mid.indexOf('premium') !== -1) return 'onyx';
+            if (mid && mid.indexOf('founding') !== -1) return 'gold';
         }
         return 'carbon';
+    }
+
+    function getAccessoryTierPrice(price) {
+        var tier = getCurrentSetupTier();
+        var discount = 0;
+        if (tier === 'onyx') discount = 0.10;
+        if (tier === 'gold') discount = 0.20;
+        return price * (1 - discount);
     }
 
     function renderPairedAccessories(caseOpt) {
         var grid = document.getElementById('accessoryGrid');
         if (!grid) return;
+        selectedAccessories = [];
 
-        // Determine the case series from the case option
-        // caseOpt may have .series or we derive from the label/type
-        var series = caseOpt.series || deriveSeriesFromCase(caseOpt);
-        var isClear = isClearCase(caseOpt);
+        var series = caseOpt.rapticSeries || 'Grid';
+        var isClear = (caseOpt.type === 'clear' || (caseOpt.material && caseOpt.material === 'clear') || series === 'Air' || series === 'Shield');
 
-        // Build a mock case object for getPairedAccessories
-        var mockCase = {
-            series: series,
-            material: caseOpt.material || '',
-            type: caseOpt.type || ''
-        };
-
-        var tier = getCurrentSetupTier();
-        var paired = [];
+        // Get accessories from protocol-config
+        var allAccessories = [];
         try {
-            if (typeof getPairedAccessories === 'function') {
-                paired = getPairedAccessories(mockCase, tier);
+            if (typeof getProtocolAccessories === 'function') {
+                allAccessories = getProtocolAccessories();
             }
-        } catch(e) {
-            console.log('Accessory pairing error:', e);
+        } catch(e) {}
+
+        // Filter: series-matched accessories
+        var seriesMatched = [];
+        var universalAccessories = [];
+
+        for (var i = 0; i < allAccessories.length; i++) {
+            var acc = allAccessories[i];
+            if (acc.pairingRule === 'any-magsafe') {
+                universalAccessories.push(acc);
+            } else if (acc.pairingRule === 'series' && acc.series && acc.series.indexOf(series) !== -1) {
+                seriesMatched.push(acc);
+            }
         }
 
         grid.innerHTML = '';
 
-        if (paired.length === 0) {
-            grid.innerHTML = '<p style="font-family: \'EB Garamond\', serif; color: #666; font-size: 0.8rem;">Accessories coming soon for this case.</p>';
-            return;
+        // Header
+        var headerDiv = document.createElement('div');
+        headerDiv.style.cssText = 'grid-column: 1 / -1; margin-bottom: 0.5rem;';
+        headerDiv.innerHTML = '<p style="font-family: \'EB Garamond\', serif; font-size: 0.75rem; color: #c5a059; margin: 0;">' +
+            (isClear ?
+                'Clear case — browse all SocietyOS Verified MagSafe accessories below. Tap to add:' :
+                'Matched accessories for ' + series + ' series — tap to add to your set:') +
+            '</p>';
+        grid.appendChild(headerDiv);
+
+        // Render series-matched accessories as selectable cards
+        seriesMatched.forEach(function(acc) {
+            grid.appendChild(createAccessoryCard(acc, false));
+        });
+
+        // For clear cases: show universal MagSafe accessories with a browse button
+        if (isClear && universalAccessories.length > 0) {
+            // Add a divider
+            var divider = document.createElement('div');
+            divider.style.cssText = 'grid-column: 1 / -1; margin: 0.5rem 0; padding-top: 0.5rem; border-top: 1px solid rgba(197,160,89,0.1);';
+            divider.innerHTML = '<p style="font-family: \'EB Garamond\', serif; font-size: 0.7rem; color: #888; margin: 0;">SocietyOS Verified MagSafe Accessories — compatible with all clear cases:</p>';
+            grid.appendChild(divider);
+
+            universalAccessories.forEach(function(acc) {
+                grid.appendChild(createAccessoryCard(acc, true));
+            });
         }
 
-        var headerMsg = isClear
-            ? 'Clear case — all SocietyOS Verified MagSafe accessories are compatible:'
-            : 'Pairs with ' + series + ' series — match the design and color:';
+        // Bundle option
+        if (seriesMatched.length >= 2) {
+            var bundleDiv = document.createElement('div');
+            bundleDiv.style.cssText = 'grid-column: 1 / -1; margin-top: 0.5rem; padding: 0.75rem; border: 1px dashed rgba(197,160,89,0.25); border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.3s ease;';
+            bundleDiv.onclick = function() { selectAllAccessories(seriesMatched); };
+            bundleDiv.onmouseenter = function() { bundleDiv.style.borderColor = 'rgba(197,160,89,0.5)'; };
+            bundleDiv.onmouseleave = function() { bundleDiv.style.borderColor = 'rgba(197,160,89,0.25)'; };
+            var bundlePrice = 99.99;
+            var tierBundlePrice = getAccessoryTierPrice(bundlePrice);
+            bundleDiv.innerHTML = '<span style="font-family: \'Cormorant Garamond\', serif; font-size: 0.9rem; color: #c5a059;">📦 Complete the full set — bundle & save — $' + tierBundlePrice.toFixed(2) + '</span>';
+            grid.appendChild(bundleDiv);
+        }
 
-        var headerEl = document.createElement('div');
-        headerEl.style.cssText = 'grid-column: 1 / -1; margin-bottom: 0.25rem;';
-        headerEl.innerHTML = '<p style="font-family: \'EB Garamond\', serif; font-size: 0.75rem; color: #c5a059; margin: 0;">' + headerMsg + '</p>';
-        grid.appendChild(headerEl);
+        if (seriesMatched.length === 0 && universalAccessories.length === 0) {
+            grid.innerHTML = '<p style="font-family: \'EB Garamond\', serif; color: #666; font-size: 0.8rem;">Accessories coming soon for this case.</p>';
+        }
+    }
 
-        paired.forEach(function(item) {
-            var acc = item.accessory;
-            var tierPrice = item.tierPrice;
-            var hasDiscount = tier !== 'carbon' && tierPrice < acc.price;
+    function createAccessoryCard(acc, isUniversal) {
+        var tierPrice = getAccessoryTierPrice(acc.price);
+        var hasDiscount = getCurrentSetupTier() !== 'carbon' && tierPrice < acc.price;
+        var typeIcon = acc.type === 'ring-stand' ? '🔄' : acc.type === 'wallet-stand' ? '💳' : acc.type === 'bundle' ? '📦' : '✨';
+        var typeLabel = acc.type === 'ring-stand' ? 'Ring Stand' : acc.type === 'wallet-stand' ? 'Wallet Stand' : acc.type === 'bundle' ? 'Bundle' : 'Accessory';
 
-            var typeIcon = acc.type === 'ring-stand' ? '🔄' : acc.type === 'wallet-stand' ? '💳' : acc.type === 'bundle' ? '📦' : '✨';
-            var typeLabel = acc.type === 'ring-stand' ? 'Ring Stand' : acc.type === 'wallet-stand' ? 'Wallet Stand' : acc.type === 'bundle' ? 'Bundle' : 'Accessory';
+        var card = document.createElement('div');
+        card.style.cssText = 'padding: 0.75rem; border: 1px solid rgba(197,160,89,0.12); border-radius: 8px; background: rgba(20,20,30,0.3); cursor: pointer; transition: all 0.25s ease; position: relative;';
+        card.dataset.accId = acc.id;
+        card.dataset.accPrice = tierPrice;
 
-            var card = document.createElement('div');
-            card.style.cssText = 'padding: 0.75rem; border: 1px solid rgba(197,160,89,0.12); border-radius: 8px; background: rgba(20,20,30,0.3); transition: all 0.3s ease;';
+        card.onmouseenter = function() {
+            if (!card.classList.contains('acc-selected')) {
+                card.style.borderColor = 'rgba(197,160,89,0.4)';
+                card.style.transform = 'translateY(-2px)';
+            }
+        };
+        card.onmouseleave = function() {
+            if (!card.classList.contains('acc-selected')) {
+                card.style.borderColor = 'rgba(197,160,89,0.12)';
+                card.style.transform = '';
+            }
+        };
+        card.onclick = function() {
+            if (card.classList.contains('acc-selected')) {
+                card.classList.remove('acc-selected');
+                card.style.borderColor = 'rgba(197,160,89,0.12)';
+                card.style.background = 'rgba(20,20,30,0.3)';
+                selectedAccessories = selectedAccessories.filter(function(id) { return id !== acc.id; });
+            } else {
+                card.classList.add('acc-selected');
+                card.style.borderColor = 'rgba(197,160,89,0.6)';
+                card.style.background = 'rgba(197,160,89,0.08)';
+                selectedAccessories.push(acc.id);
+            }
+            updateAccessoryTotal();
+        };
 
-            var priceHTML = hasDiscount
-                ? '<span style="text-decoration: line-through; color: #555; font-size: 0.75rem; font-family: \'EB Garamond\', serif;">$' + acc.price.toFixed(2) + '</span> ' +
-                  '<span style="color: #c5a059; font-size: 1rem; font-family: \'Cormorant Garamond\', serif; font-weight: 600;">$' + tierPrice.toFixed(2) + '</span>'
-                : '<span style="color: #c5a059; font-size: 1rem; font-family: \'Cormorant Garamond\', serif; font-weight: 600;">$' + tierPrice.toFixed(2) + '</span>';
+        var priceHTML = hasDiscount
+            ? '<span style="text-decoration: line-through; color: #555; font-size: 0.7rem; font-family: \'EB Garamond\', serif;">$' + acc.price.toFixed(2) + '</span> ' +
+              '<span style="color: #c5a059; font-size: 0.95rem; font-family: \'Cormorant Garamond\', serif; font-weight: 600;">$' + tierPrice.toFixed(2) + '</span>'
+            : '<span style="color: #c5a059; font-size: 0.95rem; font-family: \'Cormorant Garamond\', serif; font-weight: 600;">$' + tierPrice.toFixed(2) + '</span>';
 
-            card.innerHTML =
-                '<div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">' +
-                    '<span style="font-size: 1rem;">' + typeIcon + '</span>' +
-                    '<span style="font-size: 0.6rem; color: #c5a059; text-transform: uppercase; letter-spacing: 0.05em;">' + typeLabel + '</span>' +
-                    '<span style="font-size: 0.55rem; padding: 1px 5px; border-radius: 3px; background: rgba(197,160,89,0.1); color: #c5a059; margin-left: auto;">Verified MagSafe</span>' +
-                '</div>' +
-                '<div style="font-family: \'Cormorant Garamond\', serif; font-size: 0.9rem; color: #ddd; line-height: 1.3; margin-bottom: 0.3rem;">' + acc.name + '</div>' +
-                '<div style="display: flex; align-items: baseline; gap: 0.3rem;">' + priceHTML + '</div>';
+        card.innerHTML =
+            '<div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">' +
+                '<span style="font-size: 0.95rem;">' + typeIcon + '</span>' +
+                '<span style="font-size: 0.55rem; color: #c5a059; text-transform: uppercase; letter-spacing: 0.05em;">' + typeLabel + '</span>' +
+                '<span style="font-size: 0.5rem; padding: 1px 5px; border-radius: 3px; background: rgba(197,160,89,0.1); color: #c5a059; margin-left: auto;">MagSafe</span>' +
+            '</div>' +
+            '<div style="font-family: \'Cormorant Garamond\', serif; font-size: 0.8rem; color: #ccc; line-height: 1.3; margin-bottom: 0.3rem;">' + acc.name + '</div>' +
+            '<div style="display: flex; align-items: center; justify-content: space-between;">' +
+                '<div style="display: flex; align-items: baseline; gap: 0.3rem;">' + priceHTML + '</div>' +
+                '<span style="font-size: 0.6rem; color: #666; font-family: \'EB Garamond\', serif;">' + (isUniversal ? 'Universal' : 'Matched') + ' · Add +</span>' +
+            '</div>';
 
-            grid.appendChild(card);
+        return card;
+    }
+
+    function selectAllAccessories(accessories) {
+        var grid = document.getElementById('accessoryGrid');
+        if (!grid) return;
+        selectedAccessories = [];
+        accessories.forEach(function(acc) {
+            selectedAccessories.push(acc.id);
         });
+        // Visually select all
+        grid.querySelectorAll('[data-acc-id]').forEach(function(card) {
+            if (accessories.some(function(a) { return a.id === card.dataset.accId; })) {
+                card.classList.add('acc-selected');
+                card.style.borderColor = 'rgba(197,160,89,0.6)';
+                card.style.background = 'rgba(197,160,89,0.08)';
+            }
+        });
+        updateAccessoryTotal();
     }
 
-    function deriveSeriesFromCase(caseOpt) {
-        // Derive series from case label or type
-        var label = (caseOpt.label || '').toLowerCase();
-        var type = caseOpt.type || '';
+    function updateAccessoryTotal() {
+        var grid = document.getElementById('accessoryGrid');
+        if (!grid) return;
+        // Remove existing total
+        var existing = grid.querySelector('.acc-total-bar');
+        if (existing) existing.remove();
 
-        if (label.indexOf('grid') !== -1) return 'Grid';
-        if (label.indexOf('serenity') !== -1) return 'Serenity';
-        if (label.indexOf('mondrian') !== -1) return 'Mondrian';
-        if (label.indexOf('scepter') !== -1) return 'Scepter';
-        if (label.indexOf('rise') !== -1) return 'Rise';
-        if (label.indexOf('origin') !== -1) return 'Origin';
-        if (label.indexOf('nano') !== -1) return 'Urban Nano';
-        if (label.indexOf('nav') !== -1) return 'Urban Nav';
-        if (label.indexOf('folio') !== -1) return 'Urban';
-        if (label.indexOf('shield') !== -1) return 'Shield';
-        if (type === 'clear' || label.indexOf('air') !== -1) return 'Air';
+        if (selectedAccessories.length === 0) return;
 
-        // Default: check material
-        if (caseOpt.material && caseOpt.material.toLowerCase().indexOf('clear') !== -1) return 'Air';
-        if (caseOpt.material && caseOpt.material.toLowerCase().indexOf('aramid') !== -1) return 'Grid';
+        var total = 0;
+        try {
+            var allAcc = getProtocolAccessories();
+            selectedAccessories.forEach(function(id) {
+                var found = allAcc.find(function(a) { return a.id === id; });
+                if (found) total += getAccessoryTierPrice(found.price);
+            });
+        } catch(e) {}
 
-        return 'Grid';
-    }
-
-    function isClearCase(caseOpt) {
-        var type = caseOpt.type || '';
-        var material = (caseOpt.material || '').toLowerCase();
-        var label = (caseOpt.label || '').toLowerCase();
-        if (type === 'clear') return true;
-        if (material.indexOf('clear') !== -1) return true;
-        if (label.indexOf('air clear') !== -1 || label.indexOf('air stand') !== -1) return true;
-        return false;
+        var totalBar = document.createElement('div');
+        totalBar.className = 'acc-total-bar';
+        totalBar.style.cssText = 'grid-column: 1 / -1; margin-top: 0.5rem; padding: 0.6rem 0.75rem; background: rgba(197,160,89,0.06); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;';
+        totalBar.innerHTML =
+            '<span style="font-family: \'EB Garamond\', serif; font-size: 0.8rem; color: #c5a059;">' + selectedAccessories.length + ' accessor' + (selectedAccessories.length === 1 ? 'y' : 'ies') + ' added</span>' +
+            '<span style="font-family: \'Cormorant Garamond\', serif; font-size: 1rem; color: #c5a059; font-weight: 600;">+$' + total.toFixed(2) + '</span>';
+        grid.appendChild(totalBar);
     }
 
     function renderCaseInPreview(caseOpt) {
