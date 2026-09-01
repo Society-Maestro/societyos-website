@@ -2213,6 +2213,30 @@
                     }
                 }
             }
+
+            // Build standalone Complete the Set section BELOW the grid — visible on all devices
+            let accSection = contentEl.querySelector('.complete-the-set-standalone');
+            if (!accSection) {
+                accSection = document.createElement('div');
+                accSection.className = 'complete-the-set-standalone';
+                accSection.style.cssText = 'margin-top: 2rem; padding: 1.5rem; border: 1px solid rgba(197,160,89,0.15); border-radius: 12px; background: rgba(10,10,15,0.4);';
+                accSection.innerHTML = `
+                    <div style="font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: #c5a059; margin-bottom: 0.3rem;">Complete the Set</div>
+                    <div style="font-family: 'EB Garamond', serif; font-size: 0.85rem; color: #888; margin-bottom: 1rem;">Select your case above, then choose matching MagSafe accessories to complete your set.</div>
+                    <div id="standaloneAccessoryGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem;"></div>
+                    <div id="standaloneAccessoryStatus" style="text-align: center; padding: 1rem; color: #666; font-family: 'EB Garamond', serif; font-size: 0.9rem;">Select a case to see matching accessories</div>
+                `;
+                // Insert after the layout
+                if (layout) {
+                    layout.parentNode.insertBefore(accSection, layout.nextSibling);
+                } else {
+                    contentEl.appendChild(accSection);
+                }
+            }
+            // If a case is already selected, render its accessories
+            if (selections.case) {
+                renderStandaloneAccessories(selections.case);
+            }
         }
 
         // Reset selection state
@@ -2243,7 +2267,7 @@
             selections.membership = opt;
             // Re-render accessories with tier discount
             if (selections.case) {
-                renderPairedAccessories(selections.case);
+                renderStandaloneAccessories(selections.case);
             }
         }
 
@@ -2256,6 +2280,7 @@
         }
         if (step === 2) {
             renderCaseInPreview(opt);
+            renderStandaloneAccessories(opt);
         }
         if (step === 3 && opt.type === 'tangem') {
             triggerNFCAnimation();
@@ -2634,27 +2659,21 @@
         return price * (1 - discount);
     }
 
-    function renderPairedAccessories(caseOpt) {
-        var grid = document.getElementById('accessoryGrid');
+    // Standalone accessory rendering — works on ALL devices, below the case grid
+    function renderStandaloneAccessories(caseOpt) {
+        var grid = document.getElementById('standaloneAccessoryGrid');
+        var status = document.getElementById('standaloneAccessoryStatus');
         if (!grid) return;
-        selectedAccessories = [];
 
         var series = caseOpt.rapticSeries || 'Grid';
         var isClear = (caseOpt.type === 'clear' || (caseOpt.material && caseOpt.material === 'clear') || series === 'Air' || series === 'Shield');
-        var hasMagSafe = caseOpt.hasMagsafe !== false; // All Raptic cases have MagSafe
+        var hasMagSafe = caseOpt.hasMagsafe !== false;
 
-        // Get accessories from protocol-config
         var allAccessories = [];
-        try {
-            if (typeof getProtocolAccessories === 'function') {
-                allAccessories = getProtocolAccessories();
-            }
-        } catch(e) {}
+        try { allAccessories = getProtocolAccessories(); } catch(e) {}
 
-        // Filter: series-matched accessories
         var seriesMatched = [];
         var universalAccessories = [];
-
         for (var i = 0; i < allAccessories.length; i++) {
             var acc = allAccessories[i];
             if (acc.pairingRule === 'any-magsafe') {
@@ -2665,34 +2684,36 @@
         }
 
         grid.innerHTML = '';
+        selectedAccessories = [];
+        if (status) status.style.display = 'none';
 
         // Header
         var headerDiv = document.createElement('div');
         headerDiv.style.cssText = 'grid-column: 1 / -1; margin-bottom: 0.5rem;';
-        headerDiv.innerHTML = '<p style="font-family: \'EB Garamond\', serif; font-size: 0.75rem; color: #c5a059; margin: 0;">' +
+        headerDiv.innerHTML = '<p style="font-family: \'EB Garamond\', serif; font-size: 0.8rem; color: #c5a059; margin: 0;">' +
             (isClear ?
-                'Clear case — browse all SocietyOS Verified MagSafe accessories below. Tap to add:' :
+                'Clear case selected — all SocietyOS Verified MagSafe accessories are compatible. Tap to add:' :
                 hasMagSafe ?
                 'Matched accessories for ' + series + ' series — tap to add. All cases are MagSafe compatible:' :
                 'Matched accessories for ' + series + ' series — tap to add to your set:') +
             '</p>';
         grid.appendChild(headerDiv);
 
-        // Render series-matched accessories as selectable cards
+        // Series matched accessories
         seriesMatched.forEach(function(acc) {
-            grid.appendChild(createAccessoryCard(acc, false));
+            grid.appendChild(createStandaloneAccCard(acc, false));
         });
 
-        // For ALL MagSafe cases: show universal MagSafe accessories
+        // Universal MagSafe accessories — shown for ALL MagSafe cases
         if (hasMagSafe && universalAccessories.length > 0) {
-            // Add a divider
-            var divider = document.createElement('div');
-            divider.style.cssText = 'grid-column: 1 / -1; margin: 0.5rem 0; padding-top: 0.5rem; border-top: 1px solid rgba(197,160,89,0.1);';
-            divider.innerHTML = '<p style="font-family: \'EB Garamond\', serif; font-size: 0.7rem; color: #888; margin: 0;">SocietyOS Verified MagSafe Accessories — compatible with all clear cases:</p>';
-            grid.appendChild(divider);
-
+            if (seriesMatched.length > 0) {
+                var divider = document.createElement('div');
+                divider.style.cssText = 'grid-column: 1 / -1; margin: 0.5rem 0; padding-top: 0.5rem; border-top: 1px solid rgba(197,160,89,0.1);';
+                divider.innerHTML = '<p style="font-family: \'EB Garamond\', serif; font-size: 0.7rem; color: #888; margin: 0;">SocietyOS Verified MagSafe Accessories — compatible with all cases:</p>';
+                grid.appendChild(divider);
+            }
             universalAccessories.forEach(function(acc) {
-                grid.appendChild(createAccessoryCard(acc, true));
+                grid.appendChild(createStandaloneAccCard(acc, true));
             });
         }
 
@@ -2700,30 +2721,31 @@
         if (seriesMatched.length >= 2) {
             var bundleDiv = document.createElement('div');
             bundleDiv.style.cssText = 'grid-column: 1 / -1; margin-top: 0.5rem; padding: 0.75rem; border: 1px dashed rgba(197,160,89,0.25); border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.3s ease;';
-            bundleDiv.onclick = function() { selectAllAccessories(seriesMatched); };
+            bundleDiv.onclick = function() { selectAllStandalone(seriesMatched); };
             bundleDiv.onmouseenter = function() { bundleDiv.style.borderColor = 'rgba(197,160,89,0.5)'; };
             bundleDiv.onmouseleave = function() { bundleDiv.style.borderColor = 'rgba(197,160,89,0.25)'; };
-            var bundlePrice = 99.99;
-            var tierBundlePrice = getAccessoryTierPrice(bundlePrice);
+            var tierBundlePrice = getAccessoryTierPrice(99.99);
             bundleDiv.innerHTML = '<span style="font-family: \'Cormorant Garamond\', serif; font-size: 0.9rem; color: #c5a059;">📦 Complete the full set — bundle & save — $' + tierBundlePrice.toFixed(2) + '</span>';
             grid.appendChild(bundleDiv);
         }
 
         if (seriesMatched.length === 0 && universalAccessories.length === 0) {
-            grid.innerHTML = '<p style="font-family: \'EB Garamond\', serif; color: #666; font-size: 0.8rem;">Accessories coming soon for this case.</p>';
+            if (status) {
+                status.style.display = 'block';
+                status.textContent = 'Accessories coming soon for this case.';
+            }
         }
     }
 
-    function createAccessoryCard(acc, isUniversal) {
+    function createStandaloneAccCard(acc, isUniversal) {
         var tierPrice = getAccessoryTierPrice(acc.price);
         var hasDiscount = getCurrentSetupTier() !== 'carbon' && tierPrice < acc.price;
         var typeIcon = acc.type === 'ring-stand' ? '🔄' : acc.type === 'wallet-stand' ? '💳' : acc.type === 'bundle' ? '📦' : '✨';
-        var typeLabel = acc.type === 'ring-stand' ? 'Ring Stand' : acc.type === 'wallet-stand' ? 'Wallet Stand' : acc.type === 'bundle' ? 'Bundle' : 'Accessory';
+        var typeLabel = acc.type === 'ring-stand' ? 'Ring Stand' : acc.type === 'wallet-stand' ? 'Wallet Stand' : 'Bundle';
 
         var card = document.createElement('div');
-        card.style.cssText = 'padding: 0.75rem; border: 1px solid rgba(197,160,89,0.12); border-radius: 8px; background: rgba(20,20,30,0.3); cursor: pointer; transition: all 0.25s ease; position: relative;';
-        card.dataset.accId = acc.id;
-        card.dataset.accPrice = tierPrice;
+        card.style.cssText = 'padding: 0.75rem; border: 1px solid rgba(197,160,89,0.12); border-radius: 8px; background: rgba(20,20,30,0.3); cursor: pointer; transition: all 0.25s ease;';
+        card.setAttribute('data-acc-id', acc.id);
 
         card.onmouseenter = function() {
             if (!card.classList.contains('acc-selected')) {
@@ -2749,7 +2771,7 @@
                 card.style.background = 'rgba(197,160,89,0.08)';
                 selectedAccessories.push(acc.id);
             }
-            updateAccessoryTotal();
+            updateStandaloneTotal();
         };
 
         var priceHTML = hasDiscount
@@ -2765,38 +2787,32 @@
             '</div>' +
             '<div style="font-family: \'Cormorant Garamond\', serif; font-size: 0.8rem; color: #ccc; line-height: 1.3; margin-bottom: 0.3rem;">' + acc.name + '</div>' +
             '<div style="display: flex; align-items: center; justify-content: space-between;">' +
-                '<div style="display: flex; align-items: baseline; gap: 0.3rem;">' + priceHTML + '</div>' +
+                '<div>' + priceHTML + '</div>' +
                 '<span style="font-size: 0.6rem; color: #666; font-family: \'EB Garamond\', serif;">' + (isUniversal ? 'Universal' : 'Matched') + ' · Add +</span>' +
             '</div>';
-
         return card;
     }
 
-    function selectAllAccessories(accessories) {
-        var grid = document.getElementById('accessoryGrid');
+    function selectAllStandalone(accessories) {
+        var grid = document.getElementById('standaloneAccessoryGrid');
         if (!grid) return;
         selectedAccessories = [];
-        accessories.forEach(function(acc) {
-            selectedAccessories.push(acc.id);
-        });
-        // Visually select all
+        accessories.forEach(function(acc) { selectedAccessories.push(acc.id); });
         grid.querySelectorAll('[data-acc-id]').forEach(function(card) {
-            if (accessories.some(function(a) { return a.id === card.dataset.accId; })) {
+            if (accessories.some(function(a) { return a.id === card.getAttribute('data-acc-id'); })) {
                 card.classList.add('acc-selected');
                 card.style.borderColor = 'rgba(197,160,89,0.6)';
                 card.style.background = 'rgba(197,160,89,0.08)';
             }
         });
-        updateAccessoryTotal();
+        updateStandaloneTotal();
     }
 
-    function updateAccessoryTotal() {
-        var grid = document.getElementById('accessoryGrid');
+    function updateStandaloneTotal() {
+        var grid = document.getElementById('standaloneAccessoryGrid');
         if (!grid) return;
-        // Remove existing total
         var existing = grid.querySelector('.acc-total-bar');
         if (existing) existing.remove();
-
         if (selectedAccessories.length === 0) return;
 
         var total = 0;
