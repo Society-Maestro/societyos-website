@@ -1833,10 +1833,12 @@
 
             <!-- Device Picker -->
             <div class="case-device-picker" id="caseDevicePicker">
-                <button class="case-device-btn active" onclick="selectCaseDevice('Fold 8 Ultra', this)">Fold 8 Ultra</button>
-                <button class="case-device-btn" onclick="selectCaseDevice('Fold 7', this)">Fold 7</button>
+                <button class="case-device-btn active" onclick="selectCaseDevice('iPhone Fold', this)">iPhone Fold</button>
                 <button class="case-device-btn" onclick="selectCaseDevice('iPhone 18 Pro', this)">iPhone 18 Pro</button>
-                <button class="case-device-btn" onclick="selectCaseDevice('iPhone Ultra', this)">iPhone Ultra</button>
+                <button class="case-device-btn" onclick="selectCaseDevice('iPhone 18 Pro Max', this)">iPhone 18 Pro Max</button>
+                <button class="case-device-btn" onclick="selectCaseDevice('Samsung Galaxy S26 Ultra', this)">Galaxy S26 Ultra</button>
+                <button class="case-device-btn" onclick="selectCaseDevice('Samsung Galaxy Fold 8', this)">Galaxy Fold 8</button>
+                <button class="case-device-btn" onclick="selectCaseDevice('Samsung Galaxy Z Fold 8 Ultra', this)">Z Fold 8 Ultra</button>
             </div>
 
             <!-- Case Info -->
@@ -1846,6 +1848,24 @@
                 <div class="case-info-features" id="caseInfoFeatures"></div>
                 <div class="case-color-picker" id="caseColorPicker"></div>
             </div>
+        </div>
+
+        <!-- Complete the Set — Paired Accessories -->
+        <div class="complete-the-set" id="completeTheSet" style="margin-top: 2rem; padding: 1.5rem; border: 1px solid rgba(197,160,89,0.2); border-radius: 12px; background: rgba(10,10,15,0.6);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                <div>
+                    <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: #c5a059; margin: 0;">Complete the Set</h3>
+                    <p style="font-family: 'EB Garamond', serif; font-size: 0.9rem; color: #888; margin: 0.25rem 0 0 0;">SocietyOS Verified MagSafe Accessories — matched to your case</p>
+                </div>
+                <!-- Tier Selector -->
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <span style="font-size: 0.8rem; color: #666; font-family: 'EB Garamond', serif;">Member Tier:</span>
+                    <button class="tier-btn active" onclick="selectTier('carbon', this)" style="padding: 4px 12px; border: 1px solid rgba(197,160,89,0.3); border-radius: 6px; background: transparent; color: #c5a059; font-family: 'EB Garamond', serif; font-size: 0.8rem; cursor: pointer;">Carbon</button>
+                    <button class="tier-btn" onclick="selectTier('onyx', this)" style="padding: 4px 12px; border: 1px solid rgba(120,120,120,0.3); border-radius: 6px; background: transparent; color: #9999; font-family: 'EB Garamond', serif; font-size: 0.8rem; cursor: pointer;">Onyx <span style="font-size: 0.7rem; color: #6a9c5a;">-10%</span></button>
+                    <button class="tier-btn" onclick="selectTier('gold', this)" style="padding: 4px 12px; border: 1px solid rgba(197,160,89,0.3); border-radius: 6px; background: transparent; color: #c5a059; font-family: 'EB Garamond', serif; font-size: 0.8rem; cursor: pointer;">Gold <span style="font-size: 0.7rem; color: #c5a059;">-20%</span></button>
+                </div>
+            </div>
+            <div id="accessoryGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;"></div>
         </div>
     </div>
 </section>
@@ -2139,7 +2159,22 @@
         'Ombre Black / Ombre Gray': 'linear-gradient(135deg, #1a1a1a, #5a5a5a)'
     };
 
-    let currentDevice = 'Fold 8 Ultra';
+    let currentDevice = 'iPhone Fold';
+    let currentTier = 'carbon';
+    let currentCase = null;
+
+    function selectTier(tier, btn) {
+        currentTier = tier;
+        document.querySelectorAll('.tier-btn').forEach(b => {
+            b.classList.remove('active');
+            b.style.color = '#9999';
+            b.style.borderColor = 'rgba(120,120,120,0.3)';
+        });
+        btn.classList.add('active');
+        btn.style.color = '#c5a059';
+        btn.style.borderColor = 'rgba(197,160,89,0.3)';
+        renderAccessories();
+    }
 
     function renderCaseSelector() {
         const protocol = getActiveProtocol();
@@ -2149,10 +2184,11 @@
         document.getElementById('caseSelectorTitle').textContent = protocol.brand === 'SocietyOS' ? 'Sovereign Protection' : 'Premium Cases by Raptic';
         document.getElementById('caseSelectorSubtitle').textContent = protocol.brand === 'SocietyOS'
             ? 'Select your device — the case morphs to life'
-            : 'Premium Raptic cases — a SocietyOS partner';
+            : 'Premium Raptic cases — a SocietyOS distributor partner';
 
         // Find case for current device
-        const caseData = cases.find(c => c.device.includes(currentDevice)) || cases[0];
+        const caseData = cases.find(c => c.device === currentDevice) || cases.find(c => c.device.includes(currentDevice)) || cases[0];
+        currentCase = caseData;
 
         // Update glass case
         document.getElementById('glassCaseMaterial').textContent = caseData.material;
@@ -2188,7 +2224,6 @@
             swatch.onclick = function() {
                 document.querySelectorAll('.case-color-swatch').forEach(s => s.classList.remove('active'));
                 this.classList.add('active');
-                // Shift the glass glow color
                 const glassCase = document.getElementById('liquidGlassCase');
                 glassCase.style.setProperty('--glass-tint', bg || '#c5a059');
             };
@@ -2203,6 +2238,79 @@
             document.body.appendChild(badge);
         }
         badge.textContent = 'Active Protocol: ' + protocol.name;
+
+        // Render matching accessories
+        renderAccessories();
+    }
+
+    function renderAccessories() {
+        if (!currentCase) return;
+        const paired = getPairedAccessories(currentCase, currentTier);
+        const grid = document.getElementById('accessoryGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        if (paired.length === 0) {
+            grid.innerHTML = '<p style="font-family: \'EB Garamond\', serif; color: #666; font-size: 0.9rem;">No matching accessories found for this case. Clear and transparent cases pair with any SocietyOS Verified MagSafe accessory.</p>';
+            return;
+        }
+
+        // Build the "Complete the Set" suggestion header
+        const isClearCase = (currentCase.series === 'Air' || currentCase.series === 'Shield' || (currentCase.material && currentCase.material.toLowerCase().includes('clear')));
+        const setHeader = document.createElement('div');
+        setHeader.style.gridColumn = '1 / -1';
+        setHeader.style.marginBottom = '0.5rem';
+        setHeader.innerHTML = '<p style="font-family: \'EB Garamond\', serif; font-size: 0.85rem; color: #c5a059; margin: 0;">' +
+            (isClearCase ?
+                'Clear case selected — all SocietyOS Verified MagSafe accessories are compatible. Complete your setup:' :
+                'Pairs with ' + (currentCase.series || 'your') + ' series — match the design and color for a seamless look:') +
+            '</p>';
+        grid.appendChild(setHeader);
+
+        paired.forEach(function(item) {
+            const acc = item.accessory;
+            const tierPrice = item.tierPrice;
+            const hasDiscount = currentTier !== 'carbon' && tierPrice < acc.price;
+
+            const card = document.createElement('div');
+            card.style.cssText = 'padding: 1rem; border: 1px solid rgba(197,160,89,0.15); border-radius: 10px; background: rgba(20,20,30,0.4); transition: all 0.3s ease; cursor: pointer;';
+            card.onmouseenter = function() { card.style.borderColor = 'rgba(197,160,89,0.4)'; card.style.transform = 'translateY(-2px)'; };
+            card.onmouseleave = function() { card.style.borderColor = 'rgba(197,160,89,0.15)'; card.style.transform = ''; };
+
+            const typeIcon = acc.type === 'ring-stand' ? '🔄' : acc.type === 'wallet-stand' ? '💳' : acc.type === 'bundle' ? '📦' : '✨';
+            const typeLabel = acc.type === 'ring-stand' ? 'Ring Stand' : acc.type === 'wallet-stand' ? 'Wallet Stand' : acc.type === 'bundle' ? 'Bundle Kit' : 'Accessory';
+
+            card.innerHTML =
+                '<div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">' +
+                    '<span style="font-size: 1.2rem;">' + typeIcon + '</span>' +
+                    '<span style="font-size: 0.7rem; color: #c5a059; text-transform: uppercase; letter-spacing: 0.05em;">' + typeLabel + '</span>' +
+                '</div>' +
+                '<div style="font-family: \'Cormorant Garamond\', serif; font-size: 1.05rem; color: #e0e0e0; margin-bottom: 0.25rem; line-height: 1.3;">' + acc.name + '</div>' +
+                '<div style="font-family: \'EB Garamond\', serif; font-size: 0.8rem; color: #888; margin-bottom: 0.5rem;">' + (acc.description || '') + '</div>' +
+                '<div style="display: flex; align-items: center; justify-content: space-between;">' +
+                    '<div style="display: flex; align-items: baseline; gap: 0.4rem;">' +
+                        (hasDiscount ?
+                            '<span style="text-decoration: line-through; color: #666; font-size: 0.85rem; font-family: \'EB Garamond\', serif;">$' + acc.price.toFixed(2) + '</span>' +
+                            '<span style="color: #c5a059; font-size: 1.1rem; font-family: \'Cormorant Garamond\', serif; font-weight: 600;">$' + tierPrice.toFixed(2) + '</span>'
+                            :
+                            '<span style="color: #c5a059; font-size: 1.1rem; font-family: \'Cormorant Garamond\', serif; font-weight: 600;">$' + tierPrice.toFixed(2) + '</span>'
+                        ) +
+                    '</div>' +
+                    '<span style="font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; background: rgba(197,160,89,0.1); color: #c5a059; font-family: \'EB Garamond\', serif;">Verified MagSafe</span>' +
+                '</div>';
+
+            grid.appendChild(card);
+        });
+
+        // Add "Complete the Set" bundle suggestion at the end
+        if (paired.length > 1 && currentTier !== 'carbon') {
+            const bundleCta = document.createElement('div');
+            bundleCta.style.cssText = 'grid-column: 1 / -1; padding: 1rem; border: 1px dashed rgba(197,160,89,0.3); border-radius: 10px; text-align: center; margin-top: 0.5rem;';
+            const totalSaving = paired.reduce(function(sum, item) { return sum + (item.accessory.price - item.tierPrice); }, 0);
+            bundleCta.innerHTML =
+                '<span style="font-family: \'Cormorant Garamond\', serif; font-size: 1rem; color: #c5a059;">📦 Complete the full set and save $' + totalSaving.toFixed(2) + ' with ' + currentTier.charAt(0).toUpperCase() + currentTier.slice(1) + ' membership</span>';
+            grid.appendChild(bundleCta);
+        }
     }
 
     function selectCaseDevice(device, btn) {
@@ -2210,12 +2318,11 @@
         document.querySelectorAll('.case-device-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
-        // Morph animation — glass case pulses and reshapes
         const glassCase = document.getElementById('liquidGlassCase');
         glassCase.style.transform = 'scale(0.92) rotateY(8deg)';
         glassCase.style.opacity = '0.4';
 
-        setTimeout(() => {
+        setTimeout(function() {
             renderCaseSelector();
             glassCase.style.transform = '';
             glassCase.style.opacity = '';
