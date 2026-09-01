@@ -1617,10 +1617,10 @@
         "raptic-i18p-nano-black": "case-images/raptic-i18p-nano-black.jpg",
         "raptic-i18p-nano-white": "case-images/raptic-i18p-nano-white.jpg",
         "raptic-i18p-folio-black": "case-images/raptic-i18p-folio-black.jpg",
-        "raptic-i18p-air-stand-clear": "case-images/raptic-i18p-air-stand-clear.jpg",
-        "raptic-i18p-air-stand-burgundy": "case-images/raptic-i18p-air-stand-burgundy.jpg",
-        "raptic-i18p-air-clear-clear": "case-images/raptic-i18p-air-clear-clear.jpg",
-        "raptic-i18p-air-clear-burgundy": "case-images/raptic-i18p-air-clear-burgundy.jpg",
+        "raptic-i18p-air-stand-clear": "case-images/raptic-ip17pm-air-clear-clear.jpg",
+        "raptic-i18p-air-stand-burgundy": "case-images/raptic-ip17pm-air-clear-black.jpg",
+        "raptic-i18p-air-clear-clear": "case-images/raptic-ip17pm-air-clear-clear.jpg",
+        "raptic-i18p-air-clear-burgundy": "case-images/raptic-ip17pm-air-clear-black.jpg",
         "raptic-i18p-shield-evo-starfall": "case-images/raptic-i18p-shield-evo-starfall.jpg",
         "raptic-i18p-shield-evo-gold": "case-images/raptic-i18p-shield-evo-gold.jpg",
         "raptic-i18p-shield-evo-onyx": "case-images/raptic-i18p-shield-evo-onyx.jpg",
@@ -1764,7 +1764,7 @@
                 { id: 'raptic-i18p-nano-black', label: 'Urban Nano — Stellar Black', subtitle: 'Included with membership', type: 'leather', lifestyle: 'Ultra-Slim 1.6mm · Premium PU Leather', material: 'leather', series: 'a18', hasMagsafe: true, rapticSeries: 'Urban Nano' },
                 { id: 'raptic-i18p-nano-white', label: 'Urban Nano — Plume White', subtitle: 'Included with membership', type: 'leather', lifestyle: 'Ultra-Slim 1.6mm · Premium PU Leather', material: 'leather', series: 'a18', hasMagsafe: true, rapticSeries: 'Urban Nano' },
                 // ── iPhone 18 Pro — Urban Folio ──
-                { id: 'raptic-i18p-folio-black', label: 'Urban Folio — Black', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Military-Grade · Slim Front Cover', material: 'shield', series: 'a18', hasMagsafe: true, rapticSeries: 'Urban' },
+                { id: 'raptic-i18p-folio-black', label: 'Urban Folio — Black', subtitle: 'Included with membership', type: 'magsafe', lifestyle: 'Military-Grade · Slim Front Cover', material: 'shield', series: 'a18', hasMagsafe: true, rapticSeries: 'Shield' },
                 // ── iPhone 18 Pro — Air Stand (Clear) ──
                 { id: 'raptic-i18p-air-stand-clear', label: 'Air Stand — Clear', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Military-Grade · 360° Kickstand', material: 'clear', series: 'a18', hasMagsafe: true, rapticSeries: 'Air' },
                 { id: 'raptic-i18p-air-stand-burgundy', label: 'Air Stand — Burgundy', subtitle: 'Included with membership', type: 'clear', lifestyle: 'Military-Grade · Burgundy Bumper', material: 'clear', series: 'a18', hasMagsafe: true, rapticSeries: 'Air' },
@@ -2641,6 +2641,7 @@
 
         var series = caseOpt.rapticSeries || 'Grid';
         var isClear = (caseOpt.type === 'clear' || (caseOpt.material && caseOpt.material === 'clear') || series === 'Air' || series === 'Shield');
+        var hasMagSafe = caseOpt.hasMagsafe !== false; // All Raptic cases have MagSafe
 
         // Get accessories from protocol-config
         var allAccessories = [];
@@ -2671,6 +2672,8 @@
         headerDiv.innerHTML = '<p style="font-family: \'EB Garamond\', serif; font-size: 0.75rem; color: #c5a059; margin: 0;">' +
             (isClear ?
                 'Clear case — browse all SocietyOS Verified MagSafe accessories below. Tap to add:' :
+                hasMagSafe ?
+                'Matched accessories for ' + series + ' series — tap to add. All cases are MagSafe compatible:' :
                 'Matched accessories for ' + series + ' series — tap to add to your set:') +
             '</p>';
         grid.appendChild(headerDiv);
@@ -2680,8 +2683,8 @@
             grid.appendChild(createAccessoryCard(acc, false));
         });
 
-        // For clear cases: show universal MagSafe accessories with a browse button
-        if (isClear && universalAccessories.length > 0) {
+        // For ALL MagSafe cases: show universal MagSafe accessories
+        if (hasMagSafe && universalAccessories.length > 0) {
             // Add a divider
             var divider = document.createElement('div');
             divider.style.cssText = 'grid-column: 1 / -1; margin: 0.5rem 0; padding-top: 0.5rem; border-top: 1px solid rgba(197,160,89,0.1);';
