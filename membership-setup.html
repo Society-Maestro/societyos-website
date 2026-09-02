@@ -3057,7 +3057,7 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
                 selections.case = null; // ensure no stale case
                 currentStep = 3;
             }
-            renderStep(currentStep);
+            try { renderStep(currentStep); } catch(e) { console.error('SocietyOS renderStep error:', e); }
         } else {
             // Complete — would redirect to payment
             alert('SocietyOS setup complete! Welcome to the Society.');
@@ -3076,12 +3076,12 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
                 window.__caseLocked = false;
                 document.getElementById('selection-grid')?.classList.remove('case-locked');
             }
-            renderStep(currentStep);
+            try { renderStep(currentStep); } catch(e) { console.error('SocietyOS renderStep error:', e); }
         }
     }
 
-    // Init
-    renderStep(1);
+    // Init — wrapped in try-catch so missing elements don't kill the page
+    try { renderStep(1); } catch(e) { console.error('SocietyOS init error:', e); }
 </script>
 
 </body>
