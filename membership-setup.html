@@ -3068,6 +3068,15 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
                 currentStep = 3;
             }
             try { renderStep(currentStep); } catch(e) { console.error('SocietyOS renderStep error:', e); }
+            // Auto-scroll to top of content area on step change
+            setTimeout(function() {
+                var contentEl = document.querySelector('.content') || document.querySelector('main') || document.body;
+                if (contentEl) {
+                    contentEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }, 100);
         } else {
             // Complete — would redirect to payment
             alert('SocietyOS setup complete! Welcome to the Society.');
@@ -3087,6 +3096,15 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
                 document.getElementById('selection-grid')?.classList.remove('case-locked');
             }
             try { renderStep(currentStep); } catch(e) { console.error('SocietyOS renderStep error:', e); }
+            // Auto-scroll to top of content area on step change
+            setTimeout(function() {
+                var contentEl = document.querySelector('.content') || document.querySelector('main') || document.body;
+                if (contentEl) {
+                    contentEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }, 100);
         }
     }
 
