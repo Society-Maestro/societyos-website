@@ -2663,14 +2663,28 @@
     function renderStandaloneAccessories(caseOpt) {
         var grid = document.getElementById('standaloneAccessoryGrid');
         var status = document.getElementById('standaloneAccessoryStatus');
-        if (!grid) return;
+        if (!grid) {
+            console.error('SocietyOS: standaloneAccessoryGrid not found in DOM');
+            return;
+        }
 
         var series = caseOpt.rapticSeries || 'Grid';
         var isClear = (caseOpt.type === 'clear' || (caseOpt.material && caseOpt.material === 'clear') || series === 'Air' || series === 'Shield');
         var hasMagSafe = caseOpt.hasMagsafe !== false;
 
         var allAccessories = [];
-        try { allAccessories = getProtocolAccessories(); } catch(e) {}
+        try {
+            allAccessories = getProtocolAccessories();
+        } catch(e) {
+            console.error('SocietyOS: getProtocolAccessories failed:', e.message);
+            grid.innerHTML = '<p style="color: #c5a059; font-family: \'EB Garamond\', serif; font-size: 0.8rem;">Loading accessories...</p>';
+            return;
+        }
+
+        if (!allAccessories || allAccessories.length === 0) {
+            grid.innerHTML = '<p style="color: #666; font-family: \'EB Garamond\', serif; font-size: 0.8rem;">No accessories available.</p>';
+            return;
+        }
 
         var seriesMatched = [];
         var universalAccessories = [];
