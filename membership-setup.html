@@ -2225,6 +2225,9 @@
                     <div style="font-family: 'EB Garamond', serif; font-size: 0.85rem; color: #888; margin-bottom: 1rem;">Select your case above, then choose matching MagSafe accessories to complete your set.</div>
                     <div id="standaloneAccessoryGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem;"></div>
                     <div id="standaloneAccessoryStatus" style="text-align: center; padding: 1rem; color: #666; font-family: 'EB Garamond', serif; font-size: 0.9rem;">Select a case to see matching accessories</div>
+                    <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
+                        <button onclick="goNext()" style="padding: 0.6rem 1.5rem; background: rgba(197,160,89,0.1); border: 1px solid rgba(197,160,89,0.3); border-radius: 8px; color: #c5a059; font-family: 'Cormorant Garamond', serif; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;">Continue →</button>
+                    </div>
                 `;
                 // Insert after the layout
                 if (layout) {
@@ -2281,6 +2284,13 @@
         if (step === 2) {
             try { renderCaseInPreview(opt); } catch(e) { console.error('renderCaseInPreview error:', e); }
             renderStandaloneAccessories(opt);
+            // Auto-scroll to the Complete the Set section
+            setTimeout(function() {
+                var accSection = document.querySelector('.complete-the-set-standalone');
+                if (accSection) {
+                    accSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 200);
         }
         if (step === 3 && opt.type === 'tangem') {
             triggerNFCAnimation();
