@@ -2279,7 +2279,7 @@
             showDeviceRender(opt);
         }
         if (step === 2) {
-            renderCaseInPreview(opt);
+            try { renderCaseInPreview(opt); } catch(e) { console.error('renderCaseInPreview error:', e); }
             renderStandaloneAccessories(opt);
         }
         if (step === 3 && opt.type === 'tangem') {
