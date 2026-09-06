@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>SocietyOS — Society TV Premium · Powered by PrimeHub</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=EB+Garamond:wght@400;500;600;700&family=SF+Mono&display=swap');
+        :root {
+            --bg-primary: #0d1f2d;
+            --bg-secondary: #122844;
+            --bg-elevated: #1a3358;
+            --bg-card: #152a45;
+            --bg-deep: #091623;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-glow: rgba(197, 160, 89, 0.3);
+            --society-gold: #c5a059;
+            --society-gold-light: #e5c585;
+            --society-gold-glow: rgba(197, 160, 89, 0.15);
+            --society-gold-2: #c5a059;
+            --society-gold-light-2: #e5c585;
+            --society-gold-glow-2: rgba(197, 160, 89, 0.15);
+            --society-purple: #8b5cf6;
+            --society-purple-glow: rgba(139, 92, 246, 0.12);
+            --accent-green: #2a8a5e;
+            --society-green-glow: rgba(27, 94, 62, 0.2);
+            --success: #2dd4a8;
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b8;
+            --text-tertiary: #6a6a82;
+            --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-display: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'EB Garamond', Georgia, serif;
+            --font-mono: 'SF Mono', Monaco, Menlo, monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        body::before {
+            content: ''; position: fixed; top: -20%; left: -10%;
+            width: 60%; height: 60%;
+            background: radial-gradient(circle, rgba(30, 61, 89, 0.2) 0%, transparent 60%);
+            filter: blur(80px); z-index: 0; pointer-events: none;
+        }
+        body::after {
+            content: ''; position: fixed; bottom: -20%; right: -10%;
+            width: 50%; height: 50%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 60%);
+            filter: blur(80px); z-index: 0; pointer-events: none;
+        }
+
+        .container {
+            position: relative; z-index: 1;
+            max-width: 1200px; margin: 0 auto; padding: 2rem;
+            min-height: 100vh; display: flex; flex-direction: column;
+        }
+
+        /* ── Logo ── */
+        .logo-wrap {
+            text-align: center; margin-bottom: 1.5rem;
+        }
+        .logo-wrap img {
+            width: 160px; height: auto; opacity: 0.95;
+            filter: drop-shadow(0 0 20px rgba(197, 160, 89, 0.2));
+        }
+        .logo-wrap .powered {
+            font-family: var(--font-mono); font-size: 0.7rem;
+            color: var(--text-tertiary); letter-spacing: 2px;
+            text-transform: uppercase; margin-top: 0.5rem;
+        }
+
+        /* ── Progress steps ── */
+        .steps {
+            display: flex; justify-content: center; align-items: center;
+            gap: 0.5rem; margin-bottom: 2.5rem;
+        }
+        .step { display: flex; align-items: center; gap: 0.5rem; }
+        .step-dot {
+            width: 32px; height: 32px; border-radius: 50%;
+            border: 2px solid var(--border-subtle);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 600; color: var(--text-tertiary);
+            transition: var(--transition);
+        }
+        .step.active .step-dot {
+            border-color: var(--society-gold);
+            background: var(--society-gold-glow);
+            color: var(--society-gold-light);
+            box-shadow: 0 0 20px var(--society-gold-glow);
+        }
+        .step.completed .step-dot {
+            background: var(--society-gold); border-color: var(--society-gold); color: white;
+        }
+        .step-label {
+            font-size: 0.85rem; color: var(--text-tertiary); transition: var(--transition);
+        }
+        .step.active .step-label { color: var(--text-primary); }
+        .step-line {
+            width: 40px; height: 2px; background: var(--border-subtle); transition: var(--transition);
+        }
+        .step-line.completed { background: var(--society-gold); }
+
+        /* ── Stage ── */
+        .stage {
+            width: 100%; max-width: 900px; min-height: 380px;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; position: relative; margin: 0 auto;
+        }
+
+        /* AI Bubble */
+        .ai-bubble {
+            width: 180px; height: 180px; border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%,
+                rgba(168, 112, 255, 0.3) 0%,
+                rgba(197, 160, 89, 0.15) 50%,
+                rgba(10, 10, 15, 0.8) 100%);
+            border: 1px solid var(--border-glow);
+            position: relative; display: flex; align-items: center; justify-content: center;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 60px var(--society-gold-glow), inset 0 0 40px rgba(197, 160, 89, 0.08);
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-12px) scale(1.02); }
+        }
+        .ai-bubble::before {
+            content: ''; position: absolute; width: 60%; height: 60%; border-radius: 50%;
+            background: radial-gradient(circle, var(--society-gold-glow) 0%, transparent 70%);
+            animation: pulse-inner 3s ease-in-out infinite;
+        }
+        @keyframes pulse-inner {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+        .ai-bubble-mark {
+            width: 72px; height: 72px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--society-gold), var(--society-gold-2));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; font-weight: 800; color: white; z-index: 2;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 20px var(--society-gold-glow);
+            font-family: var(--font-display);
+        }
+        /* Morphed states */
+        .ai-bubble.morphed-tv {
+            width: 280px; height: 160px; border-radius: 16px;
+            animation: none;
+            border: 1px solid var(--border-glow);
+        }
+        .ai-bubble.morphed-tv .ai-bubble-mark {
+            width: 48px; height: 48px; font-size: 1.4rem;
+        }
+        .ai-bubble.morphed-complete {
+            width: 220px; height: 220px; border-radius: 50%;
+            border-color: var(--success);
+            box-shadow: 0 0 80px rgba(45, 212, 168, 0.2), inset 0 0 40px rgba(45, 212, 168, 0.08);
+        }
+
+        /* Orbiting particles */
+        .orbit-container {
+            position: absolute; width: 280px; height: 280px;
+            top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;
+        }
+        .orbit-particle {
+            position: absolute; width: 6px; height: 6px; border-radius: 50%;
+            background: var(--society-gold); box-shadow: 0 0 8px var(--society-gold);
+            top: 50%; left: 50%;
+        }
+        .orbit-particle:nth-child(1) { animation: orbit 6s linear infinite; }
+        .orbit-particle:nth-child(2) { animation: orbit 8s linear infinite reverse; }
+        .orbit-particle:nth-child(3) { animation: orbit 10s linear infinite; }
+        @keyframes orbit {
+            from { transform: translate(-50%, -50%) rotate(0deg) translateX(130px) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg) translateX(130px) rotate(-360deg); }
+        }
+
+        /* Stage prompt */
+        .stage-prompt {
+            font-family: var(--font-display);
+            font-size: 1.5rem; font-weight: 600;
+            margin-top: 2rem; margin-bottom: 0.5rem;
+            text-align: center; transition: opacity 0.4s;
+        }
+        .stage-subtitle {
+            color: var(--text-secondary); font-size: 0.95rem;
+            text-align: center; margin-bottom: 2rem;
+            font-family: var(--font-body);
+        }
+
+        /* ── TV Tier selection cards ── */
+        .tier-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem; width: 100%; max-width: 900px;
+            margin: 0 auto;
+        }
+        .tier-card {
+            background: var(--bg-card); border: 1px solid var(--border-subtle);
+            border-radius: 16px; padding: 1.5rem;
+            cursor: pointer; transition: var(--transition);
+            position: relative; overflow: visible; opacity: 0.85;
+            filter: brightness(0.9) saturate(0.8);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        }
+        .tier-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--society-gold), var(--society-gold-2));
+            transform: scaleX(0); transform-origin: left; transition: var(--transition);
+        }
+        .tier-card::after {
+            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--society-gold-glow) 0%, transparent 40%, transparent 60%, var(--society-gold-glow-2) 100%);
+            opacity: 0; transition: opacity 0.6s ease; pointer-events: none; z-index: -1;
+        }
+        .tier-card:hover {
+            opacity: 1; filter: brightness(1) saturate(1);
+            border-color: var(--border-glow); background: var(--bg-elevated);
+            transform: translateY(-4px);
+            box-shadow: 0 0 0 1px var(--border-glow), 0 0 20px rgba(197, 160, 89, 0.2), 0 0 40px rgba(197, 160, 89, 0.1), 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+        .tier-card:hover::before { transform: scaleX(1); }
+        .tier-card:hover::after { opacity: 1; }
+        .tier-card.selected {
+            opacity: 1; filter: brightness(1) saturate(1);
+            border-color: var(--society-gold); background: var(--bg-elevated);
+            box-shadow: 0 0 0 1px var(--society-gold), 0 0 20px rgba(197, 160, 89, 0.25), 0 0 40px rgba(197, 160, 89, 0.12), 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+        .tier-card.selected::before { transform: scaleX(1); }
+        .tier-card.selected::after { opacity: 0.5; }
+
+        .tier-name {
+            font-family: var(--font-display); font-size: 1.5rem; font-weight: 700;
+            margin-bottom: 0.25rem; letter-spacing: 1px;
+        }
+        .tier-price {
+            font-family: var(--font-mono); font-size: 0.9rem;
+            color: var(--text-secondary); margin-bottom: 1rem;
+        }
+        .tier-price .amount {
+            color: var(--society-gold-light); font-weight: 600; font-size: 1.1rem;
+        }
+        .tier-features {
+            display: flex; flex-direction: column; gap: 0.5rem;
+            font-size: 0.85rem; color: var(--text-secondary);
+        }
+        .tier-feature { display: flex; align-items: flex-start; gap: 0.5rem; }
+        .tier-feature .icon { flex-shrink: 0; margin-top: 1px; }
+        .tier-feature .check { color: var(--success); }
+        .tier-feature .cross { color: var(--text-tertiary); }
+        .tier-feature .partial { color: var(--society-gold); }
+        .tier-badge {
+            display: inline-block; padding: 3px 10px; border-radius: 12px;
+            font-size: 0.7rem; font-weight: 600; font-family: var(--font-mono);
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 0.75rem;
+        }
+        .badge-gold { background: var(--society-gold-glow); color: var(--society-gold-light); border: 1px solid var(--border-glow); }
+        .badge-purple { background: var(--society-purple-glow); color: var(--society-purple); border: 1px solid rgba(139, 92, 246, 0.3); }
+        .badge-green { background: var(--society-green-glow); color: var(--accent-green); border: 1px solid rgba(42, 138, 94, 0.3); }
+
+        /* ── Content showcase ── */
+        .showcase {
+            width: 100%; max-width: 900px; margin: 0 auto;
+            display: none; flex-direction: column; gap: 1.5rem;
+        }
+        .showcase.active { display: flex; }
+
+        .showcase-header {
+            text-align: center; margin-bottom: 0.5rem;
+        }
+        .showcase-header h2 {
+            font-family: var(--font-display); font-size: 2rem; font-weight: 700;
+            background: linear-gradient(135deg, var(--society-gold-light), var(--society-gold));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; margin-bottom: 0.5rem;
+        }
+        .showcase-header p {
+            color: var(--text-secondary); font-size: 1rem;
+        }
+
+        /* Content stats bar */
+        .stats-bar {
+            display: flex; gap: 1rem; flex-wrap: wrap;
+            justify-content: center; margin: 1rem 0;
+        }
+        .stat-pill {
+            background: var(--bg-card); border: 1px solid var(--border-subtle);
+            border-radius: 24px; padding: 0.5rem 1.25rem;
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 0.85rem; color: var(--text-secondary);
+        }
+        .stat-pill .num {
+            font-family: var(--font-display); font-size: 1.3rem;
+            font-weight: 700; color: var(--society-gold-light);
+        }
+        .stat-pill .label {
+            font-family: var(--font-mono); font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* Content row */
+        .content-section { width: 100%; }
+        .content-section-title {
+            font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+            margin-bottom: 0.75rem; color: var(--text-primary);
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .content-section-title .tag {
+            font-family: var(--font-mono); font-size: 0.7rem;
+            color: var(--text-tertiary); text-transform: uppercase;
+            letter-spacing: 1px; font-weight: 400;
+        }
+        .content-row {
+            display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;
+            scrollbar-width: thin; scrollbar-color: var(--border-subtle) transparent;
+        }
+        .content-row::-webkit-scrollbar { height: 4px; }
+        .content-row::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 2px; }
+        .content-row::-webkit-scrollbar-track { background: transparent; }
+
+        .movie-card {
+            min-width: 140px; max-width: 140px; flex-shrink: 0;
+            background: var(--bg-card); border: 1px solid var(--border-subtle);
+            border-radius: 10px; overflow: hidden; cursor: pointer;
+            transition: var(--transition); position: relative;
+        }
+        .movie-card:hover {
+            transform: translateY(-3px); border-color: var(--border-glow);
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.15);
+        }
+        .movie-card img {
+            width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block;
+            background: var(--bg-deep);
+        }
+        .movie-card .info { padding: 0.5rem 0.625rem; }
+        .movie-card .title {
+            font-size: 0.8rem; font-weight: 600; color: var(--text-primary);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .movie-card .meta {
+            font-size: 0.7rem; color: var(--text-tertiary); margin-top: 2px;
+            display: flex; gap: 6px; align-items: center;
+            font-family: var(--font-mono);
+        }
+        .movie-card .meta .av { color: var(--success); }
+        .movie-card .meta .miss { color: #ef4444; }
+        .movie-card .meta .req { color: var(--society-gold); }
+        .movie-card .quality-badge {
+            position: absolute; top: 6px; right: 6px;
+            padding: 2px 6px; border-radius: 4px;
+            font-size: 0.6rem; font-weight: 700; font-family: var(--font-mono);
+            background: rgba(45, 212, 168, 0.2); color: var(--success);
+            border: 1px solid rgba(45, 212, 168, 0.3);
+        }
+
+        /* ── Device showcase ── */
+        .device-showcase {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+            width: 100%; max-width: 700px; margin: 1rem auto;
+        }
+        .device-tile {
+            background: var(--bg-card); border: 1px solid var(--border-subtle);
+            border-radius: 14px; padding: 1.25rem; text-align: center;
+            transition: var(--transition);
+        }
+        .device-tile:hover {
+            border-color: var(--border-glow);
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.1);
+        }
+        .device-tile .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .device-tile .name {
+            font-family: var(--font-display); font-size: 1.1rem; font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .device-tile .desc {
+            font-size: 0.8rem; color: var(--text-tertiary);
+            font-family: var(--font-mono);
+        }
+        .device-tile .status {
+            display: inline-block; margin-top: 0.5rem;
+            padding: 3px 10px; border-radius: 12px;
+            font-size: 0.7rem; font-weight: 600; font-family: var(--font-mono);
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .status-live { background: rgba(45, 212, 168, 0.12); color: var(--success); }
+        .status-testing { background: var(--society-gold-glow); color: var(--society-gold-light); }
+
+        /* ── Network discovery card ── */
+        .discovery-card {
+            background: var(--bg-card); border: 1px solid var(--border-glow);
+            border-radius: 14px; padding: 1.5rem; max-width: 600px; margin: 0 auto;
+            text-align: center;
+        }
+        .discovery-card .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .discovery-card h3 {
+            font-family: var(--font-display); font-size: 1.2rem; font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .discovery-card p {
+            font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .match-phrase-box {
+            background: var(--bg-deep); border: 1px solid var(--border-glow);
+            border-radius: 10px; padding: 1rem; margin: 0.5rem 0;
+        }
+        .match-phrase-box .label {
+            font-family: var(--font-mono); font-size: 0.7rem;
+            color: var(--text-tertiary); text-transform: uppercase;
+            letter-spacing: 1px; margin-bottom: 0.25rem;
+        }
+        .match-phrase-box .phrase {
+            font-family: var(--font-display); font-size: 1.3rem;
+            color: var(--society-gold-light); font-weight: 600;
+        }
+        .match-phrase-box .sub {
+            font-size: 0.8rem; color: var(--text-tertiary); margin-top: 0.25rem;
+        }
+
+        /* ── Summary ── */
+        .summary {
+            display: none; flex-direction: column; align-items: center;
+            text-align: center; gap: 0.75rem; max-width: 600px; margin: 0 auto;
+        }
+        .summary.active { display: flex; }
+        .summary h3 {
+            font-family: var(--font-display); font-size: 1.5rem; font-weight: 700;
+            background: linear-gradient(135deg, var(--society-gold-light), var(--society-gold));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .summary-row {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; padding: 0.75rem 1.25rem;
+            background: var(--bg-card); border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+        }
+        .summary-row .label {
+            font-size: 0.9rem; color: var(--text-secondary); font-family: var(--font-mono);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .summary-row .value {
+            font-size: 0.95rem; color: var(--text-primary); font-weight: 600;
+        }
+        .summary-row .value.gold { color: var(--society-gold-light); }
+
+        /* ── Action bar ── */
+        .action-bar {
+            display: flex; justify-content: center; gap: 1rem;
+            margin-top: 2rem; padding-bottom: 1rem;
+        }
+        .btn {
+            padding: 0.875rem 2rem; border-radius: 12px; font-size: 0.95rem;
+            font-weight: 600; cursor: pointer; border: none; transition: var(--transition);
+            font-family: var(--font-body); display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--society-gold), var(--society-gold-2));
+            color: var(--bg-deep); box-shadow: 0 4px 20px var(--society-gold-glow);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(197, 160, 89, 0.3);
+        }
+        .btn-primary:disabled {
+            opacity: 0.4; cursor: not-allowed; transform: none;
+        }
+        .btn-ghost {
+            background: transparent; color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+        }
+        .btn-ghost:hover {
+            color: var(--text-primary); border-color: var(--border-glow);
+        }
+
+        /* ── Live badge ── */
+        .live-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 12px; border-radius: 20px;
+            background: rgba(45, 212, 168, 0.1); border: 1px solid rgba(45, 212, 168, 0.3);
+            font-size: 0.7rem; font-weight: 600; font-family: var(--font-mono);
+            color: var(--success); text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+        .live-badge .dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--success); animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* ── Now playing card ── */
+        .now-playing {
+            background: var(--bg-card); border: 1px solid var(--border-glow);
+            border-radius: 14px; padding: 1.25rem; max-width: 500px; margin: 0 auto;
+            display: flex; gap: 1rem; align-items: center;
+        }
+        .now-playing .poster {
+            width: 60px; height: 90px; border-radius: 8px;
+            background: var(--bg-deep); flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+        }
+        .now-playing .info { flex: 1; text-align: left; }
+        .now-playing .title { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .now-playing .sub { font-size: 0.8rem; color: var(--text-tertiary); margin-bottom: 0.5rem; }
+        .now-playing .device-tag {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 8px; border-radius: 10px;
+            background: var(--bg-elevated); font-size: 0.7rem;
+            color: var(--text-secondary); font-family: var(--font-mono);
+        }
+        .now-playing .device-tag .dot {
+            width: 5px; height: 5px; border-radius: 50%; background: var(--success);
+        }
+        .now-playing .progress {
+            height: 3px; background: var(--bg-deep); border-radius: 2px;
+            margin-top: 0.5rem; overflow: hidden;
+        }
+        .now-playing .progress-bar {
+            height: 100%; background: var(--society-gold); border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .tier-grid { grid-template-columns: 1fr; }
+            .device-showcase { grid-template-columns: 1fr; }
+            .stage-prompt { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Logo -->
+    <div class="logo-wrap">
+        <img src="assets/societyos-ares-4.png" alt="SocietyOS" onerror="this.src='https://societyos.world/assets/societyos-ares-4.png'">
+        <div class="powered">Society TV Premium · Powered by PrimeHub</div>
+    </div>
+
+    <!-- Progress steps -->
+    <div class="steps">
+        <div class="step completed" id="step-1">
+            <div class="step-dot">1</div>
+            <span class="step-label">Device</span>
+        </div>
+        <div class="step-line completed" id="line-1"></div>
+        <div class="step completed" id="step-2">
+            <div class="step-dot">2</div>
+            <span class="step-label">Case</span>
+        </div>
+        <div class="step-line completed" id="line-2"></div>
+        <div class="step completed" id="step-3">
+            <div class="step-dot">3</div>
+            <span class="step-label">Wallet</span>
+        </div>
+        <div class="step-line completed" id="line-3"></div>
+        <div class="step active" id="step-4">
+            <div class="step-dot">4</div>
+            <span class="step-label">Society TV</span>
+        </div>
+        <div class="step-line" id="line-4"></div>
+        <div class="step" id="step-5">
+            <div class="step-dot">5</div>
+            <span class="step-label">Membership</span>
+        </div>
+    </div>
+
+    <!-- Main stage -->
+    <div class="content">
+        <div class="stage" id="stage">
+            <div class="orbit-container" id="orbit-container">
+                <div class="orbit-particle"></div>
+                <div class="orbit-particle"></div>
+                <div class="orbit-particle"></div>
+            </div>
+            <div class="ai-bubble" id="ai-bubble">
+                <div class="ai-bubble-mark" id="bubble-mark">S</div>
+            </div>
+            <div class="stage-prompt" id="stage-prompt">Set up Society TV</div>
+            <div class="stage-subtitle" id="stage-subtitle">Premium streaming powered by PrimeHub — 433K+ titles, 4K HDR, native Silo apps</div>
+        </div>
+
+        <!-- Step 1: Tier selection -->
+        <div class="showcase active" id="showcase-tiers">
+            <div class="live-badge" style="align-self:center;">
+                <span class="dot"></span>
+                PrimeHub API Connected · 433,573 Titles Live
+            </div>
+
+            <div class="tier-grid">
+                <!-- Carbon -->
+                <div class="tier-card" data-tier="carbon" onclick="selectTier('carbon', this)">
+                    <div class="tier-name" style="color: var(--text-secondary);">Carbon</div>
+                    <div class="tier-price"><span class="amount">$59.95</span>/mo</div>
+                    <div class="tier-features">
+                        <div class="tier-feature"><span class="icon check">✓</span> FreeCast 500+ channels</div>
+                        <div class="tier-feature"><span class="icon check">✓</span> 500K+ VOD library</div>
+                        <div class="tier-feature"><span class="icon check">✓</span> Local channels (CBS, FOX, NBC)</div>
+                        <div class="tier-feature"><span class="icon cross">✗</span> PrimeHub 433K+ titles</div>
+                        <div class="tier-feature"><span class="icon cross">✗</span> Silo apps (Apple/Android TV)</div>
+                        <div class="tier-feature"><span class="icon cross">✗</span> 4K HDR content</div>
+                    </div>
+                </div>
+
+                <!-- Onyx -->
+                <div class="tier-card" data-tier="onyx" onclick="selectTier('onyx', this)">
+                    <div class="tier-name" style="color: var(--text-primary);">Onyx</div>
+                    <div class="tier-price"><span class="amount">$69.95</span>/mo</div>
+                    <span class="tier-badge badge-green">Most Popular</span>
+                    <div class="tier-features">
+                        <div class="tier-feature"><span class="icon check">✓</span> Everything in Carbon</div>
+                        <div class="tier-feature"><span class="icon check">✓</span> PrimeHub — 433K+ titles</div>
+                        <div class="tier-feature"><span class="icon check">✓</span> Silo Apple TV app</div>
+                        <div class="tier-feature"><span class="icon check">✓</span> Silo Android TV app</div>
+                        <div class="tier-feature"><span class="icon check">✓</span> Network device discovery</div>
+                        <div class="tier-feature"><span class="icon check">✓</span> Content requests (auto)</div>
+                        <div class="tier-feature"><span class="icon partial">◐</span> 1080p max quality</div>
+                        <div class="tier-feature"><span class="icon cross">✗</span> 4K HDR / DV / HDR10+</div>
+                    </div>
+                </div>
+
+                <!-- GOLD -->
+                <div class="tier-card selected" data-tier="gold" onclick="selectTier('gold', this)">
+                    <div class="tier-name" style="color: var(--society-gold-light);">GOLD</div>
+                    <div class="tier-price"><span class="amount">$89.95</span>/mo</div>
+                    <span class="tier-badge badge-gold">Best Value</span>
+                    <div class="tier-features">
+                        <div class="tier-feature"><span class="icon check">✓</span> Everything in Onyx</div>
+                        <div class="tier-feature"><span class="icon check">✓</span> 4K HDR · DV HDR10+</div>
+                        <div class="tier-feature"><span class="icon check">✓</span> All 8 libraries (incl. Sports)</div>
+                        <div class="tier-feature"><span class="icon check">✓</span> Athena Legal Intelligence</div>
+                        <div class="tier-feature"><span class="icon check">✓</span> Private Vault (encrypted)</div>
+                        <div class="tier-feature"><span class="icon check">✓</span> Unlimited device sessions</div>
+                        <div class="tier-feature"><span class="icon check">✓</span> Priority content requests</div>
+                        <div class="tier-feature"><span class="icon check">✓</span> Discord + Web Push + Email</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align:center; margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-tertiary); font-family: var(--font-mono);">
+                Founding NODES — $2,499 lifetime · Everything in GOLD, forever
+            </div>
+        </div>
+
+        <!-- Step 2: Content showcase -->
+        <div class="showcase" id="showcase-content">
+            <div class="showcase-header">
+                <h2>Your Streaming Universe</h2>
+                <p>433,573 titles across 8 libraries · 4K HDR · TMDB-integrated · auto-updated daily</p>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-bar">
+                <div class="stat-pill"><span class="num">433K</span><span class="label">Total Titles</span></div>
+                <div class="stat-pill"><span class="num">8</span><span class="label">Libraries</span></div>
+                <div class="stat-pill"><span class="num">4K</span><span class="label">Max Quality</span></div>
+                <div class="stat-pill"><span class="num">19K</span><span class="label">Live Channels</span></div>
+                <div class="stat-pill"><span class="num">13</span><span class="label">Home Sections</span></div>
+            </div>
+
+            <!-- Now Playing (live data) -->
+            <div class="content-section">
+                <div class="content-section-title">
+                    ▶ Now Playing on Your Devices
+                    <span class="tag">— live session data</span>
+                </div>
+                <div class="now-playing">
+                    <div class="poster">📺</div>
+                    <div class="info">
+                        <div class="title">Dream Corp LLC — S2E2 "The Bullied"</div>
+                        <div class="sub">1080p · H264 · EAC3 5.1 · 7.9 Mbps · Direct Play</div>
+                        <div class="device-tag"><span class="dot"></span> Silo Apple TV 1.0.0 (build 38) · Paused</div>
+                        <div class="progress"><div class="progress-bar" style="width: 63%;"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trending Movies -->
+            <div class="content-section">
+                <div class="content-section-title">
+                    🔥 Trending Movies This Week
+                    <span class="tag">— TMDB integrated · auto-discovered</span>
+                </div>
+                <div class="content-row" id="row-movies"></div>
+            </div>
+
+            <!-- Trending Series -->
+            <div class="content-section">
+                <div class="content-section-title">
+                    📺 Trending TV Shows
+                    <span class="tag">— full series with all seasons</span>
+                </div>
+                <div class="content-row" id="row-series"></div>
+            </div>
+
+            <!-- Your Favorites -->
+            <div class="content-section">
+                <div class="content-section-title">
+                    ♥ Your Favorites
+                    <span class="tag">— 12 shows favorited</span>
+                </div>
+                <div class="content-row" id="row-favorites"></div>
+            </div>
+
+            <!-- Home sections -->
+            <div class="content-section">
+                <div class="content-section-title">
+                    🏠 Your Home Sections
+                    <span class="tag">— auto-curated by PrimeHub</span>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                    <span style="padding:8px 14px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;font-size:0.8rem;">▶ Continue Watching</span>
+                    <span style="padding:8px 14px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;font-size:0.8rem;">🎧 Continue Listening</span>
+                    <span style="padding:8px 14px;background:var(--society-gold-glow);border:1px solid var(--border-glow);border-radius:8px;font-size:0.8rem;color:var(--society-gold-light);">🔥 Trending Movies</span>
+                    <span style="padding:8px 14px;background:var(--society-gold-glow);border:1px solid var(--border-glow);border-radius:8px;font-size:0.8rem;color:var(--society-gold-light);">🔥 Trending TV Shows</span>
+                    <span style="padding:8px 14px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;font-size:0.8rem;">✨ Recommended for You</span>
+                    <span style="padding:8px 14px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;font-size:0.8rem;">🎬 Popular Movies</span>
+                    <span style="padding:8px 14px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;font-size:0.8rem;">📺 Popular TV Shows</span>
+                    <span style="padding:8px 14px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;font-size:0.8rem;">🏆 IMDb Top 250 Movies</span>
+                    <span style="padding:8px 14px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;font-size:0.8rem;">🏆 IMDb Top 250 Shows</span>
+                    <span style="padding:8px 14px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;font-size:0.8rem;">🎭 Now Playing in Theaters</span>
+                    <span style="padding:8px 14px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;font-size:0.8rem;">🤯 Mindfuck Movies</span>
+                    <span style="padding:8px 14px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;font-size:0.8rem;">⭐ Top Rated Movies</span>
+                    <span style="padding:8px 14px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;font-size:0.8rem;">⭐ Top Rated TV</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Device showcase -->
+        <div class="showcase" id="showcase-devices">
+            <div class="showcase-header">
+                <h2>Native Silo Apps</h2>
+                <p>Download the Silo app on your Apple TV or Android TV — sign in once, all devices recognize each other</p>
+            </div>
+
+            <div class="device-showcase">
+                <div class="device-tile">
+                    <div class="icon">🍎</div>
+                    <div class="name">Silo Apple TV</div>
+                    <div class="desc">v1.0.0 · build 38 · Darwin/25.6.0</div>
+                    <span class="status status-live">● Live</span>
+                </div>
+                <div class="device-tile">
+                    <div class="icon">🤖</div>
+                    <div class="name">Silo Android TV</div>
+                    <div class="desc">Native Android TV app</div>
+                    <span class="status status-testing">◐ In Testing</span>
+                </div>
+            </div>
+
+            <!-- Network discovery -->
+            <div class="discovery-card">
+                <div class="icon">📡</div>
+                <h3>Same-Network Auto-Discovery</h3>
+                <p>When a new device joins your WiFi, it detects your authenticated devices and offers one-tap sign-in. No typing passwords on a TV remote.</p>
+                <div class="match-phrase-box">
+                    <div class="label">Match Phrase (verified working)</div>
+                    <div class="phrase">"kind milk"</div>
+                    <div class="sub">New device shows this phrase · if it matches your authenticated device, tap to approve</div>
+                </div>
+            </div>
+
+            <!-- Content requests -->
+            <div class="content-section" style="margin-top: 1.5rem;">
+                <div class="content-section-title">
+                    📋 Content Requests
+                    <span class="tag">— TMDB-integrated · auto-approved</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                    <div style="display:flex;align-items:center;gap:0.75rem;padding:0.625rem 1rem;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:10px;">
+                        <div style="width:32px;height:48px;border-radius:4px;background:var(--bg-deep);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.8rem;">🎬</div>
+                        <div style="flex:1;"><div style="font-size:0.85rem;font-weight:600;">The Odyssey (2026)</div><div style="font-size:0.75rem;color:var(--text-tertiary);">Movie · TMDB #1368337 · 7.9 ⭐</div></div>
+                        <span style="padding:3px 10px;border-radius:8px;font-size:0.7rem;font-weight:600;font-family:var(--font-mono);background:rgba(45,212,168,0.12);color:var(--success);">✓ Approved</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.75rem;padding:0.625rem 1rem;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:10px;">
+                        <div style="width:32px;height:48px;border-radius:4px;background:var(--bg-deep);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.8rem;">🎬</div>
+                        <div style="flex:1;"><div style="font-size:0.85rem;font-weight:600;">Spider-Man: Brand New Day (2026)</div><div style="font-size:0.75rem;color:var(--text-tertiary);">Movie · TMDB #969681 · 7.9 ⭐</div></div>
+                        <span style="padding:3px 10px;border-radius:8px;font-size:0.7rem;font-weight:600;font-family:var(--font-mono);background:rgba(45,212,168,0.12);color:var(--success);">✓ Approved</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.75rem;padding:0.625rem 1rem;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:10px;">
+                        <div style="width:32px;height:48px;border-radius:4px;background:var(--bg-deep);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.8rem;">🎬</div>
+                        <div style="flex:1;"><div style="font-size:0.85rem;font-weight:600;">Coyote vs. Acme (2026)</div><div style="font-size:0.75rem;color:var(--text-tertiary);">Movie · TMDB #1204680 · 7.6 ⭐</div></div>
+                        <span style="padding:3px 10px;border-radius:8px;font-size:0.7rem;font-weight:600;font-family:var(--font-mono);background:var(--society-gold-glow);color:var(--society-gold-light);">⏳ Requestable</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Summary -->
+        <div class="summary" id="showcase-summary">
+            <h3>Your Sovereign Setup</h3>
+            <div class="summary-row">
+                <span class="label">Device</span>
+                <span class="value">Samsung Z Fold8 Ultra</span>
+            </div>
+            <div class="summary-row">
+                <span class="label">Case</span>
+                <span class="value">Aramid Dual Ultra — Grid Valor</span>
+            </div>
+            <div class="summary-row">
+                <span class="label">Wallet</span>
+                <span class="value">Tangem (NFC Active)</span>
+            </div>
+            <div class="summary-row">
+                <span class="label">Society TV</span>
+                <span class="value gold" id="summary-tier">GOLD — 4K HDR · 433K+ titles</span>
+            </div>
+            <div class="summary-row">
+                <span class="label">Membership</span>
+                <span class="value gold">$89.95/mo</span>
+            </div>
+            <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                Your Silo app credentials will be provisioned automatically after payment.<br>
+                Download the Silo app on your Apple TV or Android TV to start streaming.
+            </div>
+        </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="action-bar">
+        <button class="btn btn-ghost" id="btn-back" onclick="goBack()">← Back</button>
+        <button class="btn btn-primary" id="btn-next" onclick="goNext()">See Content Library →</button>
+    </div>
+</div>
+
+<script>
+let currentSubStep = 0;
+const subSteps = ['tiers', 'content', 'devices', 'summary'];
+let selectedTier = 'gold';
+
+// Real movie data from PrimeHub API
+const trendingMovies = [
+    { title: 'The Runner', year: '2026', status: 'av', quality: '4K' },
+    { title: 'The Odyssey', year: '2026', status: 'req', quality: '4K' },
+    { title: 'Spider-Man: BND', year: '2026', status: 'req', quality: '4K' },
+    { title: 'The Whisper Man', year: '2026', status: 'av', quality: '4K' },
+    { title: 'Obsession', year: '2026', status: 'av', quality: '4K' },
+    { title: 'Project Hail Mary', year: '2026', status: 'av', quality: '4K' },
+    { title: 'Coyote vs. Acme', year: '2026', status: 'miss', quality: '1080p' },
+    { title: 'Toy Story 5', year: '2026', status: 'av', quality: '4K' },
+    { title: 'Mutiny', year: '2026', status: 'av', quality: '4K' },
+];
+
+const trendingSeries = [
+    { title: 'Silo', year: '2023', status: 'av', quality: '4K' },
+    { title: 'Lanterns', year: '2026', status: 'av', quality: '4K' },
+    { title: 'Reacher', year: '2022', status: 'av', quality: '4K' },
+    { title: 'The Gentlemen', year: '2024', status: 'av', quality: '4K' },
+    { title: 'Bleach', year: '2004', status: 'av', quality: '1080p' },
+    { title: 'Supergirl', year: '2026', status: 'av', quality: '4K' },
+    { title: 'Resident Evil', year: '2026', status: 'miss', quality: '4K' },
+    { title: 'Mayday', year: '2026', status: 'av', quality: '4K' },
+];
+
+const favorites = [
+    { title: 'Wednesday', year: '2022', status: 'av', quality: '4K' },
+    { title: 'Landman', year: '2024', status: 'av', quality: '4K' },
+    { title: 'House of Dragon', year: '2022', status: 'av', quality: '4K' },
+    { title: 'Daredevil: BA', year: '2025', status: 'av', quality: '4K' },
+    { title: 'Lioness', year: '2023', status: 'av', quality: '4K' },
+    { title: 'FROM', year: '2022', status: 'av', quality: '4K' },
+    { title: 'Family Guy', year: '1999', status: 'av', quality: '4K' },
+    { title: 'The Studio', year: '2025', status: 'av', quality: '4K' },
+];
+
+function renderMovieCard(item) {
+    const statusMap = {
+        'av': '<span class="av">✓ Available</span>',
+        'req': '<span class="req">✓ Requested</span>',
+        'miss': '<span class="miss">+ Request</span>'
+    };
+    return `<div class="movie-card">
+        <div style="width:100%;aspect-ratio:2/3;background:linear-gradient(135deg,var(--bg-deep),var(--bg-card));display:flex;align-items:center;justify-content:center;font-size:2rem;">🎬</div>
+        ${item.quality === '4K' ? '<div class="quality-badge">4K</div>' : ''}
+        <div class="info">
+            <div class="title">${item.title}</div>
+            <div class="meta">${statusMap[item.status]} · ${item.year}</div>
+        </div>
+    </div>`;
+}
+
+function renderContent() {
+    document.getElementById('row-movies').innerHTML = trendingMovies.map(renderMovieCard).join('');
+    document.getElementById('row-series').innerHTML = trendingSeries.map(renderMovieCard).join('');
+    document.getElementById('row-favorites').innerHTML = favorites.map(renderMovieCard).join('');
+}
+
+function selectTier(tier, card) {
+    document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedTier = tier;
+    
+    const bubble = document.getElementById('ai-bubble');
+    const mark = document.getElementById('bubble-mark');
+    bubble.classList.add('morphed-tv');
+    mark.innerHTML = '📺';
+    
+    const tierNames = { carbon: 'Carbon', onyx: 'Onyx', gold: 'GOLD' };
+    document.getElementById('summary-tier').textContent = `${tierNames[tier]} — ${tier === 'gold' ? '4K HDR · 433K+ titles' : tier === 'onyx' ? '1080p · 433K+ titles' : 'FreeCast channels'}`;
+}
+
+function showSubStep(step) {
+    document.querySelectorAll('.showcase').forEach(el => el.classList.remove('active'));
+    document.getElementById('showcase-' + step).classList.add('active');
+    const summary = document.getElementById('showcase-summary');
+    if (step === 'summary') {
+        summary.classList.add('active');
+    } else {
+        document.getElementById('showcase-' + step).classList.add('active');
+    }
+    
+    // Update bubble
+    const bubble = document.getElementById('ai-bubble');
+    const mark = document.getElementById('bubble-mark');
+    
+    if (step === 'tiers') {
+        bubble.classList.remove('morphed-tv', 'morphed-complete');
+        mark.textContent = 'S';
+        document.getElementById('stage-prompt').textContent = 'Set up Society TV';
+        document.getElementById('stage-subtitle').textContent = 'Premium streaming powered by PrimeHub — 433K+ titles, 4K HDR, native Silo apps';
+    } else if (step === 'content') {
+        bubble.classList.add('morphed-tv');
+        bubble.classList.remove('morphed-complete');
+        mark.innerHTML = '🎬';
+        document.getElementById('stage-prompt').textContent = 'Your Content Library';
+        document.getElementById('stage-subtitle').textContent = '433,573 titles · 8 libraries · auto-updated daily';
+    } else if (step === 'devices') {
+        bubble.classList.add('morphed-tv');
+        bubble.classList.remove('morphed-complete');
+        mark.innerHTML = '📡';
+        document.getElementById('stage-prompt').textContent = 'Native Apps & Device Discovery';
+        document.getElementById('stage-subtitle').textContent = 'Silo apps for Apple TV and Android TV — one-tap sign-in';
+    } else if (step === 'summary') {
+        bubble.classList.remove('morphed-tv');
+        bubble.classList.add('morphed-complete');
+        mark.innerHTML = '✓';
+        document.getElementById('stage-prompt').textContent = 'Your Sovereign Setup';
+        document.getElementById('stage-subtitle').textContent = 'Everything provisioned automatically after payment';
+    }
+}
+
+function goNext() {
+    if (currentSubStep < subSteps.length - 1) {
+        currentSubStep++;
+        showSubStep(subSteps[currentSubStep]);
+        updateButtons();
+    }
+}
+
+function goBack() {
+    if (currentSubStep > 0) {
+        currentSubStep--;
+        showSubStep(subSteps[currentSubStep]);
+        updateButtons();
+    }
+}
+
+function updateButtons() {
+    document.getElementById('btn-back').style.display = currentSubStep > 0 ? 'inline-flex' : 'none';
+    const nextBtn = document.getElementById('btn-next');
+    if (currentSubStep === subSteps.length - 1) {
+        nextBtn.textContent = 'Complete Setup →';
+    } else if (currentSubStep === 0) {
+        nextBtn.textContent = 'See Content Library →';
+    } else if (currentSubStep === 1) {
+        nextBtn.textContent = 'See Device Apps →';
+    } else if (currentSubStep === 2) {
+        nextBtn.textContent = 'Review Setup →';
+    }
+}
+
+// Initialize
+renderContent();
+selectTier('gold', document.querySelector('[data-tier="gold"]'));
+updateButtons();
+</script>
+</body>
+</html>
