@@ -1280,6 +1280,33 @@
             z-index: 2;
         }
 
+        .glass-case-device-img-wrap {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+
+        .glass-case-device-img-wrap.morphing {
+            opacity: 0;
+            transform: translateX(-50%) scale(0.8) rotateY(15deg);
+        }
+
+        .glass-case-device-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+            filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.4));
+        }
+
         .case-device-picker {
             display: flex;
             gap: 0.75rem;
@@ -1828,6 +1855,9 @@
             <!-- Liquid Glass Case -->
             <div class="liquid-glass-case" id="liquidGlassCase">
                 <div class="glass-case-material" id="glassCaseMaterial">Woven Aramid Fiber</div>
+                <div class="glass-case-device-img-wrap" id="glassCaseDeviceImgWrap">
+                    <img class="glass-case-device-img" id="glassCaseDeviceImg" src="assets/device-iphone-duo.jpg" alt="iPhone Duo" />
+                </div>
                 <div class="glass-case-label" id="glassCaseLabel">SocietyOS Sovereign Case</div>
             </div>
 
@@ -2163,6 +2193,25 @@
     var currentTier = 'carbon';
     var currentCase = null;
 
+    // Device images — official product photos that appear inside the liquid glass case
+    var DEVICE_IMAGES = {
+        'iPhone Duo': { src: 'assets/device-iphone-duo.jpg', alt: 'iPhone Duo — 7.6" foldable, star white & night sky' },
+        'iPhone 18 Pro': { src: 'assets/device-iphone-18-pro.jpg', alt: 'iPhone 18 Pro — 48MP Fusion camera, black silver glacier burgundy' },
+        'iPhone 18 Pro Max': { src: 'assets/device-iphone-18-pro-max.jpg', alt: 'iPhone 18 Pro Max — four elegant finishes' },
+        'Samsung Galaxy S26 Ultra': { src: 'assets/device-galaxy-s26-ultra.jpg', alt: 'Samsung Galaxy S26 Ultra — Privacy Display, Cobalt Violet' },
+        'Samsung Galaxy Fold 8': { src: 'assets/device-galaxy-fold8.jpg', alt: 'Samsung Galaxy Z Fold8 — lightest foldable, wide screen' },
+        'Samsung Galaxy Z Fold 8 Ultra': { src: 'assets/device-galaxy-fold8-ultra.jpg', alt: 'Samsung Galaxy Z Fold8 Ultra — Ultra performance foldable' },
+    };
+
+    function updateDeviceImage(device) {
+        var info = DEVICE_IMAGES[device];
+        var img = document.getElementById('glassCaseDeviceImg');
+        if (img && info) {
+            img.src = info.src;
+            img.alt = info.alt;
+        }
+    }
+
     function selectTier(tier, btn) {
         currentTier = tier;
         document.querySelectorAll('.tier-btn').forEach(b => {
@@ -2318,18 +2367,29 @@
         document.querySelectorAll('.case-device-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
-        const glassCase = document.getElementById('liquidGlassCase');
+        var glassCase = document.getElementById('liquidGlassCase');
+        var imgWrap = document.getElementById('glassCaseDeviceImgWrap');
         glassCase.style.transform = 'scale(0.92) rotateY(8deg)';
         glassCase.style.opacity = '0.4';
 
+        // Trigger device image morph — fade out old image, swap mid-animation, fade in new
+        if (imgWrap) {
+            imgWrap.classList.add('morphing');
+        }
+
         setTimeout(function() {
+            updateDeviceImage(device);
             renderCaseSelector();
             glassCase.style.transform = '';
             glassCase.style.opacity = '';
+            if (imgWrap) {
+                imgWrap.classList.remove('morphing');
+            }
         }, 400);
     }
 
     // Initialize on load
+    updateDeviceImage(currentDevice);
     renderCaseSelector();
 </script>
 
