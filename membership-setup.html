@@ -2120,17 +2120,13 @@
             const caseImgSrc = (step === 2 && caseImageMap[opt.id]) ? caseImageMap[opt.id] : null;
             const caseImgHTML = caseImgSrc ? `<div class="case-card-image"><img src="${caseImgSrc}" alt="${opt.label}" /></div>` : '';
 
-            // Step 1: show real device photo instead of logo + silhouette
-            const deviceImgSrc = (step === 1 && DEVICE_IMAGE_MAP[opt.id]) ? DEVICE_IMAGE_MAP[opt.id] : null;
-            const deviceImgHTML = deviceImgSrc ? `<div class="case-card-image"><img src="${deviceImgSrc}" alt="${opt.label}" /></div>` : '';
-
             card.innerHTML = `
                 <div class="smoke-layer">
                     <div class="smoke-particle"></div>
                     <div class="smoke-particle"></div>
                     <div class="smoke-particle"></div>
                 </div>
-                ${caseImgHTML || deviceImgHTML || iconHTML + silhouetteHTML}
+                ${caseImgHTML || iconHTML + silhouetteHTML}
                 <div class="card-title">${opt.label}</div>
                 <div class="card-subtitle">${opt.subtitle}</div>
             `;
