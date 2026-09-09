@@ -365,8 +365,8 @@ var SOCIETYOS_PROTOCOLS = {
       // ── iPHONE FOLD (SKIN-PRO ONLY — HINGE PROTECTION) ──
       {
         id: "ifold-skinpro-grid-valor",
-        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Fold — Grid Valor",
-        device: "iPhone Fold",
+        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Duo — Grid Valor",
+        device: "iPhone Duo",
         material: "Woven Aramid Fiber",
         features: ["Ultra-thin molding", "MagSafe compatible", "Fully enclosed leather hinge protection", "Automatic magnetic adsorption", "Gold thread weaving"],
         colors: ["Valor"],
@@ -380,8 +380,8 @@ var SOCIETYOS_PROTOCOLS = {
       },
       {
         id: "ifold-skinpro-wisdom",
-        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Fold — Grid Wisdom",
-        device: "iPhone Fold",
+        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Duo — Grid Wisdom",
+        device: "iPhone Duo",
         material: "Woven Aramid Fiber",
         features: ["Ultra-thin molding", "MagSafe compatible", "Fully enclosed leather hinge protection", "Automatic magnetic adsorption", "Gold thread weaving"],
         colors: ["Wisdom"],
@@ -395,8 +395,8 @@ var SOCIETYOS_PROTOCOLS = {
       },
       {
         id: "ifold-skinpro-glory",
-        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Fold — Grid Glory",
-        device: "iPhone Fold",
+        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Duo — Grid Glory",
+        device: "iPhone Duo",
         material: "Woven Aramid Fiber",
         features: ["Ultra-thin molding", "MagSafe compatible", "Fully enclosed leather hinge protection", "Automatic magnetic adsorption", "Kezhi weaving"],
         colors: ["Glory"],
@@ -410,8 +410,8 @@ var SOCIETYOS_PROTOCOLS = {
       },
       {
         id: "ifold-skinpro-rise",
-        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Fold — Rise",
-        device: "iPhone Fold",
+        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Duo — Rise",
+        device: "iPhone Duo",
         material: "Woven Aramid Fiber",
         features: ["Ultra-thin molding", "MagSafe compatible", "Fully enclosed leather hinge protection", "Automatic magnetic adsorption", "Gold thread weaving"],
         colors: ["Rise"],
@@ -425,8 +425,8 @@ var SOCIETYOS_PROTOCOLS = {
       },
       {
         id: "ifold-skinpro-scepter",
-        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Fold — Scepter",
-        device: "iPhone Fold",
+        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Duo — Scepter",
+        device: "iPhone Duo",
         material: "Woven Aramid Fiber",
         features: ["Ultra-thin molding", "MagSafe compatible", "Fully enclosed leather hinge protection", "Automatic magnetic adsorption", "Kezhi weaving"],
         colors: ["Scepter"],
@@ -440,8 +440,8 @@ var SOCIETYOS_PROTOCOLS = {
       },
       {
         id: "ifold-skinpro-serenity-amber",
-        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Fold — Serenity Amber",
-        device: "iPhone Fold",
+        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Duo — Serenity Amber",
+        device: "iPhone Duo",
         material: "Woven Aramid Fiber",
         features: ["Ultra-thin molding", "MagSafe compatible", "Fully enclosed leather hinge protection", "Automatic magnetic adsorption", "Multi-Color KeZhi Weaving"],
         colors: ["Amber"],
@@ -455,8 +455,8 @@ var SOCIETYOS_PROTOCOLS = {
       },
       {
         id: "ifold-skinpro-serenity-emerald",
-        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Fold — Serenity Emerald",
-        device: "iPhone Fold",
+        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Duo — Serenity Emerald",
+        device: "iPhone Duo",
         material: "Woven Aramid Fiber",
         features: ["Ultra-thin molding", "MagSafe compatible", "Fully enclosed leather hinge protection", "Automatic magnetic adsorption", "Multi-Color KeZhi Weaving"],
         colors: ["Emerald"],
@@ -470,8 +470,8 @@ var SOCIETYOS_PROTOCOLS = {
       },
       {
         id: "ifold-skinpro-mondrian",
-        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Fold — Mondrian",
-        device: "iPhone Fold",
+        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Duo — Mondrian",
+        device: "iPhone Duo",
         material: "Woven Aramid Fiber",
         features: ["Ultra-thin molding", "MagSafe compatible", "Fully enclosed leather hinge protection", "Automatic magnetic adsorption", "Minimalist aesthetics"],
         colors: ["Mondrian"],
@@ -485,8 +485,8 @@ var SOCIETYOS_PROTOCOLS = {
       },
       {
         id: "ifold-skinpro-origin",
-        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Fold — Origin",
-        device: "iPhone Fold",
+        name: "Raptic Aramid Skin-Pro MagSafe for iPhone Duo — Origin",
+        device: "iPhone Duo",
         material: "Woven Aramid Fiber",
         features: ["Ultra-thin molding", "MagSafe compatible", "Fully enclosed leather hinge protection", "Automatic magnetic adsorption", "Precision metal inlay"],
         colors: ["Origin"],
@@ -501,8 +501,8 @@ var SOCIETYOS_PROTOCOLS = {
       // ── iPHONE FOLD — URBAN NANO (LEATHER) ──
       {
         id: "ifold-nano-dark-cherry",
-        name: "Raptic Urban Nano MagSafe for iPhone Fold — Dark Cherry",
-        device: "iPhone Fold",
+        name: "Raptic Urban Nano MagSafe for iPhone Duo — Dark Cherry",
+        device: "iPhone Duo",
         material: "Premium PU Leather",
         features: ["Ultra-slim 1.6mm", "Stain-resistant coating", "Full genuine leather wrapping", "MagSafe compatible"],
         colors: ["Dark Cherry"],
@@ -516,8 +516,8 @@ var SOCIETYOS_PROTOCOLS = {
       },
       {
         id: "ifold-nano-stellar-black",
-        name: "Raptic Urban Nano MagSafe for iPhone Fold — Stellar Black",
-        device: "iPhone Fold",
+        name: "Raptic Urban Nano MagSafe for iPhone Duo — Stellar Black",
+        device: "iPhone Duo",
         material: "Premium PU Leather",
         features: ["Ultra-slim 1.6mm", "Stain-resistant coating", "Full genuine leather wrapping", "MagSafe compatible"],
         colors: ["Stellar Black"],
@@ -532,8 +532,8 @@ var SOCIETYOS_PROTOCOLS = {
       // ── iPHONE FOLD — URBAN NAV (3D LEATHER + GOLD) ──
       {
         id: "ifold-nav-dark-cherry",
-        name: "Raptic Urban Nav MagSafe for iPhone Fold — Dark Cherry",
-        device: "iPhone Fold",
+        name: "Raptic Urban Nav MagSafe for iPhone Duo — Dark Cherry",
+        device: "iPhone Duo",
         material: "3D Leather + 18K Gold Plating",
         features: ["3D leather structure", "18K gold plating", "Ceramic cool-touch camera button", "MagSafe compatible"],
         colors: ["Dark Cherry"],
@@ -547,8 +547,8 @@ var SOCIETYOS_PROTOCOLS = {
       },
       {
         id: "ifold-nav-dark",
-        name: "Raptic Urban Nav MagSafe for iPhone Fold — Dark",
-        device: "iPhone Fold",
+        name: "Raptic Urban Nav MagSafe for iPhone Duo — Dark",
+        device: "iPhone Duo",
         material: "3D Leather + 18K Gold Plating",
         features: ["3D leather structure", "18K gold plating", "Ceramic cool-touch camera button", "MagSafe compatible"],
         colors: ["Dark"],
@@ -563,8 +563,8 @@ var SOCIETYOS_PROTOCOLS = {
       // ── iPHONE FOLD — AIR STAND (CLEAR) ──
       {
         id: "ifold-air-stand-clear",
-        name: "Raptic Air Stand MagSafe for iPhone Fold — Clear",
-        device: "iPhone Fold",
+        name: "Raptic Air Stand MagSafe for iPhone Duo — Clear",
+        device: "iPhone Duo",
         material: "Clear TPU",
         features: ["Military-grade drop protection", "Built-in kickstand", "MagSafe compatible", "Four-corner airbag"],
         colors: ["Clear"],
@@ -579,8 +579,8 @@ var SOCIETYOS_PROTOCOLS = {
       // ── iPHONE FOLD — AIR CLEAR (TRANSPARENT) ──
       {
         id: "ifold-air-clear-clear",
-        name: "Raptic Air Clear MagSafe for iPhone Fold — Clear",
-        device: "iPhone Fold",
+        name: "Raptic Air Clear MagSafe for iPhone Duo — Clear",
+        device: "iPhone Duo",
         material: "Clear TPU",
         features: ["Military-grade drop protection", "Quad-corner micro-airbag", "MagSafe compatible", "Light transmittance >95%"],
         colors: ["Clear"],
@@ -1291,7 +1291,7 @@ var SOCIETYOS_PROTOCOLS = {
       {
         id: "sos-aramid-iphone-ultra",
         name: "SocietyOS Sovereign Case — Aramid Fiber",
-        device: "iPhone Ultra (Foldable)",
+        device: "iPhone Duo (Foldable)",
         material: "Woven Aramid Fiber",
         features: ["Recessed Locking MagSafe", "Full Front Panel Protection", "Hinge Coverage", "Ultra-Slim Profile"],
         colors: ["Obsidian Black", "Graphite Gray", "Society Gold", "Midnight Blue"],
