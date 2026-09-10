@@ -2143,6 +2143,15 @@
         grid.innerHTML = '';
         grid.style.display = 'grid';
         deviceRender.style.display = 'none';
+        // Reset deviceRender styles and clean up stats panel from showDeviceRender
+        deviceRender.style.cssText = '';
+        var oldStats = deviceRender.querySelector('.device-showcase-stats');
+        if (oldStats) oldStats.remove();
+        // Reset phone mockup
+        phoneMockup.style.cssText = '';
+        phoneMockup.innerHTML = '';
+        phoneMockup.className = 'phone-mockup';
+        caseOverlay.style.display = 'none';
         summary.classList.remove('visible');
 
         // Remove step2 split layout if exiting step 2
@@ -3183,26 +3192,52 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
         const deviceImgSrc = DEVICE_IMAGE_MAP[opt.id];
 
         if (deviceImgSrc) {
-            // Build elegant two-column layout: device image + specs panel
+            // Build elegant two-column layout: device image + stats panel
+            // Keep phone-mockup and case-overlay intact — build showcase inside phoneMockup
             var isWide = (opt.type === 'foldable' || opt.type === 'foldable-wide' || opt.type === 'foldable-horizontal');
             var frameW = isWide ? '340px' : '240px';
             var frameH = isWide ? '220px' : '300px';
-            deviceRender.innerHTML = `
-                <div class="device-showcase">
-                    <div class="device-showcase-image">
-                        <div class="phone-mockup device-frame" id="phone-mockup" style="width:${frameW}; height:${frameH}; border-radius:20px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:linear-gradient(145deg,#0d0d12,#1a1a2e); border:2px solid rgba(197,160,89,0.2); box-shadow:0 12px 40px rgba(0,0,0,0.5),0 0 30px rgba(197,160,89,0.12); padding:8px;">
-                            <img src="${deviceImgSrc}" alt="${opt.label}" style="width:100%; height:100%; object-fit:contain; border-radius:14px;" />
-                        </div>
-                    </div>
-                    <div class="device-showcase-stats">
-                        <div class="device-showcase-name">${opt.label}</div>
-                        <div class="device-showcase-divider"></div>
-                        <ul class="device-stats-list">
-                            ${buildDeviceStats(opt).map(s => `<li><span class="stat-label">${s.label}</span><span class="stat-value">${s.value}</span></li>`).join('')}
-                        </ul>
-                    </div>
-                </div>
-            `;
+            phoneMockup.className = 'phone-mockup';
+            phoneMockup.style.cssText = 'width:' + frameW + '; height:' + frameH + '; border-radius:20px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:linear-gradient(145deg,#0d0d12,#1a1a2e); border:2px solid rgba(197,160,89,0.2); box-shadow:0 12px 40px rgba(0,0,0,0.5),0 0 30px rgba(197,160,89,0.12); padding:8px; opacity:0; transform:scale(0.9); transition:opacity 0.4s ease, transform 0.4s ease;';
+            phoneMockup.innerHTML = '<img src="' + deviceImgSrc + '" alt="' + opt.label + '" style="width:100%;height:100%;object-fit:contain;border-radius:14px;" />';
+            caseOverlay.style.display = 'none';
+
+            // Build stats panel beside the phone mockup
+            var existingStats = deviceRender.querySelector('.device-showcase-stats');
+            if (existingStats) existingStats.remove();
+
+            var statsPanel = document.createElement('div');
+            statsPanel.className = 'device-showcase-stats';
+            statsPanel.innerHTML = '<div class="device-showcase-name">' + opt.label + '</div>' +
+                '<div class="device-showcase-divider"></div>' +
+                '<ul class="device-stats-list">' +
+                buildDeviceStats(opt).map(function(s) { return '<li><span class="stat-label">' + s.label + '</span><span class="stat-value">' + s.value + '</span></li>'; }).join('') +
+                '</ul>';
+
+            // Restructure: deviceRender becomes a flex row with phoneMockup + stats
+            deviceRender.style.flexDirection = 'row';
+            deviceRender.style.gap = '2.5rem';
+            deviceRender.style.flexWrap = 'wrap';
+            deviceRender.style.justifyContent = 'center';
+            deviceRender.style.alignItems = 'center';
+            deviceRender.style.padding = '2rem';
+            deviceRender.style.background = 'linear-gradient(135deg, rgba(197,160,89,0.04) 0%, rgba(10,10,15,0.6) 50%, rgba(197,160,89,0.04) 100%)';
+            deviceRender.style.border = '1px solid rgba(197,160,89,0.15)';
+            deviceRender.style.borderRadius = '20px';
+            deviceRender.style.boxShadow = '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)';
+
+            // Move phoneMockup and stats into deviceRender (they're already children)
+            if (!phoneMockup.parentElement || phoneMockup.parentElement !== deviceRender) {
+                deviceRender.appendChild(phoneMockup);
+            }
+            deviceRender.appendChild(statsPanel);
+
+            setTimeout(function() {
+                phoneMockup.style.opacity = '1';
+                phoneMockup.style.transform = 'scale(1)';
+            }, 50);
+            return;
+        }
             setTimeout(() => {
                 const showcase = deviceRender.querySelector('.device-showcase');
                 if (showcase) {
