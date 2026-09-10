@@ -2371,7 +2371,7 @@
                     <div class="morph-flash"></div>
                     <div class="morph-phone">
                         <div style="display:flex; align-items:center; justify-content:center; width:100%; height:100%;">
-                            <img src="${deviceImgSrc}" alt="${deviceOpt.label}" style="max-width: 100%; max-height: 280px; object-fit: contain; border-radius: 14px; filter: drop-shadow(0 6px 24px rgba(0,0,0,0.4));" />
+                            <img src="${deviceImgSrc}" alt="${deviceOpt.label}" style="width:100%;height:100%;object-fit:cover;object-position:center;border-radius:14px;" />
                         </div>
                     </div>
                     <div class="morph-case" style="display:none;"></div>
@@ -3088,23 +3088,27 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
 
         if (isSpecs) {
             // Switch back to image
+            phoneMockup.style.width = '';
+            phoneMockup.style.height = '';
             phoneMockup.innerHTML = '<div class="phone-notch"></div>' +
                 '<div class="phone-screen" style="width:100%;height:100%;padding:0;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:16px;">' +
-                    '<img src="' + imgSrc + '" alt="' + opt.label + '" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;filter:drop-shadow(0 4px 20px rgba(0,0,0,0.3));" />' +
+                    '<img src="' + imgSrc + '" alt="' + opt.label + '" style="width:100%;height:100%;object-fit:cover;object-position:center;border-radius:16px;" />' +
                 '</div>';
             btn.textContent = 'View Specs';
         } else {
-            // Switch to specs
+            // Switch to specs — make phone mockup wider to fit specs
+            phoneMockup.style.width = '280px';
+            phoneMockup.style.height = '440px';
             var statsHTML = buildDeviceStats(opt).map(function(s) {
-                return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid rgba(197,160,89,0.06);">' +
-                    '<span style="font-family:"EB Garamond",serif;font-size:0.65rem;color:#888;text-transform:uppercase;letter-spacing:0.06em;">' + s.label + '</span>' +
-                    '<span style="font-family:"EB Garamond",serif;font-size:0.7rem;color:#ccc;text-align:right;font-weight:500;">' + s.value + '</span>' +
+                return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px solid rgba(197,160,89,0.08);">' +
+                    '<span style="font-size:0.75rem;color:#888;text-transform:uppercase;letter-spacing:0.06em;font-family:EB Garamond,serif;">' + s.label + '</span>' +
+                    '<span style="font-size:0.85rem;color:#ccc;text-align:right;font-weight:500;font-family:EB Garamond,serif;margin-left:1rem;">' + s.value + '</span>' +
                 '</div>';
             }).join('');
             phoneMockup.innerHTML = '<div class="phone-notch"></div>' +
-                '<div class="phone-screen" style="width:88%;height:88%;padding:16px 12px;overflow-y:auto;border-radius:12px;">' +
-                    '<div style="font-family:"Cormorant Garamond",serif;font-size:0.8rem;color:#c5a059;font-weight:600;margin-bottom:8px;letter-spacing:0.02em;">' + opt.label + '</div>' +
-                    '<div style="height:1px;background:linear-gradient(90deg,rgba(197,160,89,0.3),transparent);margin-bottom:10px;"></div>' +
+                '<div class="phone-screen" style="width:90%;height:88%;padding:20px 16px;overflow-y:auto;border-radius:12px;">' +
+                    '<div style="font-family:Cormorant Garamond,serif;font-size:1.1rem;color:#c5a059;font-weight:600;margin-bottom:6px;">' + opt.label + '</div>' +
+                    '<div style="height:1px;background:linear-gradient(90deg,rgba(197,160,89,0.4),transparent);margin-bottom:14px;"></div>' +
                     statsHTML +
                 '</div>';
             btn.textContent = 'View Image';
@@ -3123,7 +3127,7 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
             phoneMockup.classList.add('screen-on');
             phoneMockup.innerHTML = '<div class="phone-notch"></div>' +
                 '<div class="phone-screen" style="width:100%;height:100%;padding:0;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:16px;">' +
-                    '<img src="' + deviceImgSrc + '" alt="' + opt.label + '" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;filter:drop-shadow(0 4px 20px rgba(0,0,0,0.3));" />' +
+                    '<img src="' + deviceImgSrc + '" alt="' + opt.label + '" style="width:100%;height:100%;object-fit:cover;object-position:center;border-radius:16px;" />' +
                 '</div>';
             caseOverlay.style.display = 'none';
 
