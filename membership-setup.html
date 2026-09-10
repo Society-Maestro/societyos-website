@@ -720,6 +720,93 @@
             position: relative;
         }
 
+        /* Device showcase — two column: device image + stats */
+        .device-showcase {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            width: 100%;
+            max-width: 600px;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(197, 160, 89, 0.04) 0%, rgba(10, 10, 15, 0.6) 50%, rgba(197, 160, 89, 0.04) 100%);
+            border: 1px solid rgba(197, 160, 89, 0.15);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .device-showcase-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .device-showcase-image .phone-mockup {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(197, 160, 89, 0.15);
+            border: 2px solid rgba(197, 160, 89, 0.2);
+        }
+
+        .device-showcase-stats {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .device-showcase-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--society-gold-light, #c5a059);
+            margin-bottom: 0.25rem;
+            letter-spacing: 0.02em;
+        }
+
+        .device-showcase-divider {
+            height: 1px;
+            background: linear-gradient(90deg, rgba(197, 160, 89, 0.3) 0%, transparent 100%);
+            margin-bottom: 1.25rem;
+        }
+
+        .device-stats-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .device-stats-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0.65rem 0;
+            border-bottom: 1px solid rgba(197, 160, 89, 0.06);
+            gap: 1rem;
+        }
+
+        .device-stats-list li:last-child {
+            border-bottom: none;
+        }
+
+        .device-stats-list .stat-label {
+            font-family: 'EB Garamond', serif;
+            font-size: 0.8rem;
+            color: var(--text-tertiary, #888);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+        }
+
+        .device-stats-list .stat-value {
+            font-family: 'EB Garamond', serif;
+            font-size: 0.92rem;
+            color: var(--text-secondary, #ccc);
+            text-align: right;
+            font-weight: 500;
+        }
+
         /* ── Step 2 split layout: case grid + live phone preview ── */
         .step2-layout {
             display: flex;
@@ -2992,26 +3079,131 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
         phoneLayer.classList.remove('morphing-out');
     }
 
+    // Build device specs list from the option data
+    function buildDeviceStats(opt) {
+        var stats = [];
+        if (opt.id === 'iphone-duo') {
+            stats = [
+                { label: 'Chip', value: 'A20 Pro' },
+                { label: 'Display', value: '7.6" Inner · 5.4" Outer' },
+                { label: 'Design', value: 'Foldable · Grade 5 Titanium' },
+                { label: 'Colors', value: 'Star White · Night Sky' },
+                { label: 'Available', value: 'October 23, 2026' },
+            ];
+        } else if (opt.id === 'iphone-18-pro') {
+            stats = [
+                { label: 'Chip', value: 'A20 Pro' },
+                { label: 'Camera', value: '48MP Fusion · Variable Aperture' },
+                { label: 'Display', value: '6.3" Super Retina XDR' },
+                { label: 'Colors', value: 'Black · Silver · Glacier · Burgundy' },
+                { label: 'Available', value: 'September 18, 2026' },
+            ];
+        } else if (opt.id === 'iphone-18-promax') {
+            stats = [
+                { label: 'Chip', value: 'A20 Pro' },
+                { label: 'Camera', value: '48MP Fusion · Variable Aperture' },
+                { label: 'Display', value: '6.9" Super Retina XDR' },
+                { label: 'Battery', value: 'Longest in any iPhone' },
+                { label: 'Colors', value: 'Black · Silver · Glacier · Burgundy' },
+                { label: 'Available', value: 'September 18, 2026' },
+            ];
+        } else if (opt.id === 'samsung-s26-ultra') {
+            stats = [
+                { label: 'Chip', value: 'Snapdragon 8 Elite' },
+                { label: 'Display', value: 'Privacy Display' },
+                { label: 'Camera', value: '200MP Wide' },
+                { label: 'S Pen', value: 'Built-in' },
+                { label: 'Colors', value: 'Cobalt Violet' },
+            ];
+        } else if (opt.id === 'samsung-fold8-ultra') {
+            stats = [
+                { label: 'Chip', value: 'Snapdragon 8 Elite Gen 5' },
+                { label: 'Display', value: '8.0" Dynamic AMOLED 2X' },
+                { label: 'Camera', value: '200MP Wide · 30x Zoom' },
+                { label: 'Battery', value: '5000 mAh' },
+                { label: 'OS', value: 'Galaxy AI · DeX' },
+            ];
+        } else if (opt.id === 'samsung-fold8-wide') {
+            stats = [
+                { label: 'Chip', value: 'Snapdragon 8 Elite Gen 5' },
+                { label: 'Display', value: '4:3 Wide Foldable' },
+                { label: 'OS', value: 'Galaxy AI · Multi Window' },
+                { label: 'Design', value: 'Lightest Foldable' },
+            ];
+        } else if (opt.id === 'motorola-razr-fold') {
+            stats = [
+                { label: 'Display', value: '8.1" Book Style' },
+                { label: 'OS', value: 'Smart Connect' },
+                { label: 'Design', value: 'Flip Foldable' },
+            ];
+        } else if (opt.id === 'iphone-17') {
+            stats = [
+                { label: 'Chip', value: 'A19' },
+                { label: 'Display', value: '6.3"' },
+                { label: 'OS', value: 'iOS 27' },
+            ];
+        } else if (opt.id === 'iphone-17-pro') {
+            stats = [
+                { label: 'Chip', value: 'A19 Pro' },
+                { label: 'Display', value: '6.3"' },
+                { label: 'OS', value: 'iOS 27' },
+            ];
+        } else if (opt.id === 'iphone-17-promax') {
+            stats = [
+                { label: 'Chip', value: 'A19 Pro' },
+                { label: 'Display', value: '6.9"' },
+                { label: 'Storage', value: 'Up to 2TB' },
+                { label: 'OS', value: 'iOS 27' },
+            ];
+        } else if (opt.id === 'mac-mini') {
+            stats = [
+                { label: 'Chip', value: 'M4' },
+                { label: 'Use', value: 'Onyx Tier · Local AI' },
+                { label: 'OS', value: 'macOS Golden Gate' },
+            ];
+        } else if (opt.id === 'framework') {
+            stats = [
+                { label: 'Use', value: 'Gold Tier · Llama 70B' },
+                { label: 'OS', value: 'Linux' },
+                { label: 'Design', value: 'Modular Desktop' },
+            ];
+        } else {
+            stats = [{ label: 'Device', value: opt.label || '—' }];
+        }
+        return stats;
+    }
+
     function showDeviceRender(opt) {
         grid.style.display = 'none';
         deviceRender.style.display = 'flex';
 
-        // If we have a real device image, show it inside the phone mockup
         const deviceImgSrc = DEVICE_IMAGE_MAP[opt.id];
 
         if (deviceImgSrc) {
-            phoneMockup.className = 'phone-mockup';
-            phoneMockup.classList.add('screen-on');
-            phoneMockup.innerHTML = `
-                <div class="phone-notch"></div>
-                <div class="phone-screen" style="width: 100%; height: 100%; padding: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 16px;">
-                    <img src="${deviceImgSrc}" alt="${opt.label}" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 12px; filter: drop-shadow(0 4px 20px rgba(0,0,0,0.3));" />
+            // Build elegant two-column layout: device image inside phone frame + specs panel
+            deviceRender.innerHTML = `
+                <div class="device-showcase">
+                    <div class="device-showcase-image">
+                        <div class="phone-mockup" id="phone-mockup" style="width: 160px; height: 320px; border-radius: 24px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            <img src="${deviceImgSrc}" alt="${opt.label}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 24px;" />
+                        </div>
+                    </div>
+                    <div class="device-showcase-stats">
+                        <div class="device-showcase-name">${opt.label}</div>
+                        <div class="device-showcase-divider"></div>
+                        <ul class="device-stats-list">
+                            ${buildDeviceStats(opt).map(s => `<li><span class="stat-label">${s.label}</span><span class="stat-value">${s.value}</span></li>`).join('')}
+                        </ul>
+                    </div>
                 </div>
             `;
             setTimeout(() => {
-                phoneMockup.style.opacity = '1';
-                phoneMockup.style.transform = 'scale(1)';
-            }, 100);
+                const showcase = deviceRender.querySelector('.device-showcase');
+                if (showcase) {
+                    showcase.style.opacity = '1';
+                    showcase.style.transform = 'translateY(0)';
+                }
+            }, 50);
             return;
         }
 
