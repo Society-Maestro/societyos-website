@@ -1353,7 +1353,43 @@
             font-family: var(--font-display);
             font-size: 1.8rem;
             color: var(--society-gold-light);
+            margin-bottom: 0.75rem;
+        }
+
+        .case-info-material-benefit {
+            font-family: 'EB Garamond', serif;
+            font-size: 0.85rem;
+            color: #aaa;
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+            max-width: 460px;
+        }
+
+        .case-info-magsafe {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: 'EB Garamond', serif;
+            font-size: 0.75rem;
+            color: #c5a059;
+            background: rgba(197, 160, 89, 0.08);
+            border: 1px solid rgba(197, 160, 89, 0.15);
+            padding: 4px 12px;
+            border-radius: 20px;
             margin-bottom: 1rem;
+        }
+
+        .case-info-gold-engraving {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.8rem;
+            color: #c5a059;
+            background: linear-gradient(135deg, rgba(197, 160, 89, 0.12), rgba(197, 160, 89, 0.04));
+            border: 1px solid rgba(197, 160, 89, 0.25);
+            border-radius: 10px;
+            padding: 10px 16px;
+            margin-top: 1rem;
+            text-align: center;
+            letter-spacing: 0.03em;
         }
 
         .case-info-features {
@@ -1882,8 +1918,11 @@
             <div class="case-info-panel">
                 <div class="case-info-name" id="caseInfoName">SocietyOS Sovereign Case — Aramid Fiber</div>
                 <div class="case-info-price" id="caseInfoPrice">$89.99</div>
+                <div class="case-info-material-benefit" id="caseInfoMaterialBenefit"></div>
+                <div class="case-info-magsafe" id="caseInfoMagSafe"></div>
                 <div class="case-info-features" id="caseInfoFeatures"></div>
                 <div class="case-color-picker" id="caseColorPicker"></div>
+                <div class="case-info-gold-engraving" id="caseInfoGoldEngraving" style="display:none;"></div>
             </div>
         </div>
 
@@ -2232,6 +2271,49 @@
         renderAccessories();
     }
 
+    // Raptic case specs from official rapticstrong.com research
+    var RAPTIC_SPECS = {
+        'aramid': { materialBenefit: 'Aramid fiber is 5x stronger and 50% lighter than steel, delivering military-grade protection without bulk. Non-conductive and won\u2019t interfere with signal.', magSafe: true, goldEngraving: false },
+        'aramid-dual': { materialBenefit: 'Dual-layer aramid fiber construction delivers enhanced protection while maintaining an ultra-thin, ultra-lightweight profile. Non-conductive and resists yellowing.', magSafe: true, goldEngraving: false },
+        'aramid-dual-ultra': { materialBenefit: 'Flagship dual-layer aramid fiber with 24K gold-dipped luxury accents. 5x stronger and 50% lighter than steel \u2014 the same material used in jets and military gear.', magSafe: true, goldEngraving: true },
+        'leather': { materialBenefit: 'Full-grain genuine leather with a rich grain and refined finish. Naturally textured surface provides a superior non-slip grip while elevating your device into a statement of timeless elegance.', magSafe: true, goldEngraving: false },
+        'shield': { materialBenefit: 'Clear polycarbonate back panel protects from impact and scratches while showing off your phone\u2019s design. Soft rubber interior absorbs shock while the metal frame adds structural protection.', magSafe: true, goldEngraving: false },
+        'clear': { materialBenefit: 'Clear, light, and drop-proof construction that shows off your phone\u2019s natural design. Transparent material with 13-foot drop protection \u2014 no yellowing, no compromise.', magSafe: true, goldEngraving: false },
+        'raven-gold': { materialBenefit: 'Premium aramid fiber with KeZhi multi-color weaving and 24K gold-dipped accents. The ultimate statement piece \u2014 luxury woven protection that turns heads.', magSafe: true, goldEngraving: true },
+    };
+
+    function getRapticSpec(caseData) {
+        if (!caseData) return null;
+        var material = (caseData.material || '').toLowerCase();
+        var series = (caseData.series || '').toLowerCase();
+        var id = (caseData.id || '').toLowerCase();
+
+        // Match by ID pattern first
+        if (id.indexOf('dual-ultra') !== -1) return RAPTIC_SPECS['aramid-dual-ultra'];
+        if (id.indexOf('nav') !== -1 && id.indexOf('nano') === -1) return RAPTIC_SPECS['leather'];
+        if (id.indexOf('nano') !== -1) return RAPTIC_SPECS['leather'];
+        if (id.indexOf('skinpro') !== -1 || id.indexOf('skin-pro') !== -1) return RAPTIC_SPECS['aramid'];
+        if (id.indexOf('shield-evo') !== -1 || id.indexOf('shield') !== -1) return RAPTIC_SPECS['shield'];
+        if (id.indexOf('air-stand') !== -1) return RAPTIC_SPECS['clear'];
+        if (id.indexOf('air-clear') !== -1) return RAPTIC_SPECS['clear'];
+
+        // Match by material
+        if (material.indexOf('aramid') !== -1) {
+            if (material.indexOf('gold') !== -1 || id.indexOf('scepter') !== -1 || id.indexOf('raven-gold') !== -1 || id.indexOf('amber') !== -1 && id.indexOf('dual-ultra') !== -1) return RAPTIC_SPECS['aramid-dual-ultra'];
+            if (id.indexOf('dual') !== -1) return RAPTIC_SPECS['aramid-dual'];
+            return RAPTIC_SPECS['aramid'];
+        }
+        if (material.indexOf('leather') !== -1) {
+            if (id.indexOf('nav') !== -1 && id.indexOf('nano') === -1) return RAPTIC_SPECS['leather'];
+            return RAPTIC_SPECS['leather'];
+        }
+        if (material.indexOf('shield') !== -1 || material.indexOf('polycarbonate') !== -1) return RAPTIC_SPECS['shield'];
+        if (material.indexOf('clear') !== -1 || material.indexOf('tpu') !== -1) return RAPTIC_SPECS['clear'];
+        if (caseData.type === 'raven-gold') return RAPTIC_SPECS['raven-gold'];
+
+        return null;
+    }
+
     function renderCaseSelector() {
         const protocol = getActiveProtocol();
         const cases = protocol.cases;
@@ -2253,6 +2335,35 @@
         // Update info panel
         document.getElementById('caseInfoName').textContent = caseData.name;
         document.getElementById('caseInfoPrice').textContent = '$' + caseData.price.toFixed(2);
+
+        // Material benefit + MagSafe + Gold engraving from Raptic specs
+        var rapticSpec = getRapticSpec(caseData);
+        var benefitEl = document.getElementById('caseInfoMaterialBenefit');
+        var magSafeEl = document.getElementById('caseInfoMagSafe');
+        var goldEl = document.getElementById('caseInfoGoldEngraving');
+
+        if (rapticSpec) {
+            if (benefitEl) {
+                benefitEl.textContent = rapticSpec.materialBenefit;
+                benefitEl.style.display = '';
+            }
+            if (magSafeEl) {
+                magSafeEl.innerHTML = '\u2794 Enhanced MagSafe Compatibility \u2014 Qi/Qi2 Wireless Charging';
+                magSafeEl.style.display = '';
+            }
+            if (goldEl) {
+                if (rapticSpec.goldEngraving) {
+                    goldEl.innerHTML = '\u2726 Gold Engraving \u2014 Reserved for Gold Members \u2726';
+                    goldEl.style.display = '';
+                } else {
+                    goldEl.style.display = 'none';
+                }
+            }
+        } else {
+            if (benefitEl) benefitEl.style.display = 'none';
+            if (magSafeEl) magSafeEl.style.display = 'none';
+            if (goldEl) goldEl.style.display = 'none';
+        }
 
         // Features
         const featuresEl = document.getElementById('caseInfoFeatures');
