@@ -2450,15 +2450,12 @@
         const deviceImgSrc = DEVICE_IMAGE_MAP[deviceOpt.id];
 
         if (deviceImgSrc) {
-            var isWide = (deviceOpt.type === 'foldable' || deviceOpt.type === 'foldable-wide' || deviceOpt.type === 'foldable-horizontal');
-            var frameW = isWide ? '340px' : '240px';
-            var frameH = isWide ? '220px' : '300px';
             area.innerHTML = `
                 <div class="morph-stage">
                     <div class="morph-flash"></div>
                     <div class="morph-phone">
-                        <div style="display:flex; align-items:center; justify-content:center; width:${frameW}; height:${frameH}; background:linear-gradient(145deg,#0d0d12,#1a1a2e); border:2px solid rgba(197,160,89,0.2); border-radius:20px; padding:8px; box-shadow:0 12px 40px rgba(0,0,0,0.5),0 0 30px rgba(197,160,89,0.12);">
-                            <img src="${deviceImgSrc}" alt="${deviceOpt.label}" style="width:100%; height:100%; object-fit:contain; border-radius:14px;" />
+                        <div style="display:flex; align-items:center; justify-content:center; width:100%; height:100%;">
+                            <img src="${deviceImgSrc}" alt="${deviceOpt.label}" style="max-width: 100%; max-height: 280px; object-fit: contain; border-radius: 14px; filter: drop-shadow(0 6px 24px rgba(0,0,0,0.4));" />
                         </div>
                     </div>
                     <div class="morph-case" style="display:none;"></div>
@@ -3183,15 +3180,12 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
         const deviceImgSrc = DEVICE_IMAGE_MAP[opt.id];
 
         if (deviceImgSrc) {
-            // Build elegant two-column layout: device image + specs panel
-            var isWide = (opt.type === 'foldable' || opt.type === 'foldable-wide' || opt.type === 'foldable-horizontal');
-            var frameW = isWide ? '340px' : '240px';
-            var frameH = isWide ? '220px' : '300px';
+            // Build elegant two-column layout: device image inside phone frame + specs panel
             deviceRender.innerHTML = `
                 <div class="device-showcase">
                     <div class="device-showcase-image">
-                        <div class="phone-mockup device-frame" id="phone-mockup" style="width:${frameW}; height:${frameH}; border-radius:20px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:linear-gradient(145deg,#0d0d12,#1a1a2e); border:2px solid rgba(197,160,89,0.2); box-shadow:0 12px 40px rgba(0,0,0,0.5),0 0 30px rgba(197,160,89,0.12); padding:8px;">
-                            <img src="${deviceImgSrc}" alt="${opt.label}" style="width:100%; height:100%; object-fit:contain; border-radius:14px;" />
+                        <div class="phone-mockup" id="phone-mockup" style="width: 160px; height: 320px; border-radius: 24px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            <img src="${deviceImgSrc}" alt="${opt.label}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 24px;" />
                         </div>
                     </div>
                     <div class="device-showcase-stats">
