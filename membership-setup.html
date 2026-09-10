@@ -2056,6 +2056,9 @@
         grid.innerHTML = '';
         grid.style.display = 'grid';
         deviceRender.style.display = 'none';
+        // Remove toggle button if present
+        var oldToggle = document.getElementById('deviceViewToggle');
+        if (oldToggle) oldToggle.remove();
         summary.classList.remove('visible');
 
         // Remove step2 split layout if exiting step 2
@@ -2992,23 +2995,154 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
         phoneLayer.classList.remove('morphing-out');
     }
 
+    // Build device specs list from the option data
+    function buildDeviceStats(opt) {
+        var stats = [];
+        if (opt.id === 'iphone-duo') {
+            stats = [
+                { label: 'Chip', value: 'A20 Pro' },
+                { label: 'Display', value: '7.6" Inner · 5.4" Outer' },
+                { label: 'Design', value: 'Foldable · Titanium' },
+                { label: 'Colors', value: 'Star White · Night Sky' },
+                { label: 'Available', value: 'October 23' },
+            ];
+        } else if (opt.id === 'iphone-18-pro') {
+            stats = [
+                { label: 'Chip', value: 'A20 Pro' },
+                { label: 'Camera', value: '48MP Fusion' },
+                { label: 'Display', value: '6.3" Super Retina XDR' },
+                { label: 'Colors', value: 'Black · Silver · Glacier · Burgundy' },
+                { label: 'Available', value: 'September 18' },
+            ];
+        } else if (opt.id === 'iphone-18-promax') {
+            stats = [
+                { label: 'Chip', value: 'A20 Pro' },
+                { label: 'Camera', value: '48MP Fusion' },
+                { label: 'Display', value: '6.9" Super Retina XDR' },
+                { label: 'Battery', value: 'Longest in any iPhone' },
+                { label: 'Colors', value: 'Black · Silver · Glacier · Burgundy' },
+                { label: 'Available', value: 'September 18' },
+            ];
+        } else if (opt.id === 'samsung-s26-ultra') {
+            stats = [
+                { label: 'Chip', value: 'Snapdragon 8 Elite' },
+                { label: 'Display', value: 'Privacy Display' },
+                { label: 'Camera', value: '200MP Wide' },
+                { label: 'Colors', value: 'Cobalt Violet' },
+            ];
+        } else if (opt.id === 'samsung-fold8-ultra') {
+            stats = [
+                { label: 'Chip', value: 'Snapdragon 8 Elite Gen 5' },
+                { label: 'Display', value: '8.0" Dynamic AMOLED 2X' },
+                { label: 'Camera', value: '200MP · 30x Zoom' },
+                { label: 'Battery', value: '5000 mAh' },
+            ];
+        } else if (opt.id === 'samsung-fold8-wide') {
+            stats = [
+                { label: 'Chip', value: 'Snapdragon 8 Elite Gen 5' },
+                { label: 'Display', value: '4:3 Wide Foldable' },
+                { label: 'Design', value: 'Lightest Foldable' },
+            ];
+        } else if (opt.id === 'motorola-razr-fold') {
+            stats = [
+                { label: 'Display', value: '8.1" Book Style' },
+                { label: 'Design', value: 'Flip Foldable' },
+            ];
+        } else if (opt.id === 'iphone-17') {
+            stats = [
+                { label: 'Chip', value: 'A19' },
+                { label: 'Display', value: '6.3"' },
+            ];
+        } else if (opt.id === 'iphone-17-pro') {
+            stats = [
+                { label: 'Chip', value: 'A19 Pro' },
+                { label: 'Display', value: '6.3"' },
+            ];
+        } else if (opt.id === 'iphone-17-promax') {
+            stats = [
+                { label: 'Chip', value: 'A19 Pro' },
+                { label: 'Display', value: '6.9"' },
+                { label: 'Storage', value: 'Up to 2TB' },
+            ];
+        } else if (opt.id === 'mac-mini') {
+            stats = [
+                { label: 'Chip', value: 'M4' },
+                { label: 'Use', value: 'Local AI Node' },
+            ];
+        } else if (opt.id === 'framework') {
+            stats = [
+                { label: 'Use', value: 'Gold Tier · Llama 70B' },
+                { label: 'Design', value: 'Modular Desktop' },
+            ];
+        } else {
+            stats = [{ label: 'Device', value: opt.label || '—' }];
+        }
+        return stats;
+    }
+
+    // Toggle between device image and specs inside the phone mockup
+    function toggleDeviceSpecs(opt, imgSrc) {
+        var btn = document.getElementById('deviceViewToggle');
+        if (!btn) return;
+        var isSpecs = (btn.textContent.indexOf('View Image') !== -1);
+
+        if (isSpecs) {
+            // Switch back to image
+            phoneMockup.innerHTML = '<div class="phone-notch"></div>' +
+                '<div class="phone-screen" style="width:100%;height:100%;padding:0;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:16px;">' +
+                    '<img src="' + imgSrc + '" alt="' + opt.label + '" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;filter:drop-shadow(0 4px 20px rgba(0,0,0,0.3));" />' +
+                '</div>';
+            btn.textContent = 'View Specs';
+        } else {
+            // Switch to specs
+            var statsHTML = buildDeviceStats(opt).map(function(s) {
+                return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid rgba(197,160,89,0.06);">' +
+                    '<span style="font-family:"EB Garamond",serif;font-size:0.65rem;color:#888;text-transform:uppercase;letter-spacing:0.06em;">' + s.label + '</span>' +
+                    '<span style="font-family:"EB Garamond",serif;font-size:0.7rem;color:#ccc;text-align:right;font-weight:500;">' + s.value + '</span>' +
+                '</div>';
+            }).join('');
+            phoneMockup.innerHTML = '<div class="phone-notch"></div>' +
+                '<div class="phone-screen" style="width:88%;height:88%;padding:16px 12px;overflow-y:auto;border-radius:12px;">' +
+                    '<div style="font-family:"Cormorant Garamond",serif;font-size:0.8rem;color:#c5a059;font-weight:600;margin-bottom:8px;letter-spacing:0.02em;">' + opt.label + '</div>' +
+                    '<div style="height:1px;background:linear-gradient(90deg,rgba(197,160,89,0.3),transparent);margin-bottom:10px;"></div>' +
+                    statsHTML +
+                '</div>';
+            btn.textContent = 'View Image';
+        }
+    }
+
     function showDeviceRender(opt) {
         grid.style.display = 'none';
         deviceRender.style.display = 'flex';
 
         // If we have a real device image, show it inside the phone mockup
-        const deviceImgSrc = DEVICE_IMAGE_MAP[opt.id];
+        var deviceImgSrc = DEVICE_IMAGE_MAP[opt.id];
 
         if (deviceImgSrc) {
             phoneMockup.className = 'phone-mockup';
             phoneMockup.classList.add('screen-on');
-            phoneMockup.innerHTML = `
-                <div class="phone-notch"></div>
-                <div class="phone-screen" style="width: 100%; height: 100%; padding: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 16px;">
-                    <img src="${deviceImgSrc}" alt="${opt.label}" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 12px; filter: drop-shadow(0 4px 20px rgba(0,0,0,0.3));" />
-                </div>
-            `;
-            setTimeout(() => {
+            phoneMockup.innerHTML = '<div class="phone-notch"></div>' +
+                '<div class="phone-screen" style="width:100%;height:100%;padding:0;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:16px;">' +
+                    '<img src="' + deviceImgSrc + '" alt="' + opt.label + '" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:12px;filter:drop-shadow(0 4px 20px rgba(0,0,0,0.3));" />' +
+                '</div>';
+            caseOverlay.style.display = 'none';
+
+            // Add toggle button after phone mockup if not already present
+            var existingBtn = document.getElementById('deviceViewToggle');
+            if (!existingBtn) {
+                var btn = document.createElement('button');
+                btn.id = 'deviceViewToggle';
+                btn.textContent = 'View Specs';
+                btn.style.cssText = 'margin-top:1.5rem;padding:8px 24px;border-radius:20px;border:1px solid rgba(197,160,89,0.3);background:rgba(197,160,89,0.08);color:#c5a059;font-family:"EB Garamond",serif;font-size:0.85rem;cursor:pointer;letter-spacing:0.05em;transition:all 0.3s ease;';
+                btn.onclick = function() { toggleDeviceSpecs(opt, deviceImgSrc); };
+                phoneMockup.parentElement.appendChild(btn);
+            } else {
+                existingBtn.textContent = 'View Specs';
+                existingBtn.onclick = function() { toggleDeviceSpecs(opt, deviceImgSrc); };
+                existingBtn.style.display = '';
+            }
+
+            setTimeout(function() {
                 phoneMockup.style.opacity = '1';
                 phoneMockup.style.transform = 'scale(1)';
             }, 100);
