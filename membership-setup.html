@@ -464,18 +464,6 @@
         }
         .selection-card[data-id^="iphone"]:hover .card-icon,
         .selection-card[data-id^="iphone"].selected .card-icon,
-        .selection-card[data-id^="mac-mini"]:hover .card-icon,
-        .selection-card[data-id^="mac-mini"].selected .card-icon {
-            color: var(--text-primary);
-        }
-        .selection-card[data-id^="motorola"]:hover .card-icon,
-        .selection-card[data-id^="motorola"].selected .card-icon {
-            color: #5c92fa;
-        }
-        .selection-card[data-id^="framework"]:hover .card-icon,
-        .selection-card[data-id^="framework"].selected .card-icon {
-            color: #2a8a5e;
-        }
         .selection-card[data-id^="tangem"]:hover .card-icon,
         .selection-card[data-id^="tangem"].selected .card-icon {
             color: var(--accent-green);
@@ -505,7 +493,7 @@
             width: 90px;
             height: 60px;
         }
-        /* Foldable book tall — portrait (Fold8 Ultra, Motorola) */
+        /* Foldable book tall — portrait (Fold8 Ultra) */
         .case-foldable-book:not(.case-foldable-wide-shape) {
             width: 60px;
             height: 90px;
@@ -1584,10 +1572,7 @@
         'iphone-17-promax': ['a17'],
         'samsung-fold8-ultra': ['sf8'],
         'samsung-fold8-wide': ['sf8w'],
-        'motorola-razr-fold': [],
         'samsung-s26-ultra': ['s26'],
-        'mac-mini': [],
-        'framework': [],
     };
 
     // Case series → case IDs (Raptic products)
@@ -1861,8 +1846,6 @@
     const logos = {
         apple: `<svg viewBox="0 0 24 24" fill="currentColor" width="40" height="40"><path d="M17.05 12.04c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.1-2.01-3.77-2.04-1.6-.16-3.12.94-3.93.94-.82 0-2.07-.92-3.41-.89-1.75.03-3.37 1.02-4.27 2.58-1.82 3.15-.46 7.81 1.31 10.37.87 1.26 1.91 2.67 3.27 2.62 1.32-.05 1.82-.85 3.41-.85 1.59 0 2.04.85 3.43.82 1.42-.02 2.31-1.27 3.18-2.54 1-1.46 1.41-2.88 1.43-2.95-.03-.01-2.74-1.05-2.77-4.2zM14.6 4.59c.72-.87 1.21-2.08 1.08-3.29-1.04.04-2.31.69-3.06 1.56-.67.77-1.26 2-1.1 3.18 1.16.09 2.36-.59 3.08-1.45z"/></svg>`,
         samsung: `<svg viewBox="0 0 120 24" fill="currentColor" width="56" height="22"><path d="M0 2.5h8.2c3.2 0 5.1 1.5 5.1 4.3 0 1.7-.8 2.8-2.1 3.4 1.6.5 2.5 1.8 2.5 3.6 0 3-2.2 4.7-5.6 4.7H0V2.5zm4.2 3.3v3.3h3.1c1.2 0 1.9-.6 1.9-1.7s-.7-1.6-1.9-1.6H4.2zm0 6.3v3.6h3.3c1.4 0 2.1-.7 2.1-1.8s-.7-1.8-2.1-1.8H4.2zM16.5 2.5h4.2v16h-4.2zM30.5 18.5h-4.2v-1.2c-.7.9-1.9 1.5-3.3 1.5-2.6 0-4.2-1.8-4.2-4.4V7h4.2v6.6c0 1.3.7 2 1.8 2 1.1 0 1.8-.7 1.8-2V7h4.2v11.5zM35.5 7h4.2v1.2c.7-.9 1.9-1.5 3.3-1.5 2.6 0 4.2 1.8 4.2 4.4v7.4h-4.2v-6.6c0-1.3-.7-2-1.8-2-1.1 0-1.8.7-1.8 2v6.6h-4.2V7zM54.5 11.8c0-1.3-.7-2-1.8-2-1.1 0-1.8.7-1.8 2v6.7h-4.2V7h4.2v1.2c.7-.9 1.9-1.5 3.3-1.5 2.6 0 4.2 1.8 4.2 4.4v7.4h-4.2v-6.7zM64.5 18.5h-4.2v-1.2c-.7.9-1.9 1.5-3.3 1.5-2.6 0-4.2-1.8-4.2-4.4V7h4.2v6.6c0 1.3.7 2 1.8 2 1.1 0 1.8-.7 1.8-2V7h4.2v11.5zM73.5 6.8c-3.7 0-6.3 2.6-6.3 6 0 3.4 2.6 6 6.3 6 2.3 0 4.3-1.1 5.4-2.9l-3.5-2c-.5.7-1.1 1.1-1.9 1.1-1.2 0-2.1-.9-2.1-2.2 0-1.3.9-2.2 2.1-2.2.8 0 1.4.4 1.9 1.1l3.5-2c-1.1-1.8-3.1-2.9-5.4-2.9zM79.5 18.5h4.2v-16h-4.2zM85.5 2.5h4.2v16h-4.2zM100 7l-2.5 6.5L95 7h-4.5l5 11.5h4l5-11.5z"/></svg>`,
-        motorola: `<svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48"><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 7c-2.8 0-5 2.2-5 5v5h2.5v-5c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5v5H17v-5c0-2.8-2.2-5-5-5z"/><circle cx="12" cy="12" r="1.5"/></svg>`,
-        framework: `<svg viewBox="0 0 24 24" fill="currentColor" width="40" height="40"><rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="8" y="8" width="8" height="8" rx="1" fill="currentColor" opacity="0.3"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>`,
         tangem: `<svg viewBox="0 0 40 28" fill="none" stroke="currentColor" stroke-width="1.5" width="56" height="38"><rect x="2" y="2" width="36" height="24" rx="4"/><rect x="8" y="6" width="10" height="6" rx="1" fill="currentColor" opacity="0.3"/><circle cx="30" cy="20" r="2.5" fill="currentColor" opacity="0.5"/><line x1="22" y1="6" x2="22" y2="22" stroke-dasharray="1 1"/></svg>`,
         societyos: `<svg viewBox="0 0 32 32" width="40" height="40"><defs><linearGradient id="sos-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c5a059"/><stop offset="100%" stop-color="#c5a059"/></linearGradient></defs><rect x="6" y="6" width="20" height="20" rx="6" fill="url(#sos-grad)"/><text x="16" y="22" text-anchor="middle" fill="white" font-size="14" font-weight="800" font-family="sans-serif">S</text></svg>`,
         solana: `<svg viewBox="0 0 24 24" fill="currentColor" width="40" height="40"><path d="M5 8.5h10.5l2-2H7zM5 15.5h10.5l2-2H7zM8.5 6.5l-2 2h10.5l2-2zM8.5 13.5l-2 2h10.5l2-2z"/></svg>`,
@@ -1949,7 +1932,7 @@
             <circle cx="30" cy="75" r="2" class="case-vent"/>
             <circle cx="40" cy="75" r="2" class="case-vent"/>
         </svg>`,
-        // Foldable Book Tall — portrait, vertical crease, left/right open (Samsung Fold8 Ultra, Motorola Razr Fold)
+        // Foldable Book Tall — portrait, vertical crease, left/right open (Samsung Fold8 Ultra)
         // Proportions: tall and narrow, ~1:1.5 ratio
         foldable: `<svg viewBox="0 0 80 120" class="case-silhouette case-foldable-book" xmlns="http://www.w3.org/2000/svg">
             <g class="fold-left">
@@ -3036,12 +3019,7 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
                 { label: 'Display', value: '4:3 Wide Foldable' },
                 { label: 'Design', value: 'Lightest Foldable' },
             ];
-        } else if (opt.id === 'motorola-razr-fold') {
-            stats = [
-                { label: 'Display', value: '8.1" Book Style' },
-                { label: 'Design', value: 'Flip Foldable' },
-            ];
-        } else if (opt.id === 'iphone-17') {
+ else if (opt.id === 'iphone-17') {
             stats = [
                 { label: 'Chip', value: 'A19' },
                 { label: 'Display', value: '6.3"' },
@@ -3057,12 +3035,7 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
                 { label: 'Display', value: '6.9"' },
                 { label: 'Storage', value: 'Up to 2TB' },
             ];
-        } else if (opt.id === 'mac-mini') {
-            stats = [
-                { label: 'Chip', value: 'M4' },
-                { label: 'Use', value: 'Local AI Node' },
-            ];
-        } else if (opt.id === 'framework') {
+ else if (opt.id === 'framework') {
             stats = [
                 { label: 'Use', value: 'Gold Tier · Llama 70B' },
                 { label: 'Design', value: 'Modular Desktop' },
