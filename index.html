@@ -1892,7 +1892,7 @@
     <div class="case-selector">
         <h2 class="case-selector-title" id="caseSelectorTitle">Sovereign Protection</h2>
         <p class="case-selector-subtitle" id="caseSelectorSubtitle">Select your device — the case morphs to life</p>
-        <p style="text-align:center; color: #c5a059; font-size: 0.8rem; font-family: 'EB Garamond', serif; margin-bottom: 1.5rem; opacity: 0.8;">Gold engraving on any case is reserved for Gold members</p>
+        <p style="text-align:center; color: #c5a059; font-size: 0.8rem; font-family: 'EB Garamond', serif; margin-bottom: 1.5rem; opacity: 0.8;">Select cases feature a Gold engraving on the back — reserved exclusively for Gold members</p>
 
         <div class="case-display">
             <!-- Liquid Glass Case -->
@@ -1923,6 +1923,7 @@
                 <div class="case-info-features" id="caseInfoFeatures"></div>
                 <div class="case-color-picker" id="caseColorPicker"></div>
                 <div class="case-info-gold-engraving" id="caseInfoGoldEngraving" style="display:none;"></div>
+                <button class="case-view-toggle" id="caseViewToggle" style="margin-top:1rem;padding:6px 18px;border-radius:20px;border:1px solid rgba(197,160,89,0.3);background:rgba(197,160,89,0.08);color:#c5a059;font-family:'EB Garamond',serif;font-size:0.8rem;cursor:pointer;transition:all 0.3s ease;" onclick="toggleCaseView()">View Back</button>
             </div>
         </div>
 
@@ -2312,6 +2313,37 @@
         if (caseData.type === 'raven-gold') return RAPTIC_SPECS['raven-gold'];
 
         return null;
+    }
+
+    // Case view toggle — show front or back of case
+    var caseViewMode = 'front';
+    function toggleCaseView() {
+        var btn = document.getElementById('caseViewToggle');
+        var glassCase = document.getElementById('liquidGlassCase');
+        var materialLabel = document.getElementById('glassCaseMaterial');
+        var caseLabel = document.getElementById('glassCaseLabel');
+        if (!btn) return;
+        
+        if (caseViewMode === 'front') {
+            caseViewMode = 'back';
+            btn.textContent = 'View Front';
+            // Show back of case — material + gold engraving if applicable
+            var spec = getRapticSpec(currentCase);
+            if (spec && spec.goldEngraving) {
+                if (materialLabel) materialLabel.textContent = 'Gold Engraving — Back';
+                if (caseLabel) caseLabel.textContent = currentCase.name + ' — Gold Engraving';
+            } else {
+                if (materialLabel) materialLabel.textContent = currentCase ? currentCase.material : '';
+                if (caseLabel) caseLabel.textContent = currentCase ? currentCase.name + ' — Back' : '';
+            }
+            glassCase.style.transform = 'rotateY(180deg)';
+        } else {
+            caseViewMode = 'front';
+            btn.textContent = 'View Back';
+            if (materialLabel) materialLabel.textContent = currentCase ? currentCase.material : '';
+            if (caseLabel) caseLabel.textContent = currentCase ? currentCase.name : '';
+            glassCase.style.transform = '';
+        }
     }
 
     function renderCaseSelector() {
