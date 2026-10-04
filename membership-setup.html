@@ -1981,10 +1981,10 @@
             prompt: 'Choose your membership',
             subtitle: 'Sovereign Services for SocietyOS Members',
             options: [
-                { id: 'carbon', label: 'Carbon', subtitle: '$59.95/mo · SocietyOS + Maestro', logo: 'societyos', type: 'tier' },
-                { id: 'onyx', label: 'Onyx', subtitle: '$69.95/mo · Carbon + Sports+ + Movies+', logo: 'societyos', type: 'tier' },
-                { id: 'gold', label: 'GOLD', subtitle: '$89.95/mo · Onyx + Premium + Athena + Vault', logo: 'solana', type: 'tier' },
-                { id: 'socialite-special', label: 'Socialite Special', subtitle: '$399.95 · Formuler Z12 Ultra Pro + 1yr Onyx + gifts · 100 only', logo: 'societyos', type: 'tier' },
+                { id: 'carbon', label: 'Carbon', subtitle: '$59.95/mo · SocietyOS + Maestro', logo: 'societyos', type: 'tier', checkoutUrl: 'https://buy.stripe.com/4gMcN461Ib6Z5H86Oo53O02' },
+                { id: 'onyx', label: 'Onyx', subtitle: '$69.95/mo · Carbon + Sports+ + Movies+', logo: 'societyos', type: 'tier', checkoutUrl: 'https://buy.stripe.com/4gM28q0Ho7UNglM5Kk53O03' },
+                { id: 'gold', label: 'GOLD', subtitle: '$89.95/mo · Onyx + Premium + Athena + Vault', logo: 'solana', type: 'tier', checkoutUrl: 'https://buy.stripe.com/4gM4gy89Qa2V0mOdcM53O04' },
+                { id: 'socialite-special', label: 'Socialite Special', subtitle: '$399.95 · Formuler Z12 Ultra Pro + 1yr Onyx + gifts · 100 only', logo: 'societyos', type: 'tier', checkoutUrl: 'https://buy.stripe.com/bJe9AS4XE6QJ8Tkc8I53O05' },
             ]
         }
     };
@@ -3486,8 +3486,12 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
                 }
             }, 100);
         } else {
-            // Complete — show SocietyOS streaming credentials + open link
-            showCompletion();
+            // Complete — redirect to Stripe payment link for selected tier
+            if (selections.membership && selections.membership.checkoutUrl) {
+                window.open(selections.membership.checkoutUrl, '_self');
+            } else {
+                showCompletion();
+            }
         }
     }
 
