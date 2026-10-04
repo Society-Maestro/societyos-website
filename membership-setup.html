@@ -2456,7 +2456,7 @@
                 }
             }, 200);
         }
-        if (step === 3 && opt.type === 'tangem') {
+        if (step === 3 && (opt.type === 'tangem' || opt.type === 'tangem-ring')) {
             triggerNFCAnimation();
         }
 
@@ -3362,6 +3362,8 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
     // Check if the selected device has any compatible cases
     function deviceHasCases(deviceId) {
         if (!deviceId) return false;
+        // SocietyOS hardware devices (Formuler Z12, NoDe, BYO) don't use phone cases
+        if (['formuler-z12-ultra-pro', 'societyos-node', 'byo-device'].includes(deviceId)) return false;
         const series = phoneCaseMap[deviceId] || [];
         return series.some(s => (caseSeriesMap[s] || []).length > 0);
     }
@@ -3370,7 +3372,8 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
         if (step === 1) return selections.device !== null;
         if (step === 2) return selections.case !== null;
         if (step === 3) return selections.wallet !== null;
-        if (step === 4) return selections.membership !== null;
+        if (step === 4) return selections.societyTV !== null;
+        if (step === 5) return selections.membership !== null;
         return false;
     }
 
@@ -3386,6 +3389,9 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
         if (selections.membership?.id === 'founding-nodes') {
             btnNext.className = 'btn btn-gold';
             btnNext.textContent = 'Claim Your NODE →';
+        } else if (selections.membership?.id === 'socialite-special') {
+            btnNext.className = 'btn btn-gold';
+            btnNext.textContent = 'Claim Your Socialite Special →';
         }
     }
 
