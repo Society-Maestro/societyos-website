@@ -1686,7 +1686,7 @@
         <div class="completion-card">
             <div class="completion-icon">🎬</div>
             <h2 class="completion-title">Welcome to the Society</h2>
-            <p class="completion-subtitle">Your SocietyOS Silo VOD access is provisioned. Use the credentials below to sign in.</p>
+            <p class="completion-subtitle">Your SocietyOS streaming access is provisioned. Use the credentials below to sign in.</p>
             <div class="credential-box">
                 <div class="credential-row">
                     <span class="credential-label">SocietyOS Portal</span>
@@ -1706,7 +1706,7 @@
                     📺 Open SocietyOS →
                 </a>
                 <a href="https://societyos.pro" target="_blank" rel="noopener noreferrer" class="btn-silo-outline">
-                    Sign in to Silo VOD
+                    Sign in to SocietyOS
                 </a>
             </div>
         </div>
@@ -3443,7 +3443,7 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
         }
     }
 
-    // Generate Silo VOD credentials based on membership tier
+    // Generate SocietyOS streaming credentials based on membership tier
     function generateSiloCredentials() {
         var tier = selections.membership?.id || 'carbon';
         var tierPrefix = tier === 'gold' ? 'gd' : tier === 'onyx' ? 'ox' : 'cb';
@@ -3487,7 +3487,7 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
                 }
             }, 100);
         } else {
-            // Complete — show Silo VOD credentials + open link
+            // Complete — show SocietyOS streaming credentials + open link
             showCompletion();
         }
     }
