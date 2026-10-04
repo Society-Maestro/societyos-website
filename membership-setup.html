@@ -1617,11 +1617,6 @@
         <div class="step-line" id="line-3"></div>
         <div class="step" id="step-4">
             <div class="step-dot">4</div>
-            <span class="step-label">Society TV</span>
-        </div>
-        <div class="step-line" id="line-4"></div>
-        <div class="step" id="step-5">
-            <div class="step-dot">5</div>
             <span class="step-label">Membership</span>
         </div>
     </div>
@@ -1675,10 +1670,6 @@
             </div>
             <div class="summary-row">
                 <span class="summary-label">SocietyOS</span>
-                <span class="summary-value" id="sum-societytv">—</span>
-            </div>
-            <div class="summary-row">
-                <span class="summary-label">Membership</span>
                 <span class="summary-value" id="sum-membership">—</span>
             </div>
         </div>
@@ -1695,10 +1686,10 @@
         <div class="completion-card">
             <div class="completion-icon">🎬</div>
             <h2 class="completion-title">Welcome to the Society</h2>
-            <p class="completion-subtitle">Your Society TV — Silo VOD access is provisioned. Use the credentials below to sign in.</p>
+            <p class="completion-subtitle">Your SocietyOS Silo VOD access is provisioned. Use the credentials below to sign in.</p>
             <div class="credential-box">
                 <div class="credential-row">
-                    <span class="credential-label">Society TV Portal</span>
+                    <span class="credential-label">SocietyOS Portal</span>
                     <span class="credential-value">societyos.pro</span>
                 </div>
                 <div class="credential-row">
@@ -1712,7 +1703,7 @@
             </div>
             <div class="completion-actions">
                 <a href="https://societyos.pro" target="_blank" rel="noopener noreferrer" class="btn-silo">
-                    📺 Open Society TV →
+                    📺 Open SocietyOS →
                 </a>
                 <a href="https://societyos.pro" target="_blank" rel="noopener noreferrer" class="btn-silo-outline">
                     Sign in to Silo VOD
@@ -1863,7 +1854,6 @@
         wallet: null,
         membership: null
     };
-
     // Data for each step
     // Device images — official product photos for Step 1 cards + preview + device render
     const DEVICE_IMAGE_MAP = {
@@ -1988,18 +1978,8 @@
             ]
         },
         4: {
-            prompt: 'Set up SocietyOS',
-            subtitle: 'Sovereign Services provided for SocietyOS Members',
-            options: [
-                { id: 'freecast-activate', label: 'SocietyOS — Carbon', subtitle: 'Base channels + local TV + on-demand', logo: 'societyos', type: 'tv' },
-                { id: 'bestpanel-sports-movies', label: 'SocietyOS — Onyx', subtitle: 'Carbon + Sports+ + Movies+ packages', logo: 'societyos', type: 'tv' },
-                { id: 'bestpanel-premium', label: 'SocietyOS — GOLD', subtitle: 'Onyx + Premium packages + 4K', logo: 'societyos', type: 'tv' },
-                { id: 'skip-tv', label: 'Add Later', subtitle: 'Can activate anytime', logo: 'skip', type: 'skip' },
-            ]
-        },
-        5: {
             prompt: 'Choose your membership',
-            subtitle: 'Your sovereign journey begins',
+            subtitle: 'Sovereign Services for SocietyOS Members',
             options: [
                 { id: 'carbon', label: 'Carbon', subtitle: '$59.95/mo · SocietyOS + Maestro', logo: 'societyos', type: 'tier' },
                 { id: 'onyx', label: 'Onyx', subtitle: '$69.95/mo · Carbon + Sports+ + Movies+', logo: 'societyos', type: 'tier' },
@@ -2218,7 +2198,7 @@
 
         // Update steps
         const hasCases = deviceHasCases(selections.device?.id);
-        for (let i = 1; i <= 5; i++) {
+        for (let i = 1; i <= 4; i++) {
             const stepEl = document.getElementById(`step-${i}`);
             if (stepEl) {
                 stepEl.classList.remove('active', 'completed', 'skipped');
@@ -2411,7 +2391,7 @@
         btnBack.style.display = step > 1 ? 'inline-flex' : 'none';
 
         // Last step — show summary if complete
-        if (step === 5 && selections.membership) {
+        if (step === 4 && selections.membership) {
             showSummary();
         }
     }
@@ -2426,11 +2406,6 @@
         if (step === 2) { selections.case = opt; window.__caseLocked = true; document.getElementById('selection-grid').classList.add('case-locked'); }
         if (step === 3) selections.wallet = opt;
         if (step === 4) {
-            selections.societyTV = opt;
-            // No external links — the panel handles provisioning behind the scenes
-            // bestpanel.xyz is admin-only; members receive credentials by email after payment
-        }
-        if (step === 5) {
             selections.membership = opt;
             // Re-render accessories with tier discount
             if (selections.case) {
@@ -2491,9 +2466,7 @@
             bubble.querySelector('.ai-bubble-mark').innerHTML = logos[opt.logo] ? logos[opt.logo].replace(/width="\d+"/, 'width="32"').replace(/height="\d+"/, 'height="32"') : '✓';
         } else if (step === 4) {
             bubble.querySelector('.ai-bubble-mark').innerHTML = logos[opt.logo] ? logos[opt.logo].replace(/width="\d+"/, 'width="32"').replace(/height="\d+"/, 'height="32"') : '✓';
-        } else if (step === 5) {
-            bubble.querySelector('.ai-bubble-mark').innerHTML = logos[opt.logo] ? logos[opt.logo].replace(/width="\d+"/, 'width="32"').replace(/height="\d+"/, 'height="32"') : '✓';
-            if (opt.id === 'founding-nodes') {
+            if (opt.id === 'founding-nodes' || opt.id === 'socialite-special') {
                 bubble.style.boxShadow = '0 0 60px var(--society-gold-glow-2), inset 0 0 40px rgba(197, 160, 89, 0.08)';
             }
         }
@@ -3289,6 +3262,54 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
             return;
         }
 
+        // For SocietyOS streaming devices (Formuler Z12 Ultra Pro) — show spec card, not phone mockup
+        if (opt.type === 'streaming-device') {
+            phoneMockup.className = 'phone-mockup';
+            phoneMockup.style.cssText = 'all:unset;display:flex;flex-direction:column;align-items:center;justify-content:center;width:320px;max-width:100%;border-radius:16px;border:1px solid rgba(197,160,89,0.2);background:linear-gradient(135deg,rgba(13,31,45,0.9),rgba(26,51,88,0.7));padding:1.5rem;opacity:0;transform:scale(0.9);transition:opacity 0.5s ease,transform 0.5s ease;';
+            phoneMockup.innerHTML = 
+                '<div style="width:140px;height:100px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:12px;border:2px solid rgba(197,160,89,0.3);display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:2.5rem;">\ud83d\udcfa</div>' +
+                '<div style="font-family:\'Cormorant Garamond\',serif;font-size:1.1rem;color:#c5a059;font-weight:600;margin-bottom:0.5rem;text-align:center;">' + opt.label + '</div>' +
+                '<div style="font-size:0.7rem;color:#888;text-align:center;margin-bottom:1rem;">' + (opt.specs || opt.subtitle || '') + '</div>' +
+                '<div style="display:flex;flex-wrap:wrap;gap:0.4rem;justify-content:center;">' +
+                    ['4K HDR10+','Dolby Vision','Dolby Atmos','128GB','WiFi 6E','Widevine L1','BT3 Remote'].map(function(b) {
+                        return '<span style="padding:0.2rem 0.5rem;border-radius:9999px;background:rgba(197,160,89,0.08);border:1px solid rgba(197,160,89,0.2);color:#c5a059;font-size:0.6rem;">' + b + '</span>';
+                    }).join('') +
+                '</div>';
+            caseOverlay.style.display = 'none';
+            var existingToggle = document.getElementById('deviceViewToggle');
+            if (existingToggle) existingToggle.style.display = 'none';
+            setTimeout(function() {
+                phoneMockup.style.opacity = '1';
+                phoneMockup.style.transform = 'scale(1)';
+            }, 100);
+            return;
+        }
+
+        // For SocietyOS NoDe teaser — show coming soon teaser
+        if (opt.type === 'node-teaser') {
+            phoneMockup.className = 'phone-mockup';
+            phoneMockup.style.cssText = 'all:unset;display:flex;flex-direction:column;align-items:center;justify-content:center;width:320px;max-width:100%;border-radius:16px;border:1px solid rgba(197,160,89,0.15);background:linear-gradient(135deg,rgba(13,31,45,0.9),rgba(10,10,15,0.8));padding:2rem;opacity:0;transform:scale(0.9);transition:opacity 0.5s ease,transform 0.5s ease;';
+            phoneMockup.innerHTML = 
+                '<div style="font-size:3rem;margin-bottom:1rem;opacity:0.6;">\ud83d\udd5f</div>' +
+                '<div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;color:#c5a059;font-weight:600;margin-bottom:0.5rem;text-align:center;">' + opt.label + '</div>' +
+                '<div style="font-size:0.8rem;color:#c5a059;margin-bottom:0.5rem;text-align:center;">Coming ' + (opt.releaseDate || 'Dec 2026') + '</div>' +
+                '<div style="width:200px;height:120px;border:1px dashed rgba(197,160,89,0.25);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-top:0.5rem;position:relative;overflow:hidden;">' +
+                    '<div style="text-align:center;opacity:0.4;">' +
+                        '<div style="font-size:1.5rem;margin-bottom:0.3rem;">\ud83d\udcbb</div>' +
+                        '<div style="font-size:0.6rem;color:#c5a059;">SocietyOS NoDe Preview</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div style="font-size:0.7rem;color:#666;margin-top:1rem;text-align:center;">Sovereign home cloud powered by SocietyOS. Pre-order opens ' + (opt.releaseDate || 'Dec 2026') + '.</div>';
+            caseOverlay.style.display = 'none';
+            var existingToggle2 = document.getElementById('deviceViewToggle');
+            if (existingToggle2) existingToggle2.style.display = 'none';
+            setTimeout(function() {
+                phoneMockup.style.opacity = '1';
+                phoneMockup.style.transform = 'scale(1)';
+            }, 100);
+            return;
+        }
+
         // For foldables without a real image: build an interactive foldable mockup with open/close toggle
         if (opt.type === 'foldable' || opt.type === 'foldable-wide' || opt.type === 'foldable-horizontal') {
             const isHorizontal = opt.type === 'foldable-horizontal';
@@ -3372,8 +3393,7 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
         if (step === 1) return selections.device !== null;
         if (step === 2) return selections.case !== null;
         if (step === 3) return selections.wallet !== null;
-        if (step === 4) return selections.societyTV !== null;
-        if (step === 5) return selections.membership !== null;
+        if (step === 4) return selections.membership !== null;
         return false;
     }
 
@@ -3382,7 +3402,6 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
         document.getElementById('sum-device').textContent = selections.device?.label || '—';
         document.getElementById('sum-case').textContent = selections.case?.label || (deviceHasCases(selections.device?.id) ? '—' : 'No case available');
         document.getElementById('sum-wallet').textContent = selections.wallet?.label || '—';
-        document.getElementById('sum-societytv').textContent = selections.societyTV?.label || '—';
         document.getElementById('sum-membership').textContent = selections.membership?.label || '—';
 
         // Change button to gold if founding member
@@ -3421,7 +3440,7 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
     }
 
     function goNext() {
-        if (currentStep < 5) {
+        if (currentStep < 4) {
             currentStep++;
             // Skip step 2 (case selection) if device has no compatible cases
             if (currentStep === 2 && !deviceHasCases(selections.device?.id)) {
