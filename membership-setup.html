@@ -1216,6 +1216,138 @@
             font-size: 0.95rem;
         }
 
+        /* Completion screen */
+        .completion-screen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(13, 31, 45, 0.95);
+            backdrop-filter: blur(20px);
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .completion-screen.visible {
+            display: flex;
+            animation: fadeIn 0.8s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .completion-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 520px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 0 80px var(--society-gold-glow);
+            animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .completion-icon {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--society-gold-glow) 0%, transparent 70%);
+            border: 2px solid var(--society-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+        }
+        .completion-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--society-gold-light), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .completion-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+        .credential-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        .credential-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+        .credential-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-tertiary);
+        }
+        .credential-value {
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 0.9rem;
+            color: var(--society-gold-light);
+            font-weight: 600;
+        }
+        .completion-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .btn-silo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--society-gold), var(--society-gold-dark));
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: 0 4px 20px var(--society-gold-glow);
+        }
+        .btn-silo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px var(--society-gold-glow);
+        }
+        .btn-silo-outline {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.85rem 2rem;
+            border-radius: 14px;
+            border: 1px solid var(--border-subtle);
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-silo-outline:hover {
+            border-color: var(--society-gold);
+            color: var(--society-gold-light);
+        }
+
         /* NFC tap animation */
         .nfc-pulse {
             position: absolute;
@@ -1542,7 +1674,7 @@
                 <span class="summary-value" id="sum-wallet">—</span>
             </div>
             <div class="summary-row">
-                <span class="summary-label">Society TV</span>
+                <span class="summary-label">SocietyOS</span>
                 <span class="summary-value" id="sum-societytv">—</span>
             </div>
             <div class="summary-row">
@@ -1556,6 +1688,37 @@
     <div class="action-bar">
         <button class="btn btn-ghost" id="btn-back" style="display:none;" onclick="goBack()">← Back</button>
         <button class="btn btn-primary" id="btn-next" disabled onclick="goNext()">Continue →</button>
+    </div>
+
+    <!-- Completion screen — shows Silo credentials after setup -->
+    <div class="completion-screen" id="completionScreen">
+        <div class="completion-card">
+            <div class="completion-icon">🎬</div>
+            <h2 class="completion-title">Welcome to the Society</h2>
+            <p class="completion-subtitle">Your Society TV — Silo VOD access is provisioned. Use the credentials below to sign in.</p>
+            <div class="credential-box">
+                <div class="credential-row">
+                    <span class="credential-label">Society TV Portal</span>
+                    <span class="credential-value">societyos.pro</span>
+                </div>
+                <div class="credential-row">
+                    <span class="credential-label">Username</span>
+                    <span class="credential-value" id="silo-username">—</span>
+                </div>
+                <div class="credential-row">
+                    <span class="credential-label">Password</span>
+                    <span class="credential-value" id="silo-password">—</span>
+                </div>
+            </div>
+            <div class="completion-actions">
+                <a href="https://societyos.pro" target="_blank" rel="noopener noreferrer" class="btn-silo">
+                    📺 Open Society TV →
+                </a>
+                <a href="https://societyos.pro" target="_blank" rel="noopener noreferrer" class="btn-silo-outline">
+                    Sign in to Silo VOD
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -1720,19 +1883,23 @@
             prompt: 'Select your device',
             subtitle: 'The bubble will morph to match your world',
             options: [
-                // iPhone 18 Series
+                // ── SocietyOS Hardware ──
+                { id: 'formuler-z12-ultra-pro', label: 'Formuler Z12 Ultra Pro', subtitle: '$265 · 128GB · 4K HDR · Dolby Vision · WiFi 6E · Internal', logo: 'societyos', type: 'streaming-device', price: '$265', specs: '128GB · 4GB RAM · Android 12 · Dolby Vision + Atmos · 4K@60fps · Widevine L1 · BT3 Remote' },
+                { id: 'societyos-node', label: 'SocietyOS NoDe', subtitle: 'Coming Dec 18, 2026 · Pre-order', logo: 'societyos', type: 'node-teaser', releaseDate: 'Dec 18, 2026', teaser: true },
+                // ── iPhone 18 Series ──
                 { id: 'iphone-18-pro', label: 'iPhone 18 Pro', subtitle: 'A20 Pro · 48MP Fusion · Sept 2026', logo: 'apple', type: 'phone' },
                 { id: 'iphone-18-promax', label: 'iPhone 18 Pro Max', subtitle: 'A20 Pro · Longest Battery · Sept 2026', logo: 'apple', type: 'phone' },
                 { id: 'iphone-duo', label: 'iPhone Duo', subtitle: 'A20 Pro · 7.8" Foldable · Oct 2026', logo: 'apple', type: 'foldable-wide' },
-                // iPhone 17 Series
+                // ── iPhone 17 Series ──
                 { id: 'iphone-17', label: 'iPhone 17', subtitle: 'A19 · 6.3"', logo: 'apple', type: 'phone' },
                 { id: 'iphone-17-pro', label: 'iPhone 17 Pro', subtitle: 'A19 Pro · 6.3"', logo: 'apple', type: 'phone' },
                 { id: 'iphone-17-promax', label: 'iPhone 17 Pro Max', subtitle: 'A19 Pro · 6.9" · up to 2TB', logo: 'apple', type: 'phone' },
-                // Android Foldables
+                // ── Android ──
                 { id: 'samsung-fold8-ultra', label: 'Samsung Z Fold8 Ultra', subtitle: 'Galaxy AI · DeX · 8.0" Book', logo: 'samsung', type: 'foldable' },
                 { id: 'samsung-fold8-wide', label: 'Samsung Z Fold8 Wide', subtitle: 'Galaxy AI · DeX · 4:3 Wide', logo: 'samsung', type: 'foldable-wide' },
-                // Samsung S26
                 { id: 'samsung-s26-ultra', label: 'Samsung S26 Ultra', subtitle: 'Snapdragon 8 Elite', logo: 'samsung', type: 'phone' },
+                // ── BYO Device — SocietyOS works on what you already own ──
+                { id: 'byo-device', label: 'Use my own device', subtitle: 'SocietyOS digital experience only — no hardware', logo: 'skip', type: 'skip' },
             ]
         },
         2: {
@@ -1811,21 +1978,22 @@
             ]
         },
         3: {
-            prompt: 'Activate your Sovereign Wallet',
-            subtitle: 'Tap your Tangem card to your phone to pair',
+            prompt: 'Activate your SocietyOS Sovereign Wallet',
+            subtitle: 'Tap your Tangem card to your phone to pair — powered by Tangem EAL6+',
             options: [
-                { id: 'tangem-purple', label: 'SocietyOS Card', subtitle: 'Nyx Purple · NFC · EAL6+', logo: 'tangem', type: 'tangem' },
-                { id: 'tangem-gold', label: 'Founding NODES Card', subtitle: 'Raven Gold · NFC · EAL6+', logo: 'tangem', type: 'tangem' },
+                { id: 'tangem-purple', label: 'SocietyOS Sovereign Wallet', subtitle: 'Nyx Purple · NFC · EAL6+ · 25yr warranty', logo: 'tangem', type: 'tangem' },
+                { id: 'tangem-gold', label: 'Founding NODES Card', subtitle: 'Raven Gold · NFC · EAL6+ · Serialized', logo: 'tangem', type: 'tangem' },
+                { id: 'tangem-ring', label: 'SocietyOS Ring Set', subtitle: 'Ring + 2 Cards · $140 · Pre-order Dec 2026', logo: 'tangem', type: 'tangem-ring' },
                 { id: 'skip-wallet', label: 'Add Later', subtitle: 'Can activate anytime', logo: 'skip', type: 'skip' },
             ]
         },
         4: {
-            prompt: 'Set up Society TV',
-            subtitle: 'Premium Channels provided for SocietyOS Members',
+            prompt: 'Set up SocietyOS',
+            subtitle: 'Sovereign Services provided for SocietyOS Members',
             options: [
-                { id: 'freecast-activate', label: 'Society TV — Carbon', subtitle: 'Base channels + local TV + on-demand', logo: 'societyos', type: 'tv' },
-                { id: 'bestpanel-sports-movies', label: 'Society TV — Onyx', subtitle: 'Carbon + Sports+ + Movies+ packages', logo: 'societyos', type: 'tv' },
-                { id: 'bestpanel-premium', label: 'Society TV — GOLD', subtitle: 'Onyx + Premium packages + 4K', logo: 'societyos', type: 'tv' },
+                { id: 'freecast-activate', label: 'SocietyOS — Carbon', subtitle: 'Base channels + local TV + on-demand', logo: 'societyos', type: 'tv' },
+                { id: 'bestpanel-sports-movies', label: 'SocietyOS — Onyx', subtitle: 'Carbon + Sports+ + Movies+ packages', logo: 'societyos', type: 'tv' },
+                { id: 'bestpanel-premium', label: 'SocietyOS — GOLD', subtitle: 'Onyx + Premium packages + 4K', logo: 'societyos', type: 'tv' },
                 { id: 'skip-tv', label: 'Add Later', subtitle: 'Can activate anytime', logo: 'skip', type: 'skip' },
             ]
         },
@@ -1833,11 +2001,11 @@
             prompt: 'Choose your membership',
             subtitle: 'Your sovereign journey begins',
             options: [
-                { id: 'society-tv', label: 'Carbon', subtitle: '$59.95/mo · Society TV + Maestro', logo: 'societyos', type: 'tier' },
-                { id: 'premium', label: 'Onyx', subtitle: '$69.95/mo · Carbon + Sports+ + Movies+', logo: 'societyos', type: 'tier' },
-                { id: 'founding-nodes', label: 'GOLD', subtitle: '$89.95/mo · Onyx + Premium + Athena + Vault', logo: 'solana', type: 'tier' },
-                { id: 'onyx-apple-annual', label: 'Onyx — Apple TV STB', subtitle: '$699/yr · Onyx + Apple TV 4K included', logo: 'apple', type: 'tier' },
-                { id: 'onyx-android-annual', label: 'Onyx — Android STB', subtitle: '$699/yr · Onyx + Android TV Box included', logo: 'societyos', type: 'tier' },
+                { id: 'carbon', label: 'Carbon', subtitle: '$59.95/mo · SocietyOS + Maestro', logo: 'societyos', type: 'tier' },
+                { id: 'onyx', label: 'Onyx', subtitle: '$69.95/mo · Carbon + Sports+ + Movies+', logo: 'societyos', type: 'tier' },
+                { id: 'gold', label: 'GOLD', subtitle: '$89.95/mo · Onyx + Premium + Athena + Vault', logo: 'solana', type: 'tier' },
+                { id: 'founding-nodes', label: 'Founding NODES', subtitle: '$2,499 lifetime · Everything in GOLD, forever', logo: 'solana', type: 'tier' },
+                { id: 'socialite-special', label: 'Socialite Special', subtitle: '$399.95 · Formuler Z12 Ultra Pro + 1yr Onyx + gifts · 100 only', logo: 'societyos', type: 'tier' },
             ]
         }
     };
@@ -2779,52 +2947,65 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
         var typeIcon = acc.type === 'ring-stand' ? '🔄' : acc.type === 'wallet-stand' ? '💳' : acc.type === 'bundle' ? '📦' : '✨';
         var typeLabel = acc.type === 'ring-stand' ? 'Ring Stand' : acc.type === 'wallet-stand' ? 'Wallet Stand' : 'Bundle';
 
+        // Visual thumbnail per accessory type
+        var thumbBg = acc.type === 'ring-stand' ? 'linear-gradient(135deg, #1a1a2e, #16213e)' :
+                      acc.type === 'wallet-stand' ? 'linear-gradient(135deg, #2d1b3d, #1a1a2e)' :
+                      acc.type === 'bundle' ? 'linear-gradient(135deg, #1b2a1a, #0d1f15)' :
+                      'linear-gradient(135deg, #1a1a2e, #16213e)';
+        var thumbEmoji = acc.type === 'ring-stand' ? '💍' : acc.type === 'wallet-stand' ? '👛' : acc.type === 'bundle' ? '📦' : '✨';
+
         var card = document.createElement('div');
-        card.style.cssText = 'padding: 0.75rem; border: 1px solid rgba(197,160,89,0.12); border-radius: 8px; background: rgba(20,20,30,0.3); cursor: pointer; transition: all 0.25s ease;';
+        card.style.cssText = 'padding: 0.5rem; border: 1px solid rgba(197,160,89,0.12); border-radius: 12px; background: rgba(20,20,30,0.4); cursor: pointer; transition: all 0.25s ease; overflow: hidden; display: flex; flex-direction: column;';
         card.setAttribute('data-acc-id', acc.id);
 
         card.onmouseenter = function() {
             if (!card.classList.contains('acc-selected')) {
                 card.style.borderColor = 'rgba(197,160,89,0.4)';
                 card.style.transform = 'translateY(-2px)';
+                card.style.boxShadow = '0 4px 20px rgba(197,160,89,0.1)';
             }
         };
         card.onmouseleave = function() {
             if (!card.classList.contains('acc-selected')) {
                 card.style.borderColor = 'rgba(197,160,89,0.12)';
                 card.style.transform = '';
+                card.style.boxShadow = '';
             }
         };
         card.onclick = function() {
             if (card.classList.contains('acc-selected')) {
                 card.classList.remove('acc-selected');
                 card.style.borderColor = 'rgba(197,160,89,0.12)';
-                card.style.background = 'rgba(20,20,30,0.3)';
+                card.style.background = 'rgba(20,20,30,0.4)';
                 selectedAccessories = selectedAccessories.filter(function(id) { return id !== acc.id; });
             } else {
                 card.classList.add('acc-selected');
                 card.style.borderColor = 'rgba(197,160,89,0.6)';
                 card.style.background = 'rgba(197,160,89,0.08)';
+                card.style.boxShadow = '0 4px 20px rgba(197,160,89,0.15)';
                 selectedAccessories.push(acc.id);
             }
             updateStandaloneTotal();
         };
 
         var priceHTML = hasDiscount
-            ? '<span style="text-decoration: line-through; color: #555; font-size: 0.7rem; font-family: \'EB Garamond\', serif;">$' + acc.price.toFixed(2) + '</span> ' +
-              '<span style="color: #c5a059; font-size: 0.95rem; font-family: \'Cormorant Garamond\', serif; font-weight: 600;">$' + tierPrice.toFixed(2) + '</span>'
-            : '<span style="color: #c5a059; font-size: 0.95rem; font-family: \'Cormorant Garamond\', serif; font-weight: 600;">$' + tierPrice.toFixed(2) + '</span>';
+            ? '<span style="text-decoration: line-through; color: #555; font-size: 0.7rem; font-family: \\'EB Garamond\\', serif;">$' + acc.price.toFixed(2) + '</span> ' +
+              '<span style="color: #c5a059; font-size: 0.95rem; font-family: \\'Cormorant Garamond\\', serif; font-weight: 600;">$' + tierPrice.toFixed(2) + '</span>'
+            : '<span style="color: #c5a059; font-size: 0.95rem; font-family: \\'Cormorant Garamond\\', serif; font-weight: 600;">$' + tierPrice.toFixed(2) + '</span>';
 
+        // Visual card with image area + details
         card.innerHTML =
-            '<div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">' +
-                '<span style="font-size: 0.95rem;">' + typeIcon + '</span>' +
-                '<span style="font-size: 0.55rem; color: #c5a059; text-transform: uppercase; letter-spacing: 0.05em;">' + typeLabel + '</span>' +
-                '<span style="font-size: 0.5rem; padding: 1px 5px; border-radius: 3px; background: rgba(197,160,89,0.1); color: #c5a059; margin-left: auto;">MagSafe</span>' +
+            '<div style="width: 100%; aspect-ratio: 1; background: ' + thumbBg + '; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem; position: relative; overflow: hidden;">' +
+                '<span style="font-size: 2rem; opacity: 0.8;">' + thumbEmoji + '</span>' +
+                '<span style="position: absolute; top: 4px; right: 4px; font-size: 0.5rem; padding: 2px 6px; border-radius: 4px; background: rgba(197,160,89,0.15); color: #c5a059;">MagSafe</span>' +
             '</div>' +
-            '<div style="font-family: \'Cormorant Garamond\', serif; font-size: 0.8rem; color: #ccc; line-height: 1.3; margin-bottom: 0.3rem;">' + acc.name + '</div>' +
+            '<div style="display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.25rem;">' +
+                '<span style="font-size: 0.5rem; color: #c5a059; text-transform: uppercase; letter-spacing: 0.05em;">' + typeLabel + '</span>' +
+            '</div>' +
+            '<div style="font-family: \\'Cormorant Garamond\\', serif; font-size: 0.8rem; color: #ccc; line-height: 1.3; margin-bottom: 0.4rem; min-height: 2.1em;">' + acc.name + '</div>' +
             '<div style="display: flex; align-items: center; justify-content: space-between;">' +
                 '<div>' + priceHTML + '</div>' +
-                '<span style="font-size: 0.6rem; color: #666; font-family: \'EB Garamond\', serif;">' + (isUniversal ? 'Universal' : 'Matched') + ' · Add +</span>' +
+                '<span style="font-size: 0.6rem; color: #666; font-family: \\'EB Garamond\\', serif;">' + (isUniversal ? 'Universal' : 'Matched') + ' · Add +</span>' +
             '</div>';
         return card;
     }
@@ -3208,6 +3389,31 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
         }
     }
 
+    // Generate Silo VOD credentials based on membership tier
+    function generateSiloCredentials() {
+        var tier = selections.membership?.id || 'carbon';
+        var tierPrefix = tier === 'gold' ? 'gd' : tier === 'onyx' ? 'ox' : 'cb';
+        var randomSuffix = Math.random().toString(36).substring(2, 8);
+        var username = 'soc_' + tierPrefix + '_' + randomSuffix;
+        // Generate a memorable but secure password
+        var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%';
+        var password = '';
+        for (var i = 0; i < 14; i++) {
+            password += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return { username: username, password: password };
+    }
+
+    function showCompletion() {
+        var creds = generateSiloCredentials();
+        document.getElementById('silo-username').textContent = creds.username;
+        document.getElementById('silo-password').textContent = creds.password;
+        document.getElementById('completionScreen').classList.add('visible');
+
+        // Scroll to top so the completion card is centered
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     function goNext() {
         if (currentStep < 5) {
             currentStep++;
@@ -3227,8 +3433,8 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
                 }
             }, 100);
         } else {
-            // Complete — would redirect to payment
-            alert('SocietyOS setup complete! Welcome to the Society.');
+            // Complete — show Silo VOD credentials + open link
+            showCompletion();
         }
     }
 
