@@ -3310,6 +3310,35 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
             return;
         }
 
+        // For BYO device — show recommended device icons, not a phone mockup
+        if (opt.type === 'skip' && opt.id === 'byo-device') {
+            phoneMockup.className = 'phone-mockup';
+            phoneMockup.style.cssText = 'all:unset;display:flex;flex-direction:column;align-items:center;justify-content:center;width:360px;max-width:100%;border-radius:16px;border:1px solid rgba(197,160,89,0.15);background:linear-gradient(135deg,rgba(13,31,45,0.9),rgba(26,51,88,0.6));padding:2rem;opacity:0;transform:scale(0.9);transition:opacity 0.5s ease,transform 0.5s ease;';
+            phoneMockup.innerHTML = 
+                '<div style="font-family:\'Cormorant Garamond\',serif;font-size:1.2rem;color:#c5a059;font-weight:600;margin-bottom:0.5rem;text-align:center;">SocietyOS works on what you already own</div>' +
+                '<div style="font-size:0.75rem;color:#888;text-align:center;margin-bottom:1.5rem;">No hardware needed. SocietyOS runs on your existing devices.</div>' +
+                '<div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">' +
+                    '<div style="display:flex;flex-direction:column;align-items:center;gap:0.4rem;padding:1rem;border:1px solid rgba(197,160,89,0.12);border-radius:12px;background:rgba(10,10,15,0.3);min-width:90px;">' +
+                        '<div style="font-size:2rem;">\ud83d\udcfa</div><div style="font-size:0.65rem;color:#c5a059;font-weight:600;">Apple TV</div>' +
+                    '</div>' +
+                    '<div style="display:flex;flex-direction:column;align-items:center;gap:0.4rem;padding:1rem;border:1px solid rgba(197,160,89,0.12);border-radius:12px;background:rgba(10,10,15,0.3);min-width:90px;">' +
+                        '<div style="font-size:2rem;">\ud83d\udcbb</div><div style="font-size:0.65rem;color:#c5a059;font-weight:600;">PC / Mac</div>' +
+                    '</div>' +
+                    '<div style="display:flex;flex-direction:column;align-items:center;gap:0.4rem;padding:1rem;border:1px solid rgba(197,160,89,0.12);border-radius:12px;background:rgba(10,10,15,0.3);min-width:90px;">' +
+                        '<div style="font-size:2rem;">\ud83e\udd4a</div><div style="font-size:0.65rem;color:#c5a059;font-weight:600;">Android</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div style="font-size:0.7rem;color:#666;margin-top:1rem;text-align:center;">Stream SocietyOS on any compatible device. Digital experience only — no hardware included.</div>';
+            caseOverlay.style.display = 'none';
+            var existingToggle3 = document.getElementById('deviceViewToggle');
+            if (existingToggle3) existingToggle3.style.display = 'none';
+            setTimeout(function() {
+                phoneMockup.style.opacity = '1';
+                phoneMockup.style.transform = 'scale(1)';
+            }, 100);
+            return;
+        }
+
         // For foldables without a real image: build an interactive foldable mockup with open/close toggle
         if (opt.type === 'foldable' || opt.type === 'foldable-wide' || opt.type === 'foldable-horizontal') {
             const isHorizontal = opt.type === 'foldable-horizontal';
