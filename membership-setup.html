@@ -2432,6 +2432,8 @@
         }
         if (step === 3 && (opt.type === 'tangem' || opt.type === 'tangem-ring')) {
             // Show real Tangem product image
+            deviceRender.style.display = 'flex';
+            grid.style.display = 'none';
             phoneMockup.className = 'phone-mockup';
             phoneMockup.style.cssText = 'all:unset;display:block;width:auto;height:auto;max-width:320px;max-height:450px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.4);opacity:0;transform:scale(0.9);transition:opacity 0.5s ease,transform 0.5s ease;';
             var tangemImg = opt.type === 'tangem-ring' ? 'assets/tangem-ring-cards.webp' : 'assets/societyos-tangem-wallet-official.png';
@@ -2448,7 +2450,7 @@
 
         btnNext.disabled = false;
 
-        if (step === 5) {
+        if (step === 4) {
             showSummary();
         }
     }
