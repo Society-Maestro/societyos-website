@@ -2933,12 +2933,25 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
         var typeIcon = acc.type === 'ring-stand' ? '🔄' : acc.type === 'wallet-stand' ? '💳' : acc.type === 'bundle' ? '📦' : '✨';
         var typeLabel = acc.type === 'ring-stand' ? 'Ring Stand' : acc.type === 'wallet-stand' ? 'Wallet Stand' : 'Bundle';
 
-        // Visual thumbnail per accessory type
-        var thumbBg = acc.type === 'ring-stand' ? 'linear-gradient(135deg, #1a1a2e, #16213e)' :
-                      acc.type === 'wallet-stand' ? 'linear-gradient(135deg, #2d1b3d, #1a1a2e)' :
-                      acc.type === 'bundle' ? 'linear-gradient(135deg, #1b2a1a, #0d1f15)' :
-                      'linear-gradient(135deg, #1a1a2e, #16213e)';
-        var thumbEmoji = acc.type === 'ring-stand' ? '💍' : acc.type === 'wallet-stand' ? '👛' : acc.type === 'bundle' ? '📦' : '✨';
+        // Real product image per accessory type and series
+        var accImages = {
+            'ring-stand': {
+                'Fortune': 'assets/raptic-ringstand-fortune.jpg',
+                'Grid': 'assets/raptic-ringstand-silver.jpg',
+                'Serenity': 'assets/raptic-ringstand-gunmetal.jpg',
+                'Origin': 'assets/raptic-ringstand-fortune.jpg',
+                'Destiny': 'assets/raptic-ringstand-fortune.jpg',
+                'Mondrian': 'assets/raptic-ringstand-silver.jpg',
+            },
+            'wallet-stand': 'assets/raptic-ringstand-gunmetal.jpg',
+            'bundle': 'assets/raptic-ringstand-fortune.jpg',
+        };
+        var accImg = 'assets/raptic-ringstand-silver.jpg'; // default
+        if (acc.type === 'ring-stand' && acc.series && acc.series.length > 0) {
+            accImg = accImages['ring-stand'][acc.series[0]] || accImages['ring-stand'][acc.series[acc.series.length - 1]] || 'assets/raptic-ringstand-silver.jpg';
+        } else if (accImages[acc.type]) {
+            accImg = accImages[acc.type];
+        }
 
         var card = document.createElement('div');
         card.style.cssText = 'padding: 0.5rem; border: 1px solid rgba(197,160,89,0.12); border-radius: 12px; background: rgba(20,20,30,0.4); cursor: pointer; transition: all 0.25s ease; overflow: hidden; display: flex; flex-direction: column;';
@@ -2979,11 +2992,11 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
               '<span style="color: #c5a059; font-size: 0.95rem; font-family: \'Cormorant Garamond\', serif; font-weight: 600;">$' + tierPrice.toFixed(2) + '</span>'
             : '<span style="color: #c5a059; font-size: 0.95rem; font-family: \'Cormorant Garamond\', serif; font-weight: 600;">$' + tierPrice.toFixed(2) + '</span>';
 
-        // Visual card with image area + details
+        // Visual card with real product image
         card.innerHTML =
-            '<div style="width: 100%; aspect-ratio: 1; background: ' + thumbBg + '; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem; position: relative; overflow: hidden;">' +
-                '<span style="font-size: 2rem; opacity: 0.8;">' + thumbEmoji + '</span>' +
-                '<span style="position: absolute; top: 4px; right: 4px; font-size: 0.5rem; padding: 2px 6px; border-radius: 4px; background: rgba(197,160,89,0.15); color: #c5a059;">MagSafe</span>' +
+            '<div style="width: 100%; aspect-ratio: 1; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem; position: relative; overflow: hidden;">' +
+                '<img src="' + accImg + '" alt="' + acc.name + '" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />' +
+                '<span style="position: absolute; top: 4px; right: 4px; font-size: 0.5rem; padding: 2px 6px; border-radius: 4px; background: rgba(197,160,89,0.9); color: #fff;">MagSafe</span>' +
             '</div>' +
             '<div style="display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.25rem;">' +
                 '<span style="font-size: 0.5rem; color: #c5a059; text-transform: uppercase; letter-spacing: 0.05em;">' + typeLabel + '</span>' +
