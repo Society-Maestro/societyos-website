@@ -2431,6 +2431,18 @@
             }, 200);
         }
         if (step === 3 && (opt.type === 'tangem' || opt.type === 'tangem-ring')) {
+            // Show real Tangem product image
+            phoneMockup.className = 'phone-mockup';
+            phoneMockup.style.cssText = 'all:unset;display:block;width:auto;height:auto;max-width:320px;max-height:450px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.4);opacity:0;transform:scale(0.9);transition:opacity 0.5s ease,transform 0.5s ease;';
+            var tangemImg = opt.type === 'tangem-ring' ? 'assets/tangem-ring-cards.webp' : 'assets/tangem-cards.webp';
+            phoneMockup.innerHTML = '<img src="' + tangemImg + '" alt="' + opt.label + '" style="display:block;width:100%;height:auto;max-width:320px;max-height:450px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.4);" />';
+            caseOverlay.style.display = 'none';
+            var tangemToggle = document.getElementById('deviceViewToggle');
+            if (tangemToggle) tangemToggle.style.display = 'none';
+            setTimeout(function() {
+                phoneMockup.style.opacity = '1';
+                phoneMockup.style.transform = 'scale(1)';
+            }, 100);
             triggerNFCAnimation();
         }
 
@@ -3261,19 +3273,12 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
             return;
         }
 
-        // For SocietyOS streaming devices (Formuler Z12 Ultra Pro) — show spec card, not phone mockup
+        // For SocietyOS streaming devices (Formuler Z12 Ultra Pro) — show real product image
         if (opt.type === 'streaming-device') {
             phoneMockup.className = 'phone-mockup';
-            phoneMockup.style.cssText = 'all:unset;display:flex;flex-direction:column;align-items:center;justify-content:center;width:320px;max-width:100%;border-radius:16px;border:1px solid rgba(197,160,89,0.2);background:linear-gradient(135deg,rgba(13,31,45,0.9),rgba(26,51,88,0.7));padding:1.5rem;opacity:0;transform:scale(0.9);transition:opacity 0.5s ease,transform 0.5s ease;';
-            phoneMockup.innerHTML = 
-                '<div style="width:140px;height:100px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:12px;border:2px solid rgba(197,160,89,0.3);display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:2.5rem;">\ud83d\udcfa</div>' +
-                '<div style="font-family:\'Cormorant Garamond\',serif;font-size:1.1rem;color:#c5a059;font-weight:600;margin-bottom:0.5rem;text-align:center;">' + opt.label + '</div>' +
-                '<div style="font-size:0.7rem;color:#888;text-align:center;margin-bottom:1rem;">' + (opt.specs || opt.subtitle || '') + '</div>' +
-                '<div style="display:flex;flex-wrap:wrap;gap:0.4rem;justify-content:center;">' +
-                    ['4K HDR10+','Dolby Vision','Dolby Atmos','128GB','WiFi 6E','Widevine L1','BT3 Remote'].map(function(b) {
-                        return '<span style="padding:0.2rem 0.5rem;border-radius:9999px;background:rgba(197,160,89,0.08);border:1px solid rgba(197,160,89,0.2);color:#c5a059;font-size:0.6rem;">' + b + '</span>';
-                    }).join('') +
-                '</div>';
+            phoneMockup.style.cssText = 'all:unset;display:block;width:auto;height:auto;max-width:320px;max-height:450px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.4);opacity:0;transform:scale(0.9);transition:opacity 0.5s ease,transform 0.5s ease;';
+            phoneMockup.innerHTML = '<img src="assets/formuler-z12-ultra-pro-product.jpg" alt="' + opt.label + '" style="display:block;width:100%;height:auto;max-width:320px;max-height:450px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.4);" />' +
+                '<div style="text-align:center;margin-top:0.75rem;font-size:0.7rem;color:#888;">' + (opt.specs || opt.subtitle || '') + '</div>';
             caseOverlay.style.display = 'none';
             var existingToggle = document.getElementById('deviceViewToggle');
             if (existingToggle) existingToggle.style.display = 'none';
@@ -3284,19 +3289,18 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
             return;
         }
 
-        // For SocietyOS NoDe teaser — show coming soon teaser
+        // For SocietyOS NoDe teaser — show silhouette outline
         if (opt.type === 'node-teaser') {
             phoneMockup.className = 'phone-mockup';
-            phoneMockup.style.cssText = 'all:unset;display:flex;flex-direction:column;align-items:center;justify-content:center;width:320px;max-width:100%;border-radius:16px;border:1px solid rgba(197,160,89,0.15);background:linear-gradient(135deg,rgba(13,31,45,0.9),rgba(10,10,15,0.8));padding:2rem;opacity:0;transform:scale(0.9);transition:opacity 0.5s ease,transform 0.5s ease;';
+            phoneMockup.style.cssText = 'all:unset;display:flex;flex-direction:column;align-items:center;justify-content:center;width:320px;max-width:100%;border-radius:16px;border:1px solid rgba(197,160,89,0.15);background:linear-gradient(135deg,rgba(13,31,45,0.9),rgba(10,10,15,0.8));padding:1.5rem;opacity:0;transform:scale(0.9);transition:opacity 0.5s ease,transform 0.5s ease;';
             phoneMockup.innerHTML = 
-                '<div style="font-size:3rem;margin-bottom:1rem;opacity:0.6;">\ud83d\udd5f</div>' +
                 '<div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;color:#c5a059;font-weight:600;margin-bottom:0.5rem;text-align:center;">' + opt.label + '</div>' +
-                '<div style="font-size:0.8rem;color:#c5a059;margin-bottom:0.5rem;text-align:center;">Coming ' + (opt.releaseDate || 'Dec 2026') + '</div>' +
-                '<div style="width:200px;height:120px;border:1px dashed rgba(197,160,89,0.25);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-top:0.5rem;position:relative;overflow:hidden;">' +
-                    '<div style="text-align:center;opacity:0.4;">' +
-                        '<div style="font-size:1.5rem;margin-bottom:0.3rem;">\ud83d\udcbb</div>' +
-                        '<div style="font-size:0.6rem;color:#c5a059;">SocietyOS NoDe Preview</div>' +
-                    '</div>' +
+                '<div style="font-size:0.8rem;color:#c5a059;margin-bottom:1rem;text-align:center;">Coming ' + (opt.releaseDate || 'Dec 2026') + '</div>' +
+                '<div style="width:220px;height:140px;border:1px dashed rgba(197,160,89,0.25);border-radius:12px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:rgba(10,10,15,0.5);">' +
+                    '<svg width="120" height="80" viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">' +
+                        '<rect x="30" y="10" width="60" height="60" rx="8" fill="none" stroke="rgba(197,160,89,0.2)" stroke-width="1.5" stroke-dasharray="4,3"/>' +
+                        '<circle cx="60" cy="40" r="6" fill="none" stroke="rgba(197,160,89,0.3)" stroke-width="1"/>' +
+                    '</svg>' +
                 '</div>' +
                 '<div style="font-size:0.7rem;color:#666;margin-top:1rem;text-align:center;">Sovereign home cloud powered by SocietyOS. Pre-order opens ' + (opt.releaseDate || 'Dec 2026') + '.</div>';
             caseOverlay.style.display = 'none';
@@ -3309,7 +3313,7 @@ var SOCIETYOS_ACCESSORIES = [{"id":"acc-freeflow-fortune","name":"Raptic FreeFlo
             return;
         }
 
-        // For BYO device — show recommended device icons, not a phone mockup
+        // For BYO device — show recommended device icons
         if (opt.type === 'skip' && opt.id === 'byo-device') {
             phoneMockup.className = 'phone-mockup';
             phoneMockup.style.cssText = 'all:unset;display:flex;flex-direction:column;align-items:center;justify-content:center;width:360px;max-width:100%;border-radius:16px;border:1px solid rgba(197,160,89,0.15);background:linear-gradient(135deg,rgba(13,31,45,0.9),rgba(26,51,88,0.6));padding:2rem;opacity:0;transform:scale(0.9);transition:opacity 0.5s ease,transform 0.5s ease;';
