@@ -3,121 +3,219 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SocietyOS — Connect This Device</title>
+<title>SocietyOS — Sign In</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     background: radial-gradient(ellipse at top, #0d1f1a 0%, #060d0b 60%, #030705 100%);
     color: #e8e4d8; font-family: 'Georgia', serif; min-height: 100vh;
-    display: flex; align-items: center; justify-content: center;
+    display: flex; align-items: center; justify-content: center; padding: 24px;
   }
   .card {
-    text-align: center; padding: 48px 56px; border-radius: 16px;
+    text-align: center; padding: 40px 32px; border-radius: 16px; max-width: 420px; width: 100%;
     background: rgba(255,255,255,0.03); border: 1px solid rgba(197,160,89,0.25);
     box-shadow: 0 8px 30px rgba(0,0,0,0.4);
   }
-  .logo { font-size: 15px; letter-spacing: 6px; color: #c5a059; text-transform: uppercase; margin-bottom: 28px; }
-  h1 { font-size: 30px; font-weight: normal; margin-bottom: 10px; }
-  .sub { color: #8a9a90; font-size: 15px; margin-bottom: 32px; }
-  #qr { display: inline-block; padding: 16px; background: #fff; border-radius: 12px; }
-  #qr img, #qr canvas { display: block; }
-  .code-label { margin-top: 28px; color: #8a9a90; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; }
-  #code { font-size: 40px; letter-spacing: 10px; color: #c5a059; margin-top: 8px; }
-  .status { margin-top: 30px; font-size: 16px; min-height: 24px; color: #8a9a90; }
-  .status.ok { color: #7fc99a; }
+  .logo { font-size: 13px; letter-spacing: 6px; color: #c5a059; text-transform: uppercase; margin-bottom: 24px; }
+  h1 { font-size: 24px; font-weight: normal; margin-bottom: 10px; }
+  .sub { color: #8a9a90; font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
+  input {
+    width: 100%; padding: 13px; font-size: 16px; margin-bottom: 12px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(197,160,89,0.35);
+    border-radius: 10px; color: #e8e4d8; outline: none;
+  }
+  input:focus { border-color: #c5a059; }
+  button {
+    width: 100%; padding: 14px; font-size: 15px; letter-spacing: 2px;
+    background: linear-gradient(135deg, #c5a059, #a3813f); color: #0a120e;
+    border: none; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase;
+  }
+  button:disabled { opacity: 0.5; cursor: wait; }
+  button.ghost { background: transparent; color: #c5a059; border: 1px solid rgba(197,160,89,0.4); margin-top: 10px; }
+  .status { margin-top: 14px; font-size: 14px; min-height: 20px; }
+  .ok { color: #7fc99a; } .err { color: #d98b7f; }
+  .divider { display: flex; align-items: center; gap: 12px; color: #4d5c54; font-size: 12px; letter-spacing: 2px; margin: 22px 0; }
+  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: rgba(197,160,89,0.2); }
+  #qr { display: inline-block; padding: 12px; background: #fff; border-radius: 10px; }
+  #qr img { display: block; }
+  .usercode { font-size: 30px; letter-spacing: 4px; color: #c5a059; margin-top: 12px; font-weight: bold; }
+  .matchcode { color: #8a9a90; font-size: 13px; margin-top: 4px; font-style: italic; }
+  .hidden { display: none; }
+  .big { font-size: 52px; margin-bottom: 10px; }
+  .actions { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+  .actions a {
+    display: block; padding: 13px; border-radius: 10px; text-decoration: none; font-size: 15px;
+    letter-spacing: 1px; background: linear-gradient(135deg, #c5a059, #a3813f); color: #0a120e; font-weight: bold;
+  }
+  .actions a.ghost { background: transparent; border: 1px solid rgba(197,160,89,0.4); color: #c5a059; }
   .spinner {
-    display: inline-block; width: 14px; height: 14px; border-radius: 50%;
+    display: inline-block; width: 13px; height: 13px; border-radius: 50%;
     border: 2px solid rgba(197,160,89,0.3); border-top-color: #c5a059;
-    animation: spin 0.9s linear infinite; vertical-align: -2px; margin-right: 8px;
+    animation: spin 0.9s linear infinite; vertical-align: -2px; margin-right: 6px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .expired { color: #d98b7f; }
-  a.retry { color: #c5a059; text-decoration: underline; cursor: pointer; }
-  .hidden { display: none; }
 </style>
 </head>
 <body>
   <div class="card">
     <div class="logo">SocietyOS</div>
-    <h1>Connect this device</h1>
-    <p class="sub" id="sub">Scan with the camera on your signed-in phone, or enter the code at societyos.world/approve</p>
-    <div id="pairing">
+
+    <!-- STATE A: signed in on this device -->
+    <div id="state-connected" class="hidden">
+      <div class="big">✓</div>
+      <h1>You're in</h1>
+      <p class="sub">Signed in as <strong id="who"></strong> on this device. Full SocietyOS access.</p>
+      <div class="actions">
+        <a href="https://societyos.pro">Open SocietyOS →</a>
+        <button class="ghost" onclick="signOut()">Sign out of this device</button>
+      </div>
+    </div>
+
+    <!-- STATE B: sign in -->
+    <div id="state-signin" class="hidden">
+      <h1>Sign in</h1>
+      <p class="sub">Use your SocietyOS username and password on this device.</p>
+      <input id="user" placeholder="Username" autocomplete="username">
+      <input id="pass" type="password" placeholder="Password" autocomplete="current-password">
+      <button id="btn" onclick="doSignIn()">Sign in</button>
+      <div class="status" id="status"></div>
+
+      <div class="divider">OR LINK FROM ANOTHER DEVICE</div>
+      <p class="sub" style="margin-bottom:12px;">Scan this with your phone's camera — sign in there and approve this device.</p>
       <div id="qr"></div>
-      <div class="code-label">Pairing code</div>
-      <div id="code">······</div>
+      <div class="usercode" id="usercode">····-····</div>
+      <div class="matchcode" id="matchcode"></div>
+      <div class="status" id="linkstatus"><span class="spinner"></span>Waiting for approval…</div>
     </div>
-    <div id="done" class="hidden">
-      <div style="font-size:56px; margin-bottom:16px;">✓</div>
-      <h1>Device connected</h1>
-      <p class="sub">Full SocietyOS access enabled on this device.</p>
-    </div>
-    <div class="status" id="status"><span class="spinner"></span>Waiting for approval…</div>
   </div>
 
 <script>
-const API = window.SOCIETYOS_LINK_API || "https://societyos-device-link.societyos.workers.dev";
-const qrEl = document.getElementById("qr");
-const codeEl = document.getElementById("code");
-const statusEl = document.getElementById("status");
-const pairingEl = document.getElementById("pairing");
-const doneEl = document.getElementById("done");
-const subEl = document.getElementById("sub");
+const SILO = "https://societyos.pro";
+const TOKEN_KEY = "societyos_profile_token";
+const USER_KEY = "societyos_member";
 
-let code = null;
-let pollTimer = null;
+const $ = (id) => document.getElementById(id);
+let deviceCode = null, pollAfter = 3, pollTimer = null;
 
+/* ---------- helpers ---------- */
+function getToken() { return localStorage.getItem(TOKEN_KEY) || ""; }
+function show(state) {
+  $("state-connected").classList.toggle("hidden", state !== "connected");
+  $("state-signin").classList.toggle("hidden", state !== "signin");
+}
 function renderQR(text) {
-  qrEl.innerHTML = "";
-  const qr = qrcode(0, "M");
-  qr.addData(text);
-  qr.make();
-  qrEl.innerHTML = qr.createImgTag(6, 8);
+  const qr = qrcode(0, "M"); qr.addData(text); qr.make();
+  $("qr").innerHTML = qr.createImgTag(5, 8);
 }
 
-async function createPairing() {
-  statusEl.innerHTML = '<span class="spinner"></span>Generating secure code…';
+/* ---------- STATE A ---------- */
+function connected() {
+  let who = "member";
+  try { who = (JSON.parse(localStorage.getItem(USER_KEY) || "null") || {}).username || who; } catch (e) {}
+  $("who").textContent = who;
+  show("connected");
+  clearInterval(pollTimer);
+}
+function signOut() {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
+  location.reload();
+}
+
+/* ---------- sign in with username/password (platform /auth/login) ---------- */
+async function doSignIn() {
+  const btn = $("btn"), status = $("status");
+  const username = $("user").value.trim(), password = $("pass").value;
+  if (!username || !password) { status.className = "status err"; status.textContent = "Enter your username and password."; return; }
+  btn.disabled = true;
+  status.className = "status"; status.innerHTML = '<span class="spinner"></span>Signing in…';
   try {
-    const res = await fetch(API + "/api/link/create", { method: "POST" });
+    const res = await fetch(SILO + "/api/v2/auth/login", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      status.className = "status err";
+      status.textContent = body.detail || "Sign-in failed. Check your credentials.";
+      btn.disabled = false;
+      return;
+    }
     const data = await res.json();
-    code = data.code;
-    codeEl.textContent = code;
-    renderQR("https://societyos.world/approve?c=" + code);
-    statusEl.innerHTML = '<span class="spinner"></span>Waiting for approval…';
-    startPolling();
+    // Platform returns the session token — accept common shapes
+    const token = data.profile_token || data.token || data.access_token || "";
+    if (!token) {
+      status.className = "status err"; status.textContent = "Sign-in succeeded but no session token returned.";
+      btn.disabled = false; return;
+    }
+    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem(USER_KEY, JSON.stringify({ username, profile: data.profile || null }));
+    connected();
   } catch (e) {
-    statusEl.innerHTML = 'Cannot reach SocietyOS. <a class="retry" onclick="location.reload()">Retry</a>';
+    status.className = "status err";
+    status.textContent = "Cannot reach SocietyOS. Try again or use the QR below.";
+    btn.disabled = false;
   }
 }
 
-function startPolling() {
-  clearInterval(pollTimer);
-  pollTimer = setInterval(async () => {
-    try {
-      const res = await fetch(API + "/api/link?code=" + code);
-      const data = await res.json();
-      if (data.status === "linked") {
-        clearInterval(pollTimer);
-        localStorage.setItem("societyos_member", JSON.stringify(data.member));
-        pairingEl.classList.add("hidden");
-        doneEl.classList.remove("hidden");
-        statusEl.classList.add("ok");
-        statusEl.textContent = "Connected — welcome back.";
-      } else if (data.status === "expired") {
-        clearInterval(pollTimer);
-        statusEl.classList.add("expired");
-        statusEl.innerHTML = 'Code expired. <a class="retry" onclick="newCode()">Get a new code</a>';
-      }
-    } catch (e) { /* keep polling */ }
-  }, 2500);
+/* ---------- device link flow (platform /auth/device/*) ---------- */
+async function startDeviceLogin() {
+  $("linkstatus").innerHTML = '<span class="spinner"></span>Generating code…';
+  try {
+    const res = await fetch(SILO + "/api/v2/auth/device/start", {
+      method: "POST", headers: { "Content-Type": "application/json", "User-Agent": "SocietyOS-Link/1.0" },
+      body: JSON.stringify({ client_name: "SocietyOS Device" })
+    });
+    const d = await res.json();
+    deviceCode = d.device_code;
+    pollAfter = d.interval || 3;
+    $("usercode").textContent = d.user_code;
+    $("matchcode").textContent = d.match_code ? "Match phrase: " + d.match_code : "";
+    renderQR(d.verification_uri_complete || d.verification_uri);
+    $("linkstatus").innerHTML = '<span class="spinner"></span>Waiting for approval…';
+    schedulePoll();
+  } catch (e) {
+    $("linkstatus").className = "status err";
+    $("linkstatus").textContent = "Pairing unavailable. You can still sign in above.";
+  }
 }
 
-window.newCode = function () {
-  statusEl.classList.remove("expired");
-  createPairing();
-};
+function schedulePoll() {
+  clearInterval(pollTimer);
+  pollTimer = setInterval(poll, pollAfter * 1000);
+}
 
-createPairing();
+async function poll() {
+  if (!deviceCode) return;
+  try {
+    const res = await fetch(SILO + "/api/v2/auth/device/poll", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ device_code: deviceCode })
+    });
+    if (res.status === 404) { // expired
+      clearInterval(pollTimer);
+      $("linkstatus").innerHTML = 'Code expired. <a style="color:#c5a059;cursor:pointer" onclick="startDeviceLogin()">New code</a>';
+      return;
+    }
+    const d = await res.json();
+    if (d.status === "approved" || d.profile_token) {
+      clearInterval(pollTimer);
+      localStorage.setItem(TOKEN_KEY, d.profile_token);
+      if (d.profile) localStorage.setItem(USER_KEY, JSON.stringify({ username: d.profile.username || "member", profile: d.profile }));
+      connected();
+    }
+    // still pending → keep polling
+  } catch (e) { /* keep polling */ }
+}
+
+/* ---------- boot ---------- */
+(function init() {
+  if (getToken()) { connected(); return; }
+  show("signin");
+  startDeviceLogin();
+  $("pass").addEventListener("keydown", (e) => { if (e.key === "Enter") doSignIn(); });
+})();
 </script>
 </body>
 </html>
