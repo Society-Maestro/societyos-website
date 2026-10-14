@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SocietyOS — Approve Device</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: radial-gradient(ellipse at top, #0d1f1a 0%, #060d0b 60%, #030705 100%);
+    color: #e8e4d8; font-family: 'Georgia', serif; min-height: 100vh;
+    display: flex; align-items: center; justify-content: center; padding: 24px;
+  }
+  .card {
+    text-align: center; padding: 40px 32px; border-radius: 16px; max-width: 380px; width: 100%;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(197,160,89,0.25);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .logo { font-size: 13px; letter-spacing: 6px; color: #c5a059; text-transform: uppercase; margin-bottom: 24px; }
+  h1 { font-size: 24px; font-weight: normal; margin-bottom: 10px; }
+  .sub { color: #8a9a90; font-size: 14px; margin-bottom: 28px; line-height: 1.5; }
+  input {
+    width: 100%; padding: 14px; font-size: 22px; text-align: center; letter-spacing: 8px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(197,160,89,0.35);
+    border-radius: 10px; color: #e8e4d8; text-transform: uppercase; outline: none; margin-bottom: 18px;
+  }
+  input:focus { border-color: #c5a059; }
+  button {
+    width: 100%; padding: 15px; font-size: 16px; letter-spacing: 2px;
+    background: linear-gradient(135deg, #c5a059, #a3813f); color: #0a120e;
+    border: none; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase;
+  }
+  button:disabled { opacity: 0.5; cursor: wait; }
+  .status { margin-top: 18px; font-size: 14px; min-height: 20px; }
+  .ok { color: #7fc99a; }
+  .err { color: #d98b7f; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">SocietyOS</div>
+
+    <div id="step-code">
+      <h1>Approve device</h1>
+      <p class="sub">Enter the pairing code shown on the device you want to connect.</p>
+      <input id="code" maxlength="6" autocomplete="off" placeholder="······" inputmode="text">
+      <button id="btn" onclick="approve()">Approve device</button>
+      <div class="status" id="status"></div>
+    </div>
+
+    <div id="step-done" class="hidden">
+      <div style="font-size:56px; margin-bottom:12px;">✓</div>
+      <h1>Device approved</h1>
+      <p class="sub">Your device now has full SocietyOS access. You can close this page.</p>
+    </div>
+  </div>
+
+<script>
+const API = window.SOCIETYOS_LINK_API || "https://link.societyos.world";
+
+// Pre-fill from QR: /approve?c=CODE
+const params = new URLSearchParams(location.search);
+const qrCode = (params.get("c") || "").toUpperCase();
+if (qrCode) document.getElementById("code").value = qrCode;
+
+async function approve() {
+  const btn = document.getElementById("btn");
+  const statusEl = document.getElementById("status");
+  const code = document.getElementById("code").value.trim().toUpperCase();
+  if (code.length !== 6) {
+    statusEl.className = "status err";
+    statusEl.textContent = "Enter the 6-character code.";
+    return;
+  }
+
+  // Member identity: the signed-in member on THIS device (phone).
+  let member = null;
+  try { member = JSON.parse(localStorage.getItem("societyos_member") || "null"); } catch (e) {}
+  if (!member || !member.username) {
+    statusEl.className = "status err";
+    statusEl.textContent = "Sign in first, then approve. Redirecting to sign-in…";
+    setTimeout(() => { location.href = "/sign-in.html?next=" + encodeURIComponent("/approve?c=" + code); }, 1200);
+    return;
+  }
+
+  btn.disabled = true;
+  statusEl.className = "status";
+  statusEl.textContent = "Approving…";
+  try {
+    const res = await fetch(API + "/api/link/approve", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, member }),
+    });
+    const data = await res.json();
+    if (res.ok && data.ok) {
+      document.getElementById("step-code").classList.add("hidden");
+      document.getElementById("step-done").classList.remove("hidden");
+    } else {
+      statusEl.className = "status err";
+      statusEl.textContent = data.error || "Approval failed. Check the code and try again.";
+      btn.disabled = false;
+    }
+  } catch (e) {
+    statusEl.className = "status err";
+    statusEl.textContent = "Cannot reach SocietyOS. Check your connection.";
+    btn.disabled = false;
+  }
+}
+
+document.getElementById("code").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") approve();
+});
+</script>
+</body>
+</html>

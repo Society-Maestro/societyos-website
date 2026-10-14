@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SocietyOS — Connect This Device</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: radial-gradient(ellipse at top, #0d1f1a 0%, #060d0b 60%, #030705 100%);
+    color: #e8e4d8; font-family: 'Georgia', serif; min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card {
+    text-align: center; padding: 48px 56px; border-radius: 16px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(197,160,89,0.25);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .logo { font-size: 15px; letter-spacing: 6px; color: #c5a059; text-transform: uppercase; margin-bottom: 28px; }
+  h1 { font-size: 30px; font-weight: normal; margin-bottom: 10px; }
+  .sub { color: #8a9a90; font-size: 15px; margin-bottom: 32px; }
+  #qr { display: inline-block; padding: 16px; background: #fff; border-radius: 12px; }
+  #qr img, #qr canvas { display: block; }
+  .code-label { margin-top: 28px; color: #8a9a90; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; }
+  #code { font-size: 40px; letter-spacing: 10px; color: #c5a059; margin-top: 8px; }
+  .status { margin-top: 30px; font-size: 16px; min-height: 24px; color: #8a9a90; }
+  .status.ok { color: #7fc99a; }
+  .spinner {
+    display: inline-block; width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid rgba(197,160,89,0.3); border-top-color: #c5a059;
+    animation: spin 0.9s linear infinite; vertical-align: -2px; margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .expired { color: #d98b7f; }
+  a.retry { color: #c5a059; text-decoration: underline; cursor: pointer; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">SocietyOS</div>
+    <h1>Connect this device</h1>
+    <p class="sub" id="sub">Scan with the camera on your signed-in phone, or enter the code at societyos.world/approve</p>
+    <div id="pairing">
+      <div id="qr"></div>
+      <div class="code-label">Pairing code</div>
+      <div id="code">······</div>
+    </div>
+    <div id="done" class="hidden">
+      <div style="font-size:56px; margin-bottom:16px;">✓</div>
+      <h1>Device connected</h1>
+      <p class="sub">Full SocietyOS access enabled on this device.</p>
+    </div>
+    <div class="status" id="status"><span class="spinner"></span>Waiting for approval…</div>
+  </div>
+
+<script>
+const API = window.SOCIETYOS_LINK_API || "https://link.societyos.world";
+const qrEl = document.getElementById("qr");
+const codeEl = document.getElementById("code");
+const statusEl = document.getElementById("status");
+const pairingEl = document.getElementById("pairing");
+const doneEl = document.getElementById("done");
+const subEl = document.getElementById("sub");
+
+let code = null;
+let pollTimer = null;
+
+function renderQR(text) {
+  qrEl.innerHTML = "";
+  const qr = qrcode(0, "M");
+  qr.addData(text);
+  qr.make();
+  qrEl.innerHTML = qr.createImgTag(6, 8);
+}
+
+async function createPairing() {
+  statusEl.innerHTML = '<span class="spinner"></span>Generating secure code…';
+  try {
+    const res = await fetch(API + "/api/link/create", { method: "POST" });
+    const data = await res.json();
+    code = data.code;
+    codeEl.textContent = code;
+    renderQR("https://societyos.world/approve?c=" + code);
+    statusEl.innerHTML = '<span class="spinner"></span>Waiting for approval…';
+    startPolling();
+  } catch (e) {
+    statusEl.innerHTML = 'Cannot reach SocietyOS. <a class="retry" onclick="location.reload()">Retry</a>';
+  }
+}
+
+function startPolling() {
+  clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    try {
+      const res = await fetch(API + "/api/link?code=" + code);
+      const data = await res.json();
+      if (data.status === "linked") {
+        clearInterval(pollTimer);
+        localStorage.setItem("societyos_member", JSON.stringify(data.member));
+        pairingEl.classList.add("hidden");
+        doneEl.classList.remove("hidden");
+        statusEl.classList.add("ok");
+        statusEl.textContent = "Connected — welcome back.";
+      } else if (data.status === "expired") {
+        clearInterval(pollTimer);
+        statusEl.classList.add("expired");
+        statusEl.innerHTML = 'Code expired. <a class="retry" onclick="newCode()">Get a new code</a>';
+      }
+    } catch (e) { /* keep polling */ }
+  }, 2500);
+}
+
+window.newCode = function () {
+  statusEl.classList.remove("expired");
+  createPairing();
+};
+
+createPairing();
+</script>
+</body>
+</html>
