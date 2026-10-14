@@ -77,10 +77,11 @@ async function approve() {
   // Member identity: the signed-in member on THIS device (phone).
   let member = null;
   try { member = JSON.parse(localStorage.getItem("societyos_member") || "null"); } catch (e) {}
-  if (!member || !member.username) {
+  const token = localStorage.getItem("societyos_token") || "";
+  if (!member || !member.username || !token) {
     statusEl.className = "status err";
     statusEl.textContent = "Sign in first, then approve. Redirecting to sign-in…";
-    setTimeout(() => { location.href = "/sign-in.html?next=" + encodeURIComponent("/approve?c=" + code); }, 1200);
+    setTimeout(() => { location.href = "/device-link/link.html"; }, 1200);
     return;
   }
 
@@ -91,7 +92,7 @@ async function approve() {
     const res = await fetch(API + "/api/link/approve", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, member }),
+      body: JSON.stringify({ code, member: { ...member, token } }),
     });
     const data = await res.json();
     if (res.ok && data.ok) {

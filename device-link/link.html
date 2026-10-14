@@ -39,8 +39,7 @@
   .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: rgba(197,160,89,0.2); }
   #qr { display: inline-block; padding: 12px; background: #fff; border-radius: 10px; }
   #qr img { display: block; }
-  .usercode { font-size: 30px; letter-spacing: 4px; color: #c5a059; margin-top: 12px; font-weight: bold; }
-  .matchcode { color: #8a9a90; font-size: 13px; margin-top: 4px; font-style: italic; }
+  #code { font-size: 28px; letter-spacing: 8px; color: #c5a059; margin-top: 10px; font-weight: bold; }
   .hidden { display: none; }
   .big { font-size: 52px; margin-bottom: 10px; }
   .actions { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
@@ -55,6 +54,7 @@
     animation: spin 0.9s linear infinite; vertical-align: -2px; margin-right: 6px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+  .toggle { color: #c5a059; cursor: pointer; font-size: 13px; text-decoration: underline; margin-top: 10px; }
 </style>
 </head>
 <body>
@@ -67,154 +67,172 @@
       <h1>You're in</h1>
       <p class="sub">Signed in as <strong id="who"></strong> on this device. Full SocietyOS access.</p>
       <div class="actions">
-        <a href="https://societyos.pro">Open SocietyOS →</a>
+        <a href="https://societyos.world/">Open SocietyOS →</a>
         <button class="ghost" onclick="signOut()">Sign out of this device</button>
       </div>
     </div>
 
-    <!-- STATE B: sign in -->
+    <!-- STATE B: sign in / register on this device -->
     <div id="state-signin" class="hidden">
-      <h1>Sign in</h1>
-      <p class="sub">Use your SocietyOS username and password on this device.</p>
-      <input id="user" placeholder="Username" autocomplete="username">
-      <input id="pass" type="password" placeholder="Password" autocomplete="current-password">
-      <button id="btn" onclick="doSignIn()">Sign in</button>
-      <div class="status" id="status"></div>
+      <div id="pane-login">
+        <h1>Sign in</h1>
+        <p class="sub">Use your SocietyOS username and password on this device.</p>
+        <input id="user" placeholder="Username" autocomplete="username">
+        <input id="pass" type="password" placeholder="Password" autocomplete="current-password">
+        <button id="btn" onclick="doLogin()">Sign in</button>
+        <div class="status" id="status"></div>
+        <div class="toggle" onclick="togglePane('register')">New member? Create your access →</div>
+      </div>
+
+      <div id="pane-register" class="hidden">
+        <h1>Create access</h1>
+        <p class="sub">Set your SocietyOS username and password for this account.</p>
+        <input id="ruser" placeholder="Username" autocomplete="username">
+        <input id="rpass" type="password" placeholder="Password (6+ characters)" autocomplete="new-password">
+        <button id="rbtn" onclick="doRegister()">Create my access</button>
+        <div class="status" id="rstatus"></div>
+        <div class="toggle" onclick="togglePane('login')">← Back to sign in</div>
+      </div>
 
       <div class="divider">OR LINK FROM ANOTHER DEVICE</div>
-      <p class="sub" style="margin-bottom:12px;">Scan this with your phone's camera — sign in there and approve this device.</p>
+      <p class="sub" style="margin-bottom:12px;">Scan this with a device that's already signed in — this one will be linked instantly.</p>
       <div id="qr"></div>
-      <div class="usercode" id="usercode">····-····</div>
-      <div class="matchcode" id="matchcode"></div>
+      <div id="code">······</div>
       <div class="status" id="linkstatus"><span class="spinner"></span>Waiting for approval…</div>
     </div>
   </div>
 
 <script>
-const SILO = "https://societyos.pro";
-const TOKEN_KEY = "societyos_profile_token";
-const USER_KEY = "societyos_member";
+const API = window.SOCIETYOS_LINK_API || "https://societyos-device-link.societyos.workers.dev";
 
 const $ = (id) => document.getElementById(id);
-let deviceCode = null, pollAfter = 3, pollTimer = null;
+let code = null, pollTimer = null;
 
-/* ---------- helpers ---------- */
-function getToken() { return localStorage.getItem(TOKEN_KEY) || ""; }
+function saveMember(token, username) {
+  localStorage.setItem("societyos_token", token);
+  localStorage.setItem("societyos_member", JSON.stringify({ username }));
+}
+function getMember() {
+  try { return JSON.parse(localStorage.getItem("societyos_member") || "null"); } catch (e) { return null; }
+}
 function show(state) {
   $("state-connected").classList.toggle("hidden", state !== "connected");
   $("state-signin").classList.toggle("hidden", state !== "signin");
+}
+function togglePane(pane) {
+  $("pane-login").classList.toggle("hidden", pane !== "login");
+  $("pane-register").classList.toggle("hidden", pane !== "register");
 }
 function renderQR(text) {
   const qr = qrcode(0, "M"); qr.addData(text); qr.make();
   $("qr").innerHTML = qr.createImgTag(5, 8);
 }
 
-/* ---------- STATE A ---------- */
+/* ---------- STATE A: connected ---------- */
 function connected() {
-  let who = "member";
-  try { who = (JSON.parse(localStorage.getItem(USER_KEY) || "null") || {}).username || who; } catch (e) {}
-  $("who").textContent = who;
+  const m = getMember();
+  $("who").textContent = m && m.username ? m.username : "member";
   show("connected");
   clearInterval(pollTimer);
 }
 function signOut() {
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(USER_KEY);
+  localStorage.removeItem("societyos_token");
+  localStorage.removeItem("societyos_member");
   location.reload();
 }
 
-/* ---------- sign in with username/password (platform /auth/login) ---------- */
-async function doSignIn() {
+/* ---------- sign in / register (SocietyOS Worker) ---------- */
+async function doLogin() {
   const btn = $("btn"), status = $("status");
   const username = $("user").value.trim(), password = $("pass").value;
   if (!username || !password) { status.className = "status err"; status.textContent = "Enter your username and password."; return; }
-  btn.disabled = true;
-  status.className = "status"; status.innerHTML = '<span class="spinner"></span>Signing in…';
+  btn.disabled = true; status.className = "status"; status.innerHTML = '<span class="spinner"></span>Signing in…';
   try {
-    const res = await fetch(SILO + "/api/v2/auth/login", {
+    const res = await fetch(API + "/api/link/login", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password })
     });
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      status.className = "status err";
-      status.textContent = body.detail || "Sign-in failed. Check your credentials.";
-      btn.disabled = false;
-      return;
-    }
     const data = await res.json();
-    // Platform returns the session token — accept common shapes
-    const token = data.profile_token || data.token || data.access_token || "";
-    if (!token) {
-      status.className = "status err"; status.textContent = "Sign-in succeeded but no session token returned.";
+    if (!res.ok || !data.ok) {
+      status.className = "status err"; status.textContent = data.error || "Sign-in failed.";
       btn.disabled = false; return;
     }
-    localStorage.setItem(TOKEN_KEY, token);
-    localStorage.setItem(USER_KEY, JSON.stringify({ username, profile: data.profile || null }));
+    saveMember(data.token, data.member.username);
     connected();
   } catch (e) {
-    status.className = "status err";
-    status.textContent = "Cannot reach SocietyOS. Try again or use the QR below.";
+    status.className = "status err"; status.textContent = "Cannot reach SocietyOS. Try again or use the QR below.";
     btn.disabled = false;
   }
 }
 
-/* ---------- device link flow (platform /auth/device/*) ---------- */
-async function startDeviceLogin() {
+async function doRegister() {
+  const btn = $("rbtn"), status = $("rstatus");
+  const username = $("ruser").value.trim(), password = $("rpass").value;
+  if (!username || !password || password.length < 6) {
+    status.className = "status err"; status.textContent = "Username and a password of 6+ characters required."; return;
+  }
+  btn.disabled = true; status.className = "status"; status.innerHTML = '<span class="spinner"></span>Creating…';
+  try {
+    const res = await fetch(API + "/api/link/register", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) {
+      status.className = "status err"; status.textContent = data.error || "Could not create access.";
+      btn.disabled = false; return;
+    }
+    saveMember(data.token, data.member.username);
+    connected();
+  } catch (e) {
+    status.className = "status err"; status.textContent = "Cannot reach SocietyOS. Try again.";
+    btn.disabled = false;
+  }
+}
+
+/* ---------- QR link path (approve from another signed-in device) ---------- */
+async function createPairing() {
   $("linkstatus").innerHTML = '<span class="spinner"></span>Generating code…';
   try {
-    const res = await fetch(SILO + "/api/v2/auth/device/start", {
-      method: "POST", headers: { "Content-Type": "application/json", "User-Agent": "SocietyOS-Link/1.0" },
-      body: JSON.stringify({ client_name: "SocietyOS Device" })
-    });
-    const d = await res.json();
-    deviceCode = d.device_code;
-    pollAfter = d.interval || 3;
-    $("usercode").textContent = d.user_code;
-    $("matchcode").textContent = d.match_code ? "Match phrase: " + d.match_code : "";
-    renderQR(d.verification_uri_complete || d.verification_uri);
-    $("linkstatus").innerHTML = '<span class="spinner"></span>Waiting for approval…';
-    schedulePoll();
+    const res = await fetch(API + "/api/link/create", { method: "POST" });
+    const data = await res.json();
+    code = data.code;
+    $("code").textContent = code;
+    renderQR("https://societyos.world/device-link/approve.html?c=" + code);
+    startPolling();
   } catch (e) {
     $("linkstatus").className = "status err";
     $("linkstatus").textContent = "Pairing unavailable. You can still sign in above.";
   }
 }
 
-function schedulePoll() {
+function startPolling() {
   clearInterval(pollTimer);
-  pollTimer = setInterval(poll, pollAfter * 1000);
-}
-
-async function poll() {
-  if (!deviceCode) return;
-  try {
-    const res = await fetch(SILO + "/api/v2/auth/device/poll", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ device_code: deviceCode })
-    });
-    if (res.status === 404) { // expired
-      clearInterval(pollTimer);
-      $("linkstatus").innerHTML = 'Code expired. <a style="color:#c5a059;cursor:pointer" onclick="startDeviceLogin()">New code</a>';
-      return;
-    }
-    const d = await res.json();
-    if (d.status === "approved" || d.profile_token) {
-      clearInterval(pollTimer);
-      localStorage.setItem(TOKEN_KEY, d.profile_token);
-      if (d.profile) localStorage.setItem(USER_KEY, JSON.stringify({ username: d.profile.username || "member", profile: d.profile }));
-      connected();
-    }
-    // still pending → keep polling
-  } catch (e) { /* keep polling */ }
+  pollTimer = setInterval(async () => {
+    if (!code) return;
+    try {
+      const res = await fetch(API + "/api/link?code=" + code);
+      const data = await res.json();
+      if (data.status === "linked") {
+        clearInterval(pollTimer);
+        saveMember(data.member.token, data.member.username);
+        connected();
+      } else if (data.status === "expired") {
+        clearInterval(pollTimer);
+        $("linkstatus").innerHTML = 'Code expired. <a style="color:#c5a059;cursor:pointer" onclick="createPairing()">New code</a>';
+      }
+    } catch (e) { /* keep polling */ }
+  }, 2500);
 }
 
 /* ---------- boot ---------- */
 (function init() {
-  if (getToken()) { connected(); return; }
+  const m = getMember();
+  if (m && m.username && localStorage.getItem("societyos_token")) { connected(); return; }
   show("signin");
-  startDeviceLogin();
-  $("pass").addEventListener("keydown", (e) => { if (e.key === "Enter") doSignIn(); });
+  createPairing();
+  $("pass").addEventListener("keydown", (e) => { if (e.key === "Enter") doLogin(); });
+  $("rpass").addEventListener("keydown", (e) => { if (e.key === "Enter") doRegister(); });
 })();
 </script>
 </body>
