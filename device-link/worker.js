@@ -61,7 +61,7 @@ async function hashPassword(password, saltHex) {
   return [...new Uint8Array(bits)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-async function createMember(env, username, password) {
+async function createMember(env, username, password, profile) {
   const key = `member:${username.toLowerCase()}`;
   const existing = await env.LINKS.get(key);
   if (existing) return { error: "username already registered" };
@@ -69,7 +69,9 @@ async function createMember(env, username, password) {
   crypto.getRandomValues(buf);
   const salt = [...buf].map((b) => b.toString(16).padStart(2, "0")).join("");
   const hash = await hashPassword(password, salt);
-  await env.LINKS.put(key, JSON.stringify({ pass_salt: salt, pass_hash: hash, created: Date.now() }));
+  const rec = { pass_salt: salt, pass_hash: hash, created: Date.now() };
+  if (profile && (profile.name || profile.email)) rec.profile = profile;
+  await env.LINKS.put(key, JSON.stringify(rec));
   return { ok: true };
 }
 
@@ -146,7 +148,7 @@ export default {
       const { username, password } = body || {};
       if (!username || !password || String(password).length < 6)
         return json({ error: "username and password (6+ chars) required" }, 400);
-      const r = await createMember(env, String(username).trim(), String(password));
+      const r = await createMember(env, String(username).trim(), String(password), { name: body.name || '', email: body.email || '' });
       if (r.error) return json(r, 409);
       const token = await createSession(env, String(username).trim());
       return json({ ok: true, token, member: { username: String(username).trim() } });
