@@ -117,6 +117,60 @@ export default {
       return json({ ok: true, nodes: rec });
     }
 
+    // ---- GET /api/admin/members?adminKey= — inspect member records ----
+    if (url.pathname === '/api/admin/members' && request.method === 'GET') {
+      if (url.searchParams.get('adminKey') !== env.ADMIN_KEY) return json({ ok: false, error: 'Forbidden' }, 403);
+      const out = [];
+      let cursor = undefined;
+      do {
+        const page = await env.LINKS.list({ prefix: 'member:', cursor });
+        for (const k of page.keys) {
+          const raw = await env.LINKS.get(k.name);
+          if (!raw) continue;
+          const rec = JSON.parse(raw);
+          out.push({
+            key: k.name,
+            username: k.name.slice('member:'.length),
+            created: rec.created ? new Date(rec.created).toISOString() : null,
+            profile: rec.profile || null,
+            hasPass: !!(rec.pass_salt && rec.pass_hash),
+          });
+        }
+        cursor = page.list_complete ? undefined : page.cursor;
+      } while (cursor);
+      // attached ambassador data
+      for (const m of out) {
+        const code = (await env.AMB.get(`ambuser:${m.username}`)) || null;
+        m.ambassadorCode = code;
+        if (code) {
+          m.adjust = await env.AMB.get(`adjust:${code}`, 'json') || null;
+          m.payout = await env.AMB.get(`payout:${code}`, 'json') || null;
+        }
+      }
+      return json({ ok: true, members: out });
+    }
+
+    // ---- POST /api/admin/setpass { adminKey, username, password } — admin override ----
+    if (url.pathname === '/api/admin/setpass' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      if (body.adminKey !== env.ADMIN_KEY) return json({ ok: false, error: 'Forbidden' }, 403);
+      const username = String(body.username || '').trim().toLowerCase();
+      const password = String(body.password || '');
+      if (!username || password.length < 6) return json({ ok: false, error: 'username and 6+ char password required' }, 400);
+      const key = `member:${username}`;
+      const raw = await env.LINKS.get(key);
+      if (!raw) return json({ ok: false, error: 'member not found' }, 404);
+      const rec = JSON.parse(raw);
+      const buf = new Uint8Array(16);
+      crypto.getRandomValues(buf);
+      const salt = [...buf].map((b) => b.toString(16).padStart(2, "0")).join("");
+      rec.pass_salt = salt;
+      rec.pass_hash = await hashPassword(password, salt);
+      rec.passResetAt = Date.now();
+      await env.LINKS.put(key, JSON.stringify(rec));
+      return json({ ok: true, username, resetAt: new Date(rec.passResetAt).toISOString() });
+    }
+
     // ---- POST /api/admin/adjust  { adminKey, code, earned, note } ----
     // Manual override of an Ambassador's earned rewards. Automation (referrals × rate) remains the default;
     // admin sets earned explicitly for external agreements. earned: null clears the override.
