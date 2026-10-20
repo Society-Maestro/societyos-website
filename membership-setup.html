@@ -1840,6 +1840,16 @@
 
     // State
     let currentStep = 1;
+
+    // Ambassador referral capture: societyos.world/membership-setup.html?ref=CODE
+    (function () {
+        try {
+            var m = new URLSearchParams(window.location.search).get('ref');
+            if (m && /^[A-Za-z0-9_-]{1,64}$/.test(m)) {
+                sessionStorage.setItem('sos_ref', m);
+            }
+        } catch (e) { /* no-op */ }
+    })();
     const selections = {
         device: null,
         case: null,
@@ -3268,7 +3278,13 @@ var SOCIETYOS_ACCESSORIES = []; // Removed — accessories will return when real
         } else {
             // Complete — redirect to Stripe payment link for selected tier
             if (selections.membership && selections.membership.checkoutUrl) {
-                window.open(selections.membership.checkoutUrl, '_self');
+                var checkoutUrl = selections.membership.checkoutUrl;
+                var refCode = sessionStorage.getItem('sos_ref');
+                if (refCode && /^[A-Za-z0-9_-]{1,64}$/.test(refCode)) {
+                    checkoutUrl += (checkoutUrl.indexOf('?') === -1 ? '?' : '&') +
+                        'client_reference_id=' + encodeURIComponent(refCode + '-' + Date.now());
+                }
+                window.open(checkoutUrl, '_self');
             } else {
                 showCompletion();
             }
