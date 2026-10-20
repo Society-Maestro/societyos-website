@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SocietyOS Ambassador Portal</title>
+<style>
+  :root{ --fg:#eaeaf0; --mut:#9a9aa5; --gold:#c8a24a; --bd:#2a2a33; --card:#17171d; --bg:#0d0d11; }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,'Segoe UI',Roboto,sans-serif}
+  body{background:var(--bg);color:var(--fg);padding:32px 16px;line-height:1.5}
+  .wrap{max-width:860px;margin:0 auto}
+  .logo{text-align:center;font-size:26px;font-weight:800;letter-spacing:3px;margin-bottom:6px}
+  .logo span{color:var(--gold)}
+  .tag{text-align:center;color:var(--mut);font-size:14px;margin-bottom:28px}
+  .card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:24px;margin-bottom:16px}
+  label{display:block;font-size:13px;color:var(--mut);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase}
+  input{width:100%;background:#0f0f14;border:1px solid var(--bd);color:var(--fg);border-radius:9px;padding:12px 14px;font-size:16px}
+  button{background:var(--gold);color:#111;border:none;border-radius:9px;padding:12px 22px;font-weight:800;font-size:14px;cursor:pointer;margin-top:12px;width:100%}
+  button.ghost{background:transparent;color:var(--fg);border:1px solid var(--bd)}
+  .err{color:#e26a6a;font-size:13px;margin-top:8px;display:none}
+  .hidden{display:none}
+  h2{font-size:20px;margin-bottom:4px}
+  .tier{color:var(--gold);font-size:13px;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+  .stat{background:#0f0f14;border:1px solid var(--bd);border-radius:10px;padding:14px}
+  .stat b{display:block;font-size:26px}
+  .stat small{color:var(--mut);font-size:12px}
+  .barwrap{background:#0f0f14;border:1px solid var(--bd);border-radius:99px;height:14px;overflow:hidden;margin:8px 0 4px}
+  .bar{height:100%;background:linear-gradient(90deg,#8a6d2f,var(--gold));border-radius:99px;transition:width .8s}
+  .goal-line{font-size:13px;color:var(--mut)}
+  .payout-ok{color:#79c98c;font-size:14px;margin-top:10px;display:none}
+  ul.perks{list-style:none;margin-top:10px}
+  ul.perks li{padding:3px 0 3px 20px;position:relative;font-size:14px}
+  ul.perks li::before{content:"◆";position:absolute;left:2px;color:var(--gold);font-size:10px;top:7px}
+  .foot{font-size:11px;color:var(--mut);text-align:center;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">Society<span>OS</span> Ambassador Portal</div>
+  <div class="tag">Your referrals · Your income · Your goals</div>
+
+  <div class="card" id="loginCard">
+    <label>Access Code</label>
+    <input id="code" placeholder="Enter your Ambassador code" autocomplete="off">
+    <button onclick="login()">Enter Portal</button>
+    <div class="err" id="err">Code not recognized — check with SocietyOS support.</div>
+  </div>
+
+  <div class="hidden" id="dash">
+    <div class="card">
+      <h2 id="whoName">—</h2>
+      <div class="tier" id="whoTier">—</div>
+      <div class="stats">
+        <div class="stat"><b id="sRefs">0</b><small>Referrals (paid)</small></div>
+        <div class="stat"><b id="sEarn">$0</b><small>Earned — residual</small></div>
+        <div class="stat"><b id="sPer">$0</b><small>Per referral / yr</small></div>
+        <div class="stat"><b id="sNodes">0</b><small>Nodes held</small></div>
+      </div>
+      <div class="goal-line">Goal: <b>60 referrals</b> — your Ambassadorship pays for itself. Everything after is residual income for the life of each customer.</div>
+      <div class="barwrap"><div class="bar" id="bar" style="width:0%"></div></div>
+      <div class="goal-line"><b id="sPct">0%</b> to break-even · <span id="sTo">60 referrals to go</span> · At-cap projection: <b id="sCap">$120,000/yr</b></div>
+    </div>
+
+    <div class="card">
+      <h2>Payouts</h2>
+      <ul class="perks">
+        <li>Rewards are residual — paid for the life of every customer you refer</li>
+        <li>First payout window: <b>January 2027</b> — schedule yours below</li>
+      </ul>
+      <div id="payoutForm">
+        <button class="ghost" onclick="schedulePayout()">Schedule my first payout — January 2027</button>
+      </div>
+      <div class="payout-ok" id="payoutOk"></div>
+    </div>
+
+    <div class="card">
+      <h2>Your referral link</h2>
+      <div class="goal-line">Share this link — every signup through it is credited to you automatically:</div>
+      <input id="refLink" readonly style="margin-top:10px;font-size:14px">
+    </div>
+
+    <div class="foot">SocietyOS · Ambassador Program · Questions: hello@societyos.world</div>
+  </div>
+</div>
+<script>
+const API = 'https://societyos-ambassador.societyos.workers.dev';
+let CODE = null;
+
+async function login(){
+  const code = document.getElementById('code').value.trim();
+  const r = await fetch(API + '/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code }) });
+  const d = await r.json();
+  if(!d.ok){ document.getElementById('err').style.display = 'block'; return; }
+  document.getElementById('err').style.display = 'none';
+  CODE = d.code;
+  document.getElementById('loginCard').classList.add('hidden');
+  document.getElementById('dash').classList.remove('hidden');
+  await loadStats();
+}
+
+async function loadStats(){
+  const r = await fetch(API + '/api/stats?code=' + encodeURIComponent(CODE));
+  const d = await r.json();
+  if(!d.ok) return;
+  document.getElementById('whoName').textContent = d.name;
+  document.getElementById('whoTier').textContent = d.tier;
+  document.getElementById('sRefs').textContent = d.referrals;
+  document.getElementById('sEarn').textContent = '$' + d.earned.toLocaleString();
+  document.getElementById('sPer').textContent = '$' + d.perRef;
+  document.getElementById('sNodes').textContent = d.nodes;
+  document.getElementById('bar').style.width = d.goalPct + '%';
+  document.getElementById('sPct').textContent = d.goalPct + '%';
+  document.getElementById('sTo').textContent = d.toBreakeven === 0 ? 'Break-even reached — every referral is now profit' : d.toBreakeven + ' referrals to break-even';
+  document.getElementById('sCap').textContent = '$' + d.atCapProjection.toLocaleString() + '/yr';
+  document.getElementById('refLink').value = 'https://societyos.world/membership-setup.html?ref=' + d.code;
+  if(d.payout){
+    document.getElementById('payoutForm').classList.add('hidden');
+    const ok = document.getElementById('payoutOk');
+    ok.style.display = 'block';
+    ok.textContent = '✓ Payout scheduled for ' + d.payout.scheduledFor + ' — requested ' + new Date(d.payout.requestedAt).toLocaleDateString();
+  }
+}
+
+async function schedulePayout(){
+  const r = await fetch(API + '/api/payout', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: CODE, month: 'January 2027' }) });
+  const d = await r.json();
+  if(d.ok) loadStats();
+}
+</script>
+</body>
+</html>

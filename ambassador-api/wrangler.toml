@@ -1,0 +1,8 @@
+name = "societyos-ambassador"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[[kv_namespaces]]
+binding = "AMB"
+id = "e0b057e4cbc042a4914800b72f5fbeeb"
