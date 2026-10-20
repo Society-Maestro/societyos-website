@@ -69,7 +69,12 @@
         <li>First payout window: <b>January 2027</b> — schedule yours below</li>
       </ul>
       <div id="payoutForm">
-        <button class="ghost" onclick="schedulePayout()">Schedule my first payout — January 2027</button>
+        <label>Payout method</label>
+        <div style="display:flex;gap:10px;margin-top:4px">
+          <button class="ghost" style="margin-top:0" onclick="schedulePayout('tangem')">Tangem Pay</button>
+          <button class="ghost" style="margin-top:0" onclick="schedulePayout('wire')">Wire Transfer</button>
+        </div>
+        <div class="goal-line" style="margin-top:8px">Both methods pay in January 2027. Wire details and Tangem card verification are confirmed with SocietyOS before payout.</div>
       </div>
       <div class="payout-ok" id="payoutOk"></div>
     </div>
@@ -126,12 +131,12 @@ async function loadStats(){
     document.getElementById('payoutForm').classList.add('hidden');
     const ok = document.getElementById('payoutOk');
     ok.style.display = 'block';
-    ok.textContent = '✓ Payout scheduled for ' + d.payout.scheduledFor + ' — requested ' + new Date(d.payout.requestedAt).toLocaleDateString();
+    ok.textContent = '✓ Payout scheduled for ' + d.payout.scheduledFor + (d.payout.method ? ' via ' + d.payout.method : '') + ' — requested ' + new Date(d.payout.requestedAt).toLocaleDateString();
   }
 }
 
-async function schedulePayout(){
-  const r = await fetch(API + '/api/payout', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: CODE, month: 'January 2027' }) });
+async function schedulePayout(method){
+  const r = await fetch(API + '/api/payout', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: CODE, month: 'January 2027', method }) });
   const d = await r.json();
   if(d.ok) loadStats();
 }

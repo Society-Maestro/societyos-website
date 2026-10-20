@@ -87,14 +87,34 @@ export default {
       const body = await request.json().catch(() => ({}));
       const raw = String(body.code || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
       if (!ROSTER[raw]) return json({ ok: false, error: 'Code not recognized' }, 401);
+      const method = body.method === 'wire' ? 'Wire Transfer' : 'Tangem Pay';
       const month = String(body.month || 'January 2027');
       const rec = {
         requestedAt: new Date().toISOString(),
         scheduledFor: month,
+        method,
         status: 'scheduled',
       };
       await env.AMB.put(`payout:${raw}`, JSON.stringify(rec));
       return json({ ok: true, payout: rec });
+    }
+
+    // ---- GET /api/nodes — public NODE counter ----
+    if (url.pathname === '/api/nodes' && request.method === 'GET') {
+      let n = await env.AMB.get('nodes', 'json');
+      if (!n) n = { claimed: 25, total: 100 };
+      return json({ ok: true, claimed: n.claimed, total: n.total, remaining: Math.max(0, n.total - n.claimed) });
+    }
+
+    // ---- POST /api/admin/nodes  { adminKey, claimed, total } ----
+    if (url.pathname === '/api/admin/nodes' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      if (body.adminKey !== env.ADMIN_KEY) return json({ ok: false, error: 'Forbidden' }, 403);
+      const claimed = Number(body.claimed), total = Number(body.total || 100);
+      if (!Number.isFinite(claimed) || claimed < 0 || claimed > total) return json({ ok: false, error: 'Invalid count' }, 400);
+      const rec = { claimed, total };
+      await env.AMB.put('nodes', JSON.stringify(rec));
+      return json({ ok: true, nodes: rec });
     }
 
     // ---- POST /api/admin/adjust  { adminKey, code, earned, note } ----

@@ -3088,7 +3088,8 @@ var SOCIETYOS_ACCESSORIES = []; // Removed — accessories will return when real
                         '<circle cx="60" cy="40" r="6" fill="none" stroke="rgba(197,160,89,0.3)" stroke-width="1"/>' +
                     '</svg>' +
                 '</div>' +
-                '<div style="font-size:0.7rem;color:#666;margin-top:1rem;text-align:center;">Sovereign home cloud powered by SocietyOS. Pre-order opens ' + (opt.releaseDate || 'Dec 2026') + '.</div>';
+                '<div style="font-size:0.7rem;color:#666;margin-top:1rem;text-align:center;">Sovereign home cloud powered by SocietyOS. Pre-order opens ' + (opt.releaseDate || 'Dec 2026') + '.</div>' +
+                '<div id="nodeCounter" style="font-size:0.75rem;color:#c5a059;font-weight:600;margin-top:0.4rem;text-align:center;">Loading Node availability…</div>';
             caseOverlay.style.display = 'none';
             var existingToggle2 = document.getElementById('deviceViewToggle');
             if (existingToggle2) existingToggle2.style.display = 'none';
@@ -3096,6 +3097,15 @@ var SOCIETYOS_ACCESSORIES = []; // Removed — accessories will return when real
                 phoneMockup.style.opacity = '1';
                 phoneMockup.style.transform = 'scale(1)';
             }, 100);
+            // Public NODE counter (live from societyos-ambassador worker)
+            fetch('https://societyos-ambassador.societyos.workers.dev/api/nodes')
+                .then(function(r){ return r.json(); })
+                .then(function(d){
+                    if (d && d.ok) {
+                        var el = document.getElementById('nodeCounter');
+                        if (el) el.textContent = 'NODES CLAIMED: ' + d.claimed + ' OF ' + d.total + ' · ' + d.remaining + ' REMAINING';
+                    }
+                }).catch(function(){});
             return;
         }
 
