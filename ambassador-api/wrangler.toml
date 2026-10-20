@@ -6,3 +6,7 @@ workers_dev = true
 [[kv_namespaces]]
 binding = "AMB"
 id = "e0b057e4cbc042a4914800b72f5fbeeb"
+
+[[kv_namespaces]]
+binding = "LINKS"
+id = "e0b057e4cbc042a4914800b72f5fbeeb"
