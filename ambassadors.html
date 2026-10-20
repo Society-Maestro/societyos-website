@@ -107,6 +107,14 @@ async function loadStats(){
   document.getElementById('whoTier').textContent = d.tier;
   document.getElementById('sRefs').textContent = d.referrals;
   document.getElementById('sEarn').textContent = '$' + d.earned.toLocaleString();
+  const earnLabel = document.getElementById('sEarn').parentElement.querySelector('small');
+  if (d.adjusted) {
+    earnLabel.textContent = 'Earned — residual ✓ (verified by SocietyOS)';
+    earnLabel.style.color = '#79c98c';
+  } else {
+    earnLabel.textContent = 'Earned — residual';
+    earnLabel.style.color = '';
+  }
   document.getElementById('sPer').textContent = '$' + d.perRef;
   document.getElementById('sNodes').textContent = d.nodes;
   document.getElementById('bar').style.width = d.goalPct + '%';

@@ -53,8 +53,12 @@ export default {
       }
 
       const referrals = sessions.length;
-      const earned = referrals * who.perRef;
-      const goal = 60; // break-even referrals
+      const autoEarned = referrals * who.perRef;
+
+      // Manual adjustment (admin-set) overrides the automated calculation when present
+      let adjust = null;
+      try { adjust = await env.AMB.get(`adjust:${raw}`, 'json'); } catch (e) {}
+      const earned = adjust && typeof adjust.earned === 'number' ? adjust.earned : autoEarned;
       const payoutReq = await env.AMB.get(`payout:${raw}`, 'json');
 
       return json({
@@ -66,9 +70,12 @@ export default {
         perRef: who.perRef,
         referrals,
         earned,
-        goal,
-        goalPct: Math.min(100, Math.round((referrals / goal) * 100)),
-        toBreakeven: Math.max(0, goal - referrals),
+        autoEarned,
+        adjusted: !!(adjust && typeof adjust.earned === 'number'),
+        adjustNote: adjust ? (adjust.note || '') : '',
+        goal: 60,
+        goalPct: Math.min(100, Math.round((referrals / 60) * 100)),
+        toBreakeven: Math.max(0, 60 - referrals),
         atCapProjection: who.perRef * (who.tier.startsWith('Gold') && who.nodes === 0 ? 3000 : 1000),
         payout: payoutReq || null,
         nodesRemaining: 75,
@@ -88,6 +95,25 @@ export default {
       };
       await env.AMB.put(`payout:${raw}`, JSON.stringify(rec));
       return json({ ok: true, payout: rec });
+    }
+
+    // ---- POST /api/admin/adjust  { adminKey, code, earned, note } ----
+    // Manual override of an Ambassador's earned rewards. Automation (referrals × rate) remains the default;
+    // admin sets earned explicitly for external agreements. earned: null clears the override.
+    if (url.pathname === '/api/admin/adjust' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      if (body.adminKey !== env.ADMIN_KEY) return json({ ok: false, error: 'Forbidden' }, 403);
+      const raw = String(body.code || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      if (!ROSTER[raw]) return json({ ok: false, error: 'Code not recognized' }, 401);
+      if (body.earned === null || body.earned === undefined || body.earned === '') {
+        await env.AMB.delete(`adjust:${raw}`);
+        return json({ ok: true, cleared: true });
+      }
+      const earned = Number(body.earned);
+      if (!Number.isFinite(earned) || earned < 0) return json({ ok: false, error: 'Invalid amount' }, 400);
+      const rec = { earned, note: String(body.note || ''), setAt: new Date().toISOString() };
+      await env.AMB.put(`adjust:${raw}`, JSON.stringify(rec));
+      return json({ ok: true, adjust: rec });
     }
 
     return json({ ok: false, error: 'Not found' }, 404);
