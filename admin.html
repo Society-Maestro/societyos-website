@@ -35,10 +35,11 @@
   <div class="tag">Member records · Credentials · Ambassador data — internal only</div>
 
   <div class="card" id="login">
-    <h3>Admin Key</h3>
-    <input id="key" type="password" placeholder="Admin key" autocomplete="off">
+    <h3>Admin Sign In</h3>
+    <input id="user" placeholder="Username" autocomplete="username" style="margin-bottom:10px">
+    <input id="pass" type="password" placeholder="Password" autocomplete="current-password">
     <button onclick="load()" style="margin-top:12px">Unlock Console</button>
-    <div class="err" id="err">Wrong key.</div>
+    <div class="err" id="err">Wrong credentials.</div>
   </div>
 
   <div id="console" class="hidden">
@@ -58,9 +59,10 @@ const DEV = 'https://societyos-device-link.societyos.workers.dev';
 let KEY = '';
 
 async function load(){
-  KEY = document.getElementById('key').value.trim();
-  const r = await fetch(AMB + '/api/admin/members?adminKey=' + encodeURIComponent(KEY));
-  if(!r.ok){ document.getElementById('err').style.display='block'; return; }
+  const r = await fetch(AMB + '/api/admin/auth', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: document.getElementById('user').value.trim(), password: document.getElementById('pass').value }) });
+  const auth = await r.json();
+  if(!auth.ok){ document.getElementById('err').style.display='block'; return; }
+  KEY = auth.adminKey;
   document.getElementById('err').style.display='none';
   document.getElementById('login').classList.add('hidden');
   document.getElementById('console').classList.remove('hidden');

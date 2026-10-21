@@ -173,6 +173,15 @@ export default {
       return json({ ok: true, nodes: rec });
     }
 
+    // ---- POST /api/admin/auth { username, password } → admin session key ----
+    if (url.pathname === '/api/admin/auth' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      const username = await verifyMemberPassword(body.username || '', body.password || '');
+      if (!username || username !== String(env.ADMIN_USER || '').trim().toLowerCase())
+        return json({ ok: false, error: 'Invalid admin credentials' }, 401);
+      return json({ ok: true, adminKey: env.ADMIN_KEY });
+    }
+
     // ---- GET /api/admin/members?adminKey= — inspect member records ----
     if (url.pathname === '/api/admin/members' && request.method === 'GET') {
       if (url.searchParams.get('adminKey') !== env.ADMIN_KEY) return json({ ok: false, error: 'Forbidden' }, 403);
