@@ -36,8 +36,8 @@
 
   <div class="card" id="login">
     <h3>Admin Sign In</h3>
-    <input id="user" placeholder="Username" autocomplete="username" style="margin-bottom:10px">
-    <input id="pass" type="password" placeholder="Password" autocomplete="current-password">
+    <input autocapitalize="none" autocorrect="off" spellcheck="false" id="user" placeholder="Username" autocomplete="username" style="margin-bottom:10px">
+    <input autocapitalize="none" autocorrect="off" spellcheck="false" id="pass" type="password" placeholder="Password" autocomplete="current-password">
     <button onclick="load()" style="margin-top:12px">Unlock Console</button>
     <div class="err" id="err">Wrong credentials.</div>
   </div>
@@ -80,7 +80,7 @@ async function load(){
       '<td><small>' + (m.created ? m.created.slice(0,10) : '—') + '</small></td>' +
       '<td><small>' + (m.hasPass ? 'set' : 'none') + '</small></td>' +
       '<td>' + amb + extra + '</td>' +
-      '<td><div class="rowactions"><input type="text" placeholder="new password" id="np-' + btoa(m.username).replace(/=/g,'') + '"><button onclick="setPass(\'' + m.username.replace(/'/g,"\\'") + '\')">Override</button></div></td>';
+      '<td><div class="rowactions"><input autocapitalize="none" autocorrect="off" spellcheck="false" type="text" placeholder="new password" id="np-' + btoa(m.username).replace(/=/g,'') + '"><button onclick="setPass(\'' + m.username.replace(/'/g,"\\'") + '\')">Override</button></div></td>';
     tb.appendChild(tr);
   }
 }
