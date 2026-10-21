@@ -163,8 +163,8 @@ export default {
       const password = String(body.password || '');
       const isAdmin = body.adminKey === env.ADMIN_KEY;
       if (!isAdmin && !ROSTER[raw]) return json({ ok: false, error: 'Code not recognized' }, 401);
-      if (!username || !username.includes('@') || password.length < 6)
-        return json({ ok: false, error: 'Email as username + 6+ char password required' }, 400);
+      if (!username || username.length < 3 || !/^[a-z0-9._-]+$/.test(username) || password.length < 6)
+        return json({ ok: false, error: 'Username (3+ chars, letters/numbers) and 6+ char password required' }, 400);
       const key = `member:${username}`;
       const existing = await env.LINKS.get(key);
       if (existing && !isAdmin) return json({ ok: false, error: 'username already taken' }, 409);
