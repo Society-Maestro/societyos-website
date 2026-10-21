@@ -136,13 +136,14 @@ export default {
 
     // ---- Simple username + password login → ambassador dashboard ----
     async function verifyMemberPassword(username, password) {
-      const key = `member:${String(username).trim().toLowerCase()}`;
+      const clean = String(username).trim().toLowerCase().replace(/\s+/g, '');
+      const key = `member:${clean}`;
       const raw = await env.LINKS.get(key);
       if (!raw) return null;
       const rec = JSON.parse(raw);
       if (!rec.pass_salt || !rec.pass_hash) return null;
       const hash = await hashPassword(password, rec.pass_salt);
-      return hash === rec.pass_hash ? username.trim().toLowerCase() : null;
+      return hash === rec.pass_hash ? clean : null;
     }
 
     if (url.pathname === '/api/user-login' && request.method === 'POST') {
