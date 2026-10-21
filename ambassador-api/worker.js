@@ -15,6 +15,14 @@ export default {
       status, headers: { 'Content-Type': 'application/json', ...cors },
     });
 
+    async function hashPassword(password, saltHex) {
+      const enc = new TextEncoder();
+      const salt = new Uint8Array(saltHex.match(/.{2}/g).map((h) => parseInt(h, 16)));
+      const key = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']);
+      const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: 100000 }, key, 256);
+      return [...new Uint8Array(bits)].map((b) => b.toString(16).padStart(2, '0')).join('');
+    }
+
     // ---- POST /api/login  { code } ----
     // Codes are case-insensitive per Brandon directive (Oakley/oakley both work).
     const ROSTER = {
@@ -97,6 +105,54 @@ export default {
       };
       await env.AMB.put(`payout:${raw}`, JSON.stringify(rec));
       return json({ ok: true, payout: rec });
+    }
+
+    // ---- Simple username + password login → ambassador dashboard ----
+    async function verifyMemberPassword(username, password) {
+      const key = `member:${String(username).trim().toLowerCase()}`;
+      const raw = await env.LINKS.get(key);
+      if (!raw) return null;
+      const rec = JSON.parse(raw);
+      if (!rec.pass_salt || !rec.pass_hash) return null;
+      const hash = await hashPassword(password, rec.pass_salt);
+      return hash === rec.pass_hash ? username.trim().toLowerCase() : null;
+    }
+
+    if (url.pathname === '/api/user-login' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      const username = await verifyMemberPassword(body.username || '', body.password || '');
+      if (!username) return json({ ok: false, error: 'Invalid username or password' }, 401);
+      const code = await env.AMB.get(`ambuser:${username}`);
+      if (!code) return json({ ok: false, error: 'No ambassador profile linked to this account' }, 404);
+      const who = ROSTER[code];
+      if (!who) return json({ ok: false, error: 'Unknown ambassador code' }, 404);
+      return json({ ok: true, code, name: who.name, tier: who.tier });
+    }
+
+    // ---- Create credentials for an ambassador (by code or admin) ----
+    if (url.pathname === '/api/create-credentials' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      const raw = String(body.code || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      const username = String(body.username || '').trim().toLowerCase();
+      const password = String(body.password || '');
+      const isAdmin = body.adminKey === env.ADMIN_KEY;
+      if (!isAdmin && !ROSTER[raw]) return json({ ok: false, error: 'Code not recognized' }, 401);
+      if (!username || !username.includes('@') || password.length < 6)
+        return json({ ok: false, error: 'Email as username + 6+ char password required' }, 400);
+      const key = `member:${username}`;
+      const existing = await env.LINKS.get(key);
+      if (existing && !isAdmin) return json({ ok: false, error: 'username already taken' }, 409);
+      const buf = new Uint8Array(16);
+      crypto.getRandomValues(buf);
+      const salt = [...buf].map((b) => b.toString(16).padStart(2, "0")).join("");
+      const hash = await hashPassword(password, salt);
+      const rec = existing ? JSON.parse(existing) : { created: Date.now() };
+      rec.pass_salt = salt; rec.pass_hash = hash;
+      await env.LINKS.put(key, JSON.stringify(rec));
+      // link username → ambassador code (one code per username; admin can re-link)
+      const current = await env.AMB.get(`ambuser:${username}`);
+      if (!current || isAdmin) await env.AMB.put(`ambuser:${username}`, raw);
+      return json({ ok: true, username, code: raw });
     }
 
     // ---- GET /api/nodes — public NODE counter ----

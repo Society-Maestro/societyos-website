@@ -68,10 +68,29 @@
   </div>
 
   <div class="card" id="loginCard">
-    <label>Access Code</label>
-    <input id="code" placeholder="Enter your Ambassador code" autocomplete="off">
-    <button onclick="login()">Enter Portal</button>
-    <div class="err" id="err">Code not recognized — check with SocietyOS support.</div>
+    <h3 style="margin-bottom:10px">Sign In</h3>
+    <label>Username (email)</label>
+    <input id="user" placeholder="you@example.com" autocomplete="username">
+    <label style="margin-top:10px">Password</label>
+    <input id="pass" type="password" placeholder="Your password" autocomplete="current-password">
+    <button onclick="userLogin()" style="margin-top:14px">Sign In</button>
+    <div class="err" id="err"></div>
+    <div class="goal-line" style="margin-top:12px;font-size:12px">First time? <a href="#" onclick="showFirst();return false" style="color:var(--gold)">Create your username &amp; password</a> · or <a href="#" onclick="codeLogin();return false" style="color:var(--gold)">sign in with access code</a></div>
+    <div id="firstTime" class="hidden" style="margin-top:14px;border-top:1px solid var(--bd);padding-top:14px">
+      <label>Access Code</label>
+      <input id="code2" placeholder="Your ambassador code">
+      <label style="margin-top:10px">Choose Username (email)</label>
+      <input id="newUser" placeholder="you@example.com">
+      <label style="margin-top:10px">Choose Password</label>
+      <input id="newPass" type="password" placeholder="6+ characters">
+      <button class="ghost" onclick="createCreds()" style="margin-top:12px">Create My Login</button>
+      <div class="err" id="err2"></div>
+    </div>
+    <div id="codeEntry" class="hidden" style="margin-top:14px;border-top:1px solid var(--bd);padding-top:14px">
+      <label>Access Code</label>
+      <input id="code" placeholder="Your ambassador code">
+      <button class="ghost" onclick="login()" style="margin-top:12px">Enter Portal</button>
+    </div>
   </div>
 
   <div class="hidden" id="dash">
@@ -119,16 +138,39 @@
 const API = 'https://societyos-ambassador.societyos.workers.dev';
 let CODE = null;
 
+async function userLogin(){
+  const err = document.getElementById('err');
+  err.style.display = 'none';
+  const r = await fetch(API + '/api/user-login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: document.getElementById('user').value.trim(), password: document.getElementById('pass').value }) });
+  const d = await r.json();
+  if(!d.ok){ err.textContent = d.error || 'Sign in failed'; err.style.display = 'block'; return; }
+  enterPortal(d.code);
+}
+function showFirst(){ document.getElementById('firstTime').classList.remove('hidden'); document.getElementById('codeEntry').classList.add('hidden'); }
+function codeLogin(){ document.getElementById('codeEntry').classList.remove('hidden'); document.getElementById('firstTime').classList.add('hidden'); }
+async function createCreds(){
+  const err = document.getElementById('err2');
+  err.style.display = 'none';
+  const r = await fetch(API + '/api/create-credentials', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: document.getElementById('code2').value.trim(), username: document.getElementById('newUser').value.trim(), password: document.getElementById('newPass').value }) });
+  const d = await r.json();
+  if(!d.ok){ err.textContent = d.error || 'Could not create login'; err.style.display = 'block'; return; }
+  enterPortal(d.code);
+}
+
 async function login(){
   const code = document.getElementById('code').value.trim();
   const r = await fetch(API + '/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code }) });
   const d = await r.json();
-  if(!d.ok){ document.getElementById('err').style.display = 'block'; return; }
+  if(!d.ok){ document.getElementById('err').textContent = 'Code not recognized — check with SocietyOS support.'; document.getElementById('err').style.display = 'block'; return; }
   document.getElementById('err').style.display = 'none';
-  CODE = d.code;
+  enterPortal(d.code);
+}
+
+function enterPortal(code){
+  CODE = code;
   document.getElementById('loginCard').classList.add('hidden');
   document.getElementById('dash').classList.remove('hidden');
-  await loadStats();
+  loadStats();
 }
 
 async function loadStats(){
