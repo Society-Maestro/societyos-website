@@ -1887,9 +1887,9 @@
                 { id: 'iphone-17-pro', label: 'iPhone 17 Pro', subtitle: 'A19 Pro · 6.3"', logo: 'apple', type: 'phone' },
                 { id: 'iphone-17-promax', label: 'iPhone 17 Pro Max', subtitle: 'A19 Pro · 6.9" · up to 2TB', logo: 'apple', type: 'phone' },
                 // ── Android ──
-                { id: 'samsung-fold8-ultra', label: 'Samsung Z Fold8 Ultra', subtitle: 'Galaxy AI · DeX · 8.0" Book', logo: 'samsung', type: 'foldable' },
-                { id: 'samsung-fold8-wide', label: 'Samsung Z Fold8 Wide', subtitle: 'Galaxy AI · DeX · 4:3 Wide', logo: 'samsung', type: 'foldable-wide' },
-                { id: 'samsung-s26-ultra', label: 'Samsung S26 Ultra', subtitle: 'Snapdragon 8 Elite', logo: 'samsung', type: 'phone' },
+                { id: 'samsung-fold8-ultra', label: 'Samsung Z Fold8 Ultra', subtitle: 'Foldable — 8.0\" main display', logo: 'samsung', type: 'foldable' },
+                { id: 'samsung-fold8-wide', label: 'Samsung Z Fold8 Wide', subtitle: 'Foldable — 4:3 wide display', logo: 'samsung', type: 'foldable-wide' },
+                { id: 'samsung-s26-ultra', label: 'Samsung S26 Ultra', subtitle: 'Flagship — select for case fitting', logo: 'samsung', type: 'phone' },
                 // ── BYO Device — SocietyOS works on what you already own ──
                 { id: 'byo-device', label: 'Use my own device', subtitle: 'SocietyOS digital experience only — no hardware', logo: 'skip', type: 'skip' },
             ]
@@ -2952,23 +2952,21 @@ var SOCIETYOS_ACCESSORIES = []; // Removed — accessories will return when real
             ];
         } else if (opt.id === 'samsung-s26-ultra') {
             stats = [
-                { label: 'Chip', value: 'Snapdragon 8 Elite' },
-                { label: 'Display', value: 'Privacy Display' },
-                { label: 'Camera', value: '200MP Wide' },
-                { label: 'Colors', value: 'Cobalt Violet' },
+                { label: 'Device', value: 'Samsung Galaxy S26 Ultra' },
+                { label: 'Type', value: 'Flagship smartphone' },
+                { label: 'Purpose', value: 'Case fitting · SocietyOS apps' },
             ];
         } else if (opt.id === 'samsung-fold8-ultra') {
             stats = [
-                { label: 'Chip', value: 'Snapdragon 8 Elite Gen 5' },
-                { label: 'Display', value: '8.0" Dynamic AMOLED 2X' },
-                { label: 'Camera', value: '200MP · 30x Zoom' },
-                { label: 'Battery', value: '5000 mAh' },
+                { label: 'Device', value: 'Samsung Galaxy Z Fold8 Ultra' },
+                { label: 'Type', value: 'Foldable — 8.0" main display' },
+                { label: 'Purpose', value: 'Case fitting · SocietyOS apps' },
             ];
         } else if (opt.id === 'samsung-fold8-wide') {
             stats = [
-                { label: 'Chip', value: 'Snapdragon 8 Elite Gen 5' },
-                { label: 'Display', value: '4:3 Wide Foldable' },
-                { label: 'Design', value: 'Lightest Foldable' },
+                { label: 'Device', value: 'Samsung Galaxy Z Fold8 Wide' },
+                { label: 'Type', value: 'Foldable — 4:3 wide display' },
+                { label: 'Purpose', value: 'Case fitting · SocietyOS apps' },
             ];
         } else if (opt.id === 'iphone-17') {
             stats = [
