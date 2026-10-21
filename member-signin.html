@@ -111,7 +111,7 @@ function backToChoice(){
 async function socialiteLogin(){
   const err = document.getElementById('soErr'); err.style.display = 'none';
   const r = await fetch(DEV + '/api/link/login', { method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ username: document.getElementById('soUser').value.trim(), password: document.getElementById('soPass').value }) });
+    body: JSON.stringify({ username: document.getElementById('soUser').value.trim(), password: document.getElementById('soPass').value.replace(/\s+$/,'') }) });
   const d = await r.json();
   if(!d.ok){ err.textContent = d.error === 'invalid username or password' ? 'Invalid email or password.' : (d.error || 'Sign in failed'); err.style.display='block'; return; }
   try { sessionStorage.setItem('sos_member', JSON.stringify(d)); } catch(e){}
@@ -126,7 +126,7 @@ async function socialiteLogin(){
 async function ambassadorLogin(){
   const err = document.getElementById('amErr'); err.style.display = 'none';
   const r = await fetch(AMB + '/api/user-login', { method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ username: document.getElementById('amUser').value.trim(), password: document.getElementById('amPass').value }) });
+    body: JSON.stringify({ username: document.getElementById('amUser').value.trim(), password: document.getElementById('amPass').value.replace(/\s+$/,'') }) });
   const d = await r.json();
   if(!d.ok){ err.textContent = d.error || 'Sign in failed'; err.style.display='block'; return; }
   try { sessionStorage.setItem('sos_amb_code', d.code); } catch(e){}

@@ -160,7 +160,7 @@ let CODE = null;
 async function userLogin(){
   const err = document.getElementById('err');
   err.style.display = 'none';
-  const r = await fetch(API + '/api/user-login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: document.getElementById('user').value.trim(), password: document.getElementById('pass').value }) });
+  const r = await fetch(API + '/api/user-login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: document.getElementById('user').value.trim(), password: document.getElementById('pass').value.replace(/\s+$/,'') }) });
   const d = await r.json();
   if(!d.ok){ err.textContent = d.error || 'Sign in failed'; err.style.display = 'block'; return; }
   enterPortal(d.code);
