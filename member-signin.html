@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In — SocietyOS</title>
+<style>
+  :root {
+    --bg-primary: #0d1f2d; --bg-secondary: #122844; --bg-elevated: #1a3358; --bg-card: #152a45;
+    --border-subtle: rgba(255,255,255,0.06); --border-glow: rgba(197,160,89,0.3);
+    --society-gold: #c5a059; --society-gold-light: #e5c585; --society-gold-dark: #a08040; --society-gold-glow: rgba(197,160,89,0.15);
+    --success: #2dd4a8; --danger: #ff4d6d;
+    --text-primary: #f0f0f5; --text-secondary: #b0b8c8; --text-tertiary: #6a7a8a;
+    --font-display: 'Cormorant Garamond','EB Garamond',Garamond,'Times New Roman',serif;
+    --font-body: 'EB Garamond',Garamond,'Times New Roman',serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:var(--bg-primary);color:var(--text-primary);font-family:var(--font-body);padding:3rem 1.25rem}
+  .wrap{max-width:960px;margin:0 auto}
+  .brand{text-align:center;margin-bottom:.4rem;font-family:var(--font-display);font-size:2rem;font-weight:700;letter-spacing:.12em}
+  .brand span{background:linear-gradient(135deg,var(--society-gold-light),var(--society-gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .sub{text-align:center;color:var(--text-secondary);font-size:1.05rem;margin-bottom:2.5rem}
+  .choice{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;max-width:820px;margin:0 auto}
+  .opt{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:16px;padding:2rem;cursor:pointer;transition:transform .25s,border-color .25s,box-shadow .25s}
+  .opt:hover{transform:translateY(-4px);border-color:var(--border-glow);box-shadow:0 0 30px var(--society-gold-glow)}
+  .opt h2{font-family:var(--font-display);font-size:1.5rem;color:var(--society-gold-light);margin-bottom:.4rem}
+  .opt p{color:var(--text-secondary);font-size:.95rem}
+  .opt .tag2{display:inline-block;margin-top:1rem;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--society-gold)}
+  .hidden{display:none}
+  .panel{max-width:480px;margin:0 auto;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:16px;padding:2rem}
+  .panel h2{font-family:var(--font-display);font-size:1.5rem;color:var(--society-gold-light);margin-bottom:1rem;text-align:center}
+  label{display:block;font-size:.75rem;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.08em;margin:1rem 0 .4rem}
+  input{width:100%;padding:.85rem;border-radius:12px;background:var(--bg-elevated);border:1px solid var(--border-subtle);color:var(--text-primary);font-family:var(--font-body);font-size:1rem;outline:none;transition:var(--transition,0.2s)}
+  input:focus{border-color:var(--border-glow)}
+  .btn{width:100%;margin-top:1.6rem;padding:.85rem;border-radius:12px;border:none;cursor:pointer;font-size:1rem;font-weight:600;font-family:var(--font-body);background:linear-gradient(135deg,var(--society-gold),var(--society-gold-dark));color:#fff}
+  .btn.ghost{background:transparent;color:var(--text-secondary);border:1px solid var(--border-subtle);margin-top:.8rem}
+  .err{color:var(--danger);font-size:.85rem;margin-top:.8rem;display:none}
+  .back{text-align:center;margin-top:1.6rem}
+  .back a{color:var(--text-tertiary);text-decoration:none;font-size:.9rem}
+  .welcome{text-align:center}
+  .welcome .mark{color:var(--success);font-size:1.1rem;margin:.8rem 0}
+  .fc{display:block;margin:1.4rem auto 0;padding:.85rem 1.4rem;border-radius:12px;background:linear-gradient(135deg,var(--society-gold),var(--society-gold-dark));color:#fff;text-decoration:none;font-weight:600;width:fit-content}
+  .note{font-size:.75rem;color:var(--text-tertiary);text-align:center;margin-top:1.4rem}
+  a.gold{color:var(--society-gold)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">Society<span>OS</span></div>
+  <div class="sub">Sign in to your sovereign membership</div>
+
+  <!-- Step 1: choose portal -->
+  <div class="choice" id="choice">
+    <div class="opt" onclick="showPanel('socialite')">
+      <h2>Socialite Sign In</h2>
+      <p>Members — access your SocietyOS account, Society TV and member benefits.</p>
+      <span class="tag2">Member Access</span>
+    </div>
+    <div class="opt" onclick="showPanel('ambassador')">
+      <h2>Ambassador Sign In</h2>
+      <p>Ambassadors — your referrals, rewards income, ads and marketing dashboard.</p>
+      <span class="tag2">Business Access</span>
+    </div>
+  </div>
+
+  <!-- Socialite login -->
+  <div class="panel hidden" id="socialite">
+    <h2>Socialite Sign In</h2>
+    <label>Email</label>
+    <input id="soUser" type="email" placeholder="you@example.com" autocomplete="username">
+    <label>Password</label>
+    <input id="soPass" type="password" placeholder="Your password" autocomplete="current-password">
+    <button class="btn" onclick="socialiteLogin()">Sign In</button>
+    <div class="err" id="soErr"></div>
+    <div id="soWelcome" class="welcome hidden">
+      <div class="mark" id="soHello">✓ Welcome back</div>
+      <a class="fc" href="https://freecast.com/societyos" target="_blank" rel="noopener">Open Society TV — FreeCast</a>
+      <p class="note">Your SocietyOS member dashboard is in development — more features and services are being implemented. Check back often.</p>
+      <p class="note"><a class="gold" href="index.html#membership">Upgrade your membership</a> · <a class="gold" href="membership-setup.html">Complete device setup</a></p>
+    </div>
+    <div class="back hidden" id="soBack"><a href="#" onclick="backToChoice();return false">← Back</a></div>
+  </div>
+
+  <!-- Ambassador login -->
+  <div class="panel hidden" id="ambassador">
+    <h2>Ambassador Sign In</h2>
+    <label>Username (email)</label>
+    <input id="amUser" type="email" placeholder="you@example.com" autocomplete="username">
+    <label>Password</label>
+    <input id="amPass" type="password" placeholder="Your password" autocomplete="current-password">
+    <button class="btn" onclick="ambassadorLogin()">Sign In</button>
+    <div class="err" id="amErr"></div>
+    <p class="note">First time? Your ambassador code creates your login on the <a class="gold" href="ambassadors.html">Ambassador Portal</a>.</p>
+    <div class="back"><a href="#" onclick="backToChoice();return false">← Back</a></div>
+  </div>
+</div>
+<script>
+const AMB = 'https://societyos-ambassador.societyos.workers.dev';
+const DEV = 'https://societyos-device-link.societyos.workers.dev';
+
+function showPanel(which){
+  document.getElementById('choice').classList.add('hidden');
+  document.getElementById(which).classList.remove('hidden');
+  document.getElementById(which + 'Back')?.classList.remove('hidden');
+}
+function backToChoice(){
+  ['socialite','ambassador'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  document.getElementById('choice').classList.remove('hidden');
+}
+
+async function socialiteLogin(){
+  const err = document.getElementById('soErr'); err.style.display = 'none';
+  const r = await fetch(DEV + '/api/link/login', { method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ username: document.getElementById('soUser').value.trim(), password: document.getElementById('soPass').value }) });
+  const d = await r.json();
+  if(!d.ok){ err.textContent = d.error === 'invalid username or password' ? 'Invalid email or password.' : (d.error || 'Sign in failed'); err.style.display='block'; return; }
+  try { sessionStorage.setItem('sos_member', JSON.stringify(d)); } catch(e){}
+  document.getElementById('soHello').textContent = '✓ Welcome back, ' + (d.member && d.member.username ? d.member.username.split('@')[0] : 'member');
+  ['soUser','soPass'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  document.querySelectorAll('#socialite label').forEach(l => l.classList.add('hidden'));
+  document.querySelector('#socialite .btn').classList.add('hidden');
+  document.getElementById('soWelcome').classList.remove('hidden');
+  document.getElementById('soBack').classList.remove('hidden');
+}
+
+async function ambassadorLogin(){
+  const err = document.getElementById('amErr'); err.style.display = 'none';
+  const r = await fetch(AMB + '/api/user-login', { method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ username: document.getElementById('amUser').value.trim(), password: document.getElementById('amPass').value }) });
+  const d = await r.json();
+  if(!d.ok){ err.textContent = d.error || 'Sign in failed'; err.style.display='block'; return; }
+  try { sessionStorage.setItem('sos_amb_code', d.code); } catch(e){}
+  window.location.href = 'ambassadors.html';
+}
+
+// auto-enter ambassador portal when arriving from unified sign-in
+(function(){
+  try {
+    const c = sessionStorage.getItem('sos_amb_code');
+    if (c && location.pathname.endsWith('ambassadors.html')) window.__sos_auto_code = c;
+  } catch(e){}
+})();
+</script>
+</body>
+</html>

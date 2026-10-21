@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SocietyOS Ambassador Portal</title>
 <style>
-  :root{ --fg:#eaeaf0; --mut:#9a9aa5; --gold:#c8a24a; --bd:#2a2a33; --card:#17171d; --bg:#0d0d11; }
+  :root{ --fg:#f0f0f5; --mut:#b0b8c8; --gold:#c5a059; --bd:rgba(255,255,255,0.06); --card:#152a45; --bg:#0d1f2d; }
+  body,h1,h2,h3{font-family:'EB Garamond',Garamond,'Times New Roman',serif}
   *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,'Segoe UI',Roboto,sans-serif}
   body{background:var(--bg);color:var(--fg);padding:32px 16px;line-height:1.5}
   .wrap{max-width:860px;margin:0 auto}
@@ -137,6 +138,7 @@
 <script>
 const API = 'https://societyos-ambassador.societyos.workers.dev';
 let CODE = null;
+(function(){ try { const c = sessionStorage.getItem('sos_amb_code'); if (c) { CODE = c; sessionStorage.removeItem('sos_amb_code'); document.getElementById('loginCard').classList.add('hidden'); document.getElementById('dash').classList.remove('hidden'); setTimeout(loadStats, 0); } } catch(e){} })();
 
 async function userLogin(){
   const err = document.getElementById('err');
