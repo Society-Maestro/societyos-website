@@ -107,6 +107,15 @@ export default {
       return json({ ok: true, payout: rec });
     }
 
+    // ---- POST /api/payout/cancel { code } — ambassador cancels a scheduled payout ----
+    if (url.pathname === '/api/payout/cancel' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      const raw = String(body.code || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      if (!ROSTER[raw]) return json({ ok: false, error: 'Code not recognized' }, 401);
+      await env.AMB.delete(`payout:${raw}`);
+      return json({ ok: true, cancelled: true });
+    }
+
     // ---- Simple username + password login → ambassador dashboard ----
     async function verifyMemberPassword(username, password) {
       const key = `member:${String(username).trim().toLowerCase()}`;

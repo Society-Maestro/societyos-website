@@ -124,6 +124,7 @@
         <div class="goal-line" style="margin-top:8px">Both methods pay in January 2027. Wire details and Tangem card verification are confirmed with SocietyOS before payout.</div>
       </div>
       <div class="payout-ok" id="payoutOk"></div>
+      <button class="ghost" id="cancelBtn" onclick="cancelPayout()" style="display:none;margin-top:10px">Cancel scheduled payout</button>
     </div>
 
     <div class="card">
@@ -199,12 +200,25 @@ async function loadStats(){
   document.getElementById('sCap').textContent = '$' + d.atCapProjection.toLocaleString() + '/yr';
   document.getElementById('refLink').value = 'https://societyos.world/membership-setup.html?ref=' + d.code;
   if(d.payout){
-    document.getElementById('payoutForm').classList.add('hidden');
-    const ok = document.getElementById('payoutOk');
-    ok.style.display = 'block';
-    ok.textContent = '✓ Payout scheduled for ' + d.payout.scheduledFor + (d.payout.method ? ' via ' + d.payout.method : '') + ' — requested ' + new Date(d.payout.requestedAt).toLocaleDateString();
+  document.getElementById('payoutForm').classList.add('hidden');
+  const ok = document.getElementById('payoutOk');
+  ok.style.display = 'block';
+  ok.textContent = '✓ Payout scheduled for ' + d.payout.scheduledFor + (d.payout.method ? ' via ' + d.payout.method : '') + ' — requested ' + new Date(d.payout.requestedAt).toLocaleDateString();
+  const cancel = document.getElementById('cancelBtn');
+  cancel.style.display = 'inline-block';
   }
-}
+  }
+
+  async function cancelPayout(){
+  if(!confirm('Cancel your scheduled payout? You can schedule a new one anytime.')) return;
+  const r = await fetch(API + '/api/payout/cancel', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: CODE }) });
+  const d = await r.json();
+  if(d.ok){
+  document.getElementById('payoutForm').classList.remove('hidden');
+  document.getElementById('payoutOk').style.display = 'none';
+  document.getElementById('cancelBtn').style.display = 'none';
+  }
+  }
 
 async function schedulePayout(method){
   const r = await fetch(API + '/api/payout', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: CODE, month: 'January 2027', method }) });
