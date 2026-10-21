@@ -118,10 +118,26 @@
       <div id="payoutForm">
         <label>Payout method</label>
         <div style="display:flex;gap:10px;margin-top:4px">
-          <button class="ghost" style="margin-top:0" onclick="schedulePayout('tangem')">Tangem Pay</button>
-          <button class="ghost" style="margin-top:0" onclick="schedulePayout('wire')">Wire Transfer</button>
+          <button class="ghost" style="margin-top:0" onclick="chooseMethod('tangem')">Tangem Pay</button>
+          <button class="ghost" style="margin-top:0" onclick="chooseMethod('wire')">Wire Transfer</button>
         </div>
-        <div class="goal-line" style="margin-top:8px">Both methods pay in January 2027. Wire details and Tangem card verification are confirmed with SocietyOS before payout.</div>
+        <div class="goal-line" style="margin-top:8px">Both methods pay in January 2027. Enter where your funds should go below.</div>
+        <div id="detailForm" class="hidden" style="margin-top:14px;border-top:1px solid var(--bd);padding-top:14px">
+          <div id="wireFields" class="hidden">
+            <label>Beneficiary Name</label><input id="pd_name" placeholder="Full name on the account">
+            <label>Bank Name</label><input id="pd_bank" placeholder="Bank name">
+            <label>Account Number</label><input id="pd_account" placeholder="Account number">
+            <label>Routing (ABA) / SWIFT</label><input id="pd_routing" placeholder="Routing or SWIFT code">
+            <label>Country</label><input id="pd_country" placeholder="Country of the bank">
+          </div>
+          <div id="tangemFields" class="hidden">
+            <label>Tangem Wallet Address / Card ID</label><input id="pd_wallet" placeholder="Wallet address or card ID">
+            <label>Cardholder Name</label><input id="pd_holder" placeholder="Name on the card">
+          </div>
+          <button class="ghost" onclick="saveDetails()" style="margin-top:14px">Save payout details</button>
+          <div class="err" id="pdErr"></div>
+          <div class="payout-ok" id="pdOk"></div>
+        </div>
       </div>
       <div class="payout-ok" id="payoutOk"></div>
       <button class="ghost" id="cancelBtn" onclick="cancelPayout()" style="display:none;margin-top:10px">Cancel scheduled payout</button>
@@ -219,6 +235,28 @@ async function loadStats(){
   document.getElementById('cancelBtn').style.display = 'none';
   }
   }
+
+let PDMETHOD = 'wire';
+function chooseMethod(m){
+  PDMETHOD = m;
+  document.getElementById('detailForm').classList.remove('hidden');
+  document.getElementById('wireFields').classList.toggle('hidden', m !== 'wire');
+  document.getElementById('tangemFields').classList.toggle('hidden', m !== 'tangem');
+}
+async function saveDetails(){
+  const err = document.getElementById('pdErr'), ok = document.getElementById('pdOk');
+  err.style.display = 'none'; ok.style.display = 'none';
+  const fields = PDMETHOD === 'wire'
+    ? { beneficiary: pd_val('pd_name'), bank: pd_val('pd_bank'), account: pd_val('pd_account'), routing: pd_val('pd_routing'), country: pd_val('pd_country') }
+    : { wallet: pd_val('pd_wallet'), holder: pd_val('pd_holder') };
+  for (const v of Object.values(fields)) { if (!v) { err.textContent = 'All fields are required.'; err.style.display = 'block'; return; } }
+  const r = await fetch(API + '/api/payout-details', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: CODE, method: PDMETHOD, fields }) });
+  const d = await r.json();
+  if(!d.ok){ err.textContent = d.error || 'Could not save'; err.style.display='block'; return; }
+  ok.style.display = 'block';
+  ok.textContent = '✓ Payout details saved — ' + d.paydetails.method + '. Funds will go where you entered.';
+}
+function pd_val(id){ return document.getElementById(id).value.trim(); }
 
 async function schedulePayout(method){
   const r = await fetch(API + '/api/payout', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: CODE, month: 'January 2027', method }) });

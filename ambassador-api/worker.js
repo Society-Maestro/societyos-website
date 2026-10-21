@@ -86,6 +86,7 @@ export default {
         toBreakeven: Math.max(0, 60 - referrals),
         atCapProjection: who.perRef * (who.tier.startsWith('Gold') && who.nodes === 0 ? 3000 : 1000),
         payout: payoutReq || null,
+        paydetails: await env.AMB.get(`paydetails:${raw}`, 'json') || null,
         nodesRemaining: 75,
       });
     }
@@ -105,6 +106,22 @@ export default {
       };
       await env.AMB.put(`payout:${raw}`, JSON.stringify(rec));
       return json({ ok: true, payout: rec });
+    }
+
+    // ---- POST /api/payout-details { code, method, fields{} } — where funds go ----
+    if (url.pathname === '/api/payout-details' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      const raw = String(body.code || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      if (!ROSTER[raw]) return json({ ok: false, error: 'Code not recognized' }, 401);
+      const method = body.method === 'wire' ? 'Wire Transfer' : 'Tangem Pay';
+      const fields = body.fields || {};
+      const clean = {};
+      for (const [k, v] of Object.entries(fields)) {
+        clean[String(k).slice(0, 40)] = String(v).slice(0, 200);
+      }
+      const rec = { method, fields: clean, updatedAt: new Date().toISOString() };
+      await env.AMB.put(`paydetails:${raw}`, JSON.stringify(rec));
+      return json({ ok: true, paydetails: rec });
     }
 
     // ---- POST /api/payout/cancel { code } — ambassador cancels a scheduled payout ----
@@ -219,6 +236,7 @@ export default {
         if (code) {
           m.adjust = await env.AMB.get(`adjust:${code}`, 'json') || null;
           m.payout = await env.AMB.get(`payout:${code}`, 'json') || null;
+          m.paydetails = await env.AMB.get(`paydetails:${code}`, 'json') || null;
         }
       }
       return json({ ok: true, members: out });
