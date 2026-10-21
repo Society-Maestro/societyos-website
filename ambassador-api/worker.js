@@ -27,7 +27,7 @@ export default {
     // Codes are case-insensitive per Brandon directive (Oakley/oakley both work).
     const ROSTER = {
       'healthyself': { name: 'Healthy Self', tier: 'Gold Ambassador', nodes: 3, perRef: 40 },
-      'moe':         { name: 'Donna Michelle Blazier', tier: 'Gold Referral Ambassador', nodes: 0, perRef: 40 },
+      'moe':         { name: 'Donna Michelle Blazier', tier: 'Gold Referral Ambassador', nodes: 1, perRef: 40 },
       'oakley':      { name: 'Neil Wilkinson', tier: 'Gold Ambassador', nodes: 0, perRef: 40 },
       'founder':     { name: 'Founder', tier: 'Ambassador', nodes: 0, perRef: 40 },
     };
