@@ -1446,7 +1446,10 @@
         .case-color-swatch:hover { transform: scale(1.15); }
         .case-color-swatch.active { border-color: var(--society-gold); }
 
-    </style>
+      /* ═══ CONTAINMENT LAW — nothing escapes its box ═══ */
+  html, body { overflow-x: clip; }
+  .pricing-card, .selection-card, .stat, .card, .opt, .panel, .info-box, .pricing-grid, .content { overflow-x: clip; min-width: 0; }
+</style>
 </head>
 <body>
         <div class="gold-stripe"></div>

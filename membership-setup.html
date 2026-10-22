@@ -1579,7 +1579,10 @@
             border: 1px solid rgba(255,255,255,0.2);
             flex-shrink: 0;
         }
-    </style>
+      /* ═══ CONTAINMENT LAW — nothing escapes its box ═══ */
+  html, body { overflow-x: clip; }
+  .pricing-card, .selection-card, .stat, .card, .opt, .panel, .info-box, .pricing-grid, .content { overflow-x: clip; min-width: 0; }
+</style>
 </head>
 <body>
 

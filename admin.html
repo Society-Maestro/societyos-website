@@ -27,6 +27,9 @@
   .rowactions{display:flex;gap:6px;flex-wrap:wrap}
   .rowactions input{width:130px;padding:6px 8px;font-size:12px}
   .rowactions button{padding:6px 10px;font-size:11px}
+  /* ═══ CONTAINMENT LAW — nothing escapes its box ═══ */
+  html, body { overflow-x: clip; }
+  .pricing-card, .selection-card, .stat, .card, .opt, .panel, .info-box, .pricing-grid, .content { overflow-x: clip; min-width: 0; }
 </style>
 </head>
 <body>

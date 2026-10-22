@@ -34,6 +34,9 @@
   ul.perks li{padding:3px 0 3px 20px;position:relative;font-size:14px;line-height:1.45}
   ul.perks li::before{content:"◆";position:absolute;left:2px;color:var(--gold);font-size:10px;top:7px}
   .foot{font-size:11px;color:var(--mut);text-align:center;margin-top:8px}
+  /* ═══ CONTAINMENT LAW — nothing escapes its box ═══ */
+  html, body { overflow-x: clip; }
+  .pricing-card, .selection-card, .stat, .card, .opt, .panel, .info-box, .pricing-grid, .content { overflow-x: clip; min-width: 0; }
 </style>
 </head>
 <body>
