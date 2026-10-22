@@ -1437,16 +1437,6 @@
         .case-color-swatch:hover { transform: scale(1.15); }
         .case-color-swatch.active { border-color: var(--society-gold); }
 
-        .case-protocol-badge {
-            position: fixed;
-            bottom: 80px;
-            right: 24px;
-            font-size: 0.7rem;
-            color: var(--text-tertiary);
-            font-family: var(--font-body);
-            opacity: 0.5;
-            z-index: 9998;
-        }
     </style>
 </head>
 <body>
@@ -2463,14 +2453,6 @@
             colorEl.appendChild(swatch);
         });
 
-        // Update protocol badge
-        let badge = document.querySelector('.case-protocol-badge');
-        if (!badge) {
-            badge = document.createElement('div');
-            badge.className = 'case-protocol-badge';
-            document.body.appendChild(badge);
-        }
-        badge.textContent = 'Active Protocol: ' + protocol.name;
 
         // Render matching accessories
         renderAccessories();
