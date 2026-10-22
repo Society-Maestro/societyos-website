@@ -27,7 +27,7 @@ export default {
     // Codes are case-insensitive per Brandon directive (Oakley/oakley both work).
     const ROSTER = {
       'healthyself': { name: 'Healthy Self', tier: 'Gold Ambassador', nodes: 3, perRef: 40 },
-      'moe':         { name: 'Donna Michelle Blazier', tier: 'Gold Referral Ambassador', nodes: 1, perRef: 40 },
+      'moe':         { name: 'Donna Michelle Blazer', tier: 'Gold Referral Ambassador', nodes: 1, perRef: 40 },
       'oakley':      { name: 'Neil Wilkinson', tier: 'Gold Ambassador', nodes: 1, perRef: 40 },
       'ares':        { name: 'Ares', tier: 'Gold Ambassador', nodes: 1, perRef: 40 },
       'sam':         { name: 'Sam', tier: 'Gold Ambassador', nodes: 1, perRef: 40 },
@@ -165,7 +165,7 @@ export default {
       const password = String(body.password || '');
       const isAdmin = body.adminKey === env.ADMIN_KEY;
       if (!isAdmin && !ROSTER[raw]) return json({ ok: false, error: 'Code not recognized' }, 401);
-      if (!username || username.length < 3 || !/^[a-z0-9._-]+$/.test(username) || password.length < 6)
+      if (!username || username.length < 3 || !/^[a-z0-9._@-]+$/.test(username) || password.length < 6)
         return json({ ok: false, error: 'Username (3+ chars, letters/numbers) and 6+ char password required' }, 400);
       const key = `member:${username}`;
       const existing = await env.LINKS.get(key);
