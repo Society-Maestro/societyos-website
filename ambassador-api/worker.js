@@ -97,7 +97,7 @@ export default {
       const body = await request.json().catch(() => ({}));
       const raw = String(body.code || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
       if (!ROSTER[raw]) return json({ ok: false, error: 'Code not recognized' }, 401);
-      const method = body.method === 'wire' ? 'Wire Transfer' : 'Tangem Pay';
+      const method = body.method === 'wire' ? 'Wire Transfer' : body.method === 'check' ? 'Certified Check' : 'Tangem Pay';
       const month = String(body.month || 'January 2027');
       const rec = {
         requestedAt: new Date().toISOString(),
@@ -114,7 +114,7 @@ export default {
       const body = await request.json().catch(() => ({}));
       const raw = String(body.code || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
       if (!ROSTER[raw]) return json({ ok: false, error: 'Code not recognized' }, 401);
-      const method = body.method === 'wire' ? 'Wire Transfer' : 'Tangem Pay';
+      const method = body.method === 'wire' ? 'Wire Transfer' : body.method === 'check' ? 'Certified Check' : 'Tangem Pay';
       const fields = body.fields || {};
       const clean = {};
       for (const [k, v] of Object.entries(fields)) {
