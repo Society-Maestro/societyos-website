@@ -232,8 +232,11 @@ async function loadStats(){
   const ok = document.getElementById('payoutOk');
   ok.style.display = 'block';
   ok.textContent = '✓ Payout scheduled for ' + d.payout.scheduledFor + (d.payout.method ? ' via ' + d.payout.method : '') + ' — requested ' + new Date(d.payout.requestedAt).toLocaleDateString();
-  const cancel = document.getElementById('cancelBtn');
-  cancel.style.display = 'inline-block';
+  document.getElementById('cancelBtn').style.display = 'inline-block';
+  } else {
+  document.getElementById('payoutForm').classList.remove('hidden');
+  document.getElementById('payoutOk').style.display = 'none';
+  document.getElementById('cancelBtn').style.display = 'none';
   }
   }
 
