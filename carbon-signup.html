@@ -81,7 +81,7 @@ async function signup(){
     if (ref && /^[A-Za-z0-9_-]{1,64}$/.test(ref)) {
       fetch('https://societyos-ambassador.societyos.workers.dev/api/scan', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: ref, type: 'carbon-signup' })
+        body: JSON.stringify({ code: ref, type: 'carbon-signup', email: email, name: name, tier: 'Carbon Free' })
       }).catch(function(){});
     }
   } catch(e){}

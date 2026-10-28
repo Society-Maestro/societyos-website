@@ -188,6 +188,23 @@
         </table>
       </div>
       <div style="margin-top:1.4rem">
+        <h2 style="font-size:1.1rem">Signups by Tier</h2>
+        <div class="goal-line" id="tierCounts">Loading…</div>
+      </div>
+      <div style="margin-top:1.4rem">
+        <h2 style="font-size:1.1rem">All Signups — every member, every tier</h2>
+        <div class="goal-line">Who signed up, what tier, referred by whom, and when.</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:10px">
+          <thead><tr>
+            <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Email / Name</th>
+            <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Tier</th>
+            <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Referred by</th>
+            <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">When</th>
+          </tr></thead>
+          <tbody id="signupRows"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:1.4rem">
         <h2 style="font-size:1.1rem">Referred Socialites — full ledger</h2>
         <div class="goal-line">Every signup through an Ambassador link: email, tier, date, referred-by.</div>
         <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:10px">
@@ -272,6 +289,7 @@ async function loadStats(){
   document.getElementById('manageCard').classList.remove('hidden');
   loadManage();
   loadEarlyAttempts();
+  loadSignups();
   }
   if(d.payout){
   document.getElementById('payoutForm').classList.add('hidden');
@@ -285,6 +303,31 @@ async function loadStats(){
   document.getElementById('cancelBtn').style.display = 'none';
   const sk = document.getElementById('schedOk'); if (sk) sk.style.display = 'none';
   }
+  }
+
+  async function loadSignups(){
+    const r = await fetch(API + '/api/signups?code=' + encodeURIComponent(CODE));
+    const d = await r.json();
+    if(!d.ok) return;
+    // tier counts
+    const tiers = {};
+    for(const s of d.log){ tiers[s.tier] = (tiers[s.tier]||0)+1; }
+    document.getElementById('tierCounts').innerHTML = Object.keys(tiers).length
+      ? Object.entries(tiers).map(([t,n]) => '<b>' + t + ':</b> ' + n).join(' &nbsp;·&nbsp; ')
+      : 'No signups yet.';
+    // ledger rows
+    const tb = document.getElementById('signupRows');
+    tb.innerHTML = '';
+    if(!d.total){ tb.innerHTML = '<tr><td colspan="4" style="padding:8px 4px;color:var(--mut)">No signups yet.</td></tr>'; return; }
+    for(const s of d.log){
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)">' + (s.email || '—') + (s.name ? '<br><small style="color:var(--mut)">' + s.name + '</small>' : '') + '</td>' +
+        '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)">' + s.tier + '</td>' +
+        '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)"><span class="pill">' + s.code + '</span></td>' +
+        '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)"><small>' + new Date(s.at).toLocaleString() + '</small></td>';
+      tb.appendChild(tr);
+    }
   }
 
   async function loadEarlyAttempts(){

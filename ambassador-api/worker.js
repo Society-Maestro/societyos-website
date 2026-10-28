@@ -213,7 +213,44 @@ export default {
       const type = body.type === 'carbon-signup' ? 'carbon-signup' : 'scan';
       const cnt = ((await env.AMB.get(type + ':' + raw)) || 0) + 1;
       await env.AMB.put(type + ':' + raw, cnt);
+      // Signup ledger entry (carbon free signups): who, email, when, referred-by
+      if (type === 'carbon-signup') {
+        const ledger = await env.AMB.get('signups', 'json') || { count: 0, log: [] };
+        ledger.count = (ledger.count || 0) + 1;
+        ledger.log.unshift({ code: raw, email: String(body.email || '').slice(0, 120), name: String(body.name || '').slice(0, 80), at: new Date().toISOString(), tier: body.tier || 'Carbon Free' });
+        ledger.log = ledger.log.slice(0, 500);
+        await env.AMB.put('signups', JSON.stringify(ledger));
+      }
       return json({ ok: true, type, count: cnt });
+    }
+
+    // ---- POST /api/signup { email, name, tier } — general signup ledger (any tier) ----
+    if (url.pathname === '/api/signup' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      const ledger = await env.AMB.get('signups', 'json') || { count: 0, log: [] };
+      ledger.count = (ledger.count || 0) + 1;
+      ledger.log.unshift({
+        code: String(body.code || 'direct').slice(0, 40).toLowerCase(),
+        email: String(body.email || '').slice(0, 120),
+        name: String(body.name || '').slice(0, 80),
+        tier: String(body.tier || 'Carbon Free').slice(0, 40),
+        at: new Date().toISOString(),
+      });
+      ledger.log = ledger.log.slice(0, 500);
+      await env.AMB.put('signups', JSON.stringify(ledger));
+      return json({ ok: true, total: ledger.count });
+    }
+
+    // ---- GET /api/signups?code= — signup ledger (meastro: all; others: their own) ----
+    if (url.pathname === '/api/signups' && request.method === 'GET') {
+      const raw = (url.searchParams.get('code') || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      const ledger = await env.AMB.get('signups', 'json') || { count: 0, log: [] };
+      if (raw === 'meastro') return json({ ok: true, total: ledger.count, log: ledger.log, mine: false });
+      if (ROSTER[raw]) {
+        const mine = ledger.log.filter(s => s.code === raw);
+        return json({ ok: true, total: mine.length, log: mine, mine: true });
+      }
+      return json({ ok: false, error: 'Forbidden' }, 403);
     }
 
     // ---- GET /api/nodes — public NODE counter ----
