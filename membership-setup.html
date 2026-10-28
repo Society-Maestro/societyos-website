@@ -1889,26 +1889,31 @@
 
     const stepData = {
         1: {
-            prompt: 'Select your device',
-            subtitle: 'The bubble will morph to match your world',
+            prompt: 'Choose your SocietyOS',
+            subtitle: 'Specials, hardware and Ambassador programs — then make it yours',
             options: [
-                // ── SocietyOS Hardware ──
-                { id: 'formuler-z12-ultra-pro', label: 'Formuler Z12 Ultra Pro', subtitle: '$265 · 128GB · 4K HDR · Dolby Vision · WiFi 6E · Internal', logo: 'societyos', type: 'streaming-device', price: '$265', specs: '128GB · 4GB RAM · Android 12 · Dolby Vision + Atmos · 4K@60fps · Widevine L1 · BT3 Remote' },
-                { id: 'societyos-node', label: 'SocietyOS NoDe', subtitle: 'Coming Dec 18, 2026 · Pre-order · Limited — only 75 Nodes remaining this year', logo: 'societyos', type: 'node-teaser', releaseDate: 'Dec 18, 2026', teaser: true },
+                // ── Tiers & Hardware ──
+                { id: 'socialite-special', label: 'Socialite Special', subtitle: '$399 · 1yr Carbon Pro + SocietyOS STB included · Pre-launch', logo: 'societyos', type: 'tier', checkoutUrl: 'https://buy.stripe.com/4gM6oGfCi2AtedEc8I53O07' },
+                { id: 'formuler-z12-ultra-pro', label: 'Formuler Z12 Ultra Pro', subtitle: '$265 · 128GB · 4K HDR · Dolby Vision · WiFi 6E', logo: 'societyos', type: 'streaming-device', price: '$265', specs: '128GB · 4GB RAM · Android 12 · Dolby Vision + Atmos · 4K@60fps · Widevine L1 · BT3 Remote' },
+                { id: 'societyos-node', label: 'SocietyOS Onyx Node', subtitle: 'Coming Dec 18, 2026 · Pre-order · Limited — only 75 Nodes remaining this year', logo: 'societyos', type: 'node-teaser', releaseDate: 'Dec 18, 2026', teaser: true },
+                { id: 'onyx', label: 'Onyx — Sovereign', subtitle: '$799 first year — Umbrel Home + 1TB included · then $499/yr', logo: 'societyos', type: 'tier', checkoutUrl: 'https://buy.stripe.com/28EfZg89Q3Ex2uW5Kk53O08' },
+                { id: 'gold', label: 'Gold — Sovereign', subtitle: '$1,299 first year — Umbrel Pro + 2TB included · then $399/yr', logo: 'solana', type: 'tier', checkoutUrl: 'https://buy.stripe.com/00waEW2Pwa2Vb1s5Kk53O09' },
+                { id: 'ambassador-onyx', label: 'Onyx Ambassador', subtitle: '$1,499/yr · 70,000+ reach · 2 ads/mo · $25 residual referrals', logo: 'societyos', type: 'link', url: 'ambassadors.html' },
+                { id: 'ambassador-gold', label: 'Gold Ambassador', subtitle: '$2,499/yr · 1M+ national reach · 4 ads/mo · $40 residual referrals', logo: 'societyos', type: 'link', url: 'ambassadors.html' },
                 // ── iPhone 18 Series ──
-                { id: 'iphone-18-pro', label: 'iPhone 18 Pro', subtitle: 'A20 Pro · 48MP Fusion · Sept 2026', logo: 'apple', type: 'phone' },
-                { id: 'iphone-18-promax', label: 'iPhone 18 Pro Max', subtitle: 'A20 Pro · Longest Battery · Sept 2026', logo: 'apple', type: 'phone' },
+                { id: 'iphone-18-pro', label: 'iPhone 18 Pro', subtitle: 'A20 Pro · 48MP Fusion · Sept 2026', logo: 'apple', type: 'phone', platform: 'apple' },
+                { id: 'iphone-18-promax', label: 'iPhone 18 Pro Max', subtitle: 'A20 Pro · Longest Battery · Sept 2026', logo: 'apple', type: 'phone', platform: 'apple' },
                 { id: 'iphone-duo', label: 'iPhone Duo', subtitle: 'A20 Pro · 7.8" Foldable · Oct 2026', logo: 'apple', type: 'foldable-wide' },
                 // ── iPhone 17 Series ──
-                { id: 'iphone-17', label: 'iPhone 17', subtitle: 'A19 · 6.3"', logo: 'apple', type: 'phone' },
-                { id: 'iphone-17-pro', label: 'iPhone 17 Pro', subtitle: 'A19 Pro · 6.3"', logo: 'apple', type: 'phone' },
-                { id: 'iphone-17-promax', label: 'iPhone 17 Pro Max', subtitle: 'A19 Pro · 6.9" · up to 2TB', logo: 'apple', type: 'phone' },
+                { id: 'iphone-17', label: 'iPhone 17', subtitle: 'A19 · 6.3"', logo: 'apple', type: 'phone', platform: 'apple' },
+                { id: 'iphone-17-pro', label: 'iPhone 17 Pro', subtitle: 'A19 Pro · 6.3"', logo: 'apple', type: 'phone', platform: 'apple' },
+                { id: 'iphone-17-promax', label: 'iPhone 17 Pro Max', subtitle: 'A19 Pro · 6.9" · up to 2TB', logo: 'apple', type: 'phone', platform: 'apple' },
                 // ── Android ──
                 { id: 'samsung-fold8-ultra', label: 'Samsung Z Fold8 Ultra', subtitle: 'Foldable — 8.0\" main display', logo: 'societyos', type: 'foldable' },
                 { id: 'samsung-fold8-wide', label: 'Samsung Z Fold8 Wide', subtitle: 'Foldable — 4:3 wide display', logo: 'societyos', type: 'foldable-wide' },
                 { id: 'samsung-s26-ultra', label: 'Samsung S26 Ultra', subtitle: 'Flagship — select for case fitting', logo: 'societyos', type: 'phone' },
                 // ── BYO Device — SocietyOS works on what you already own ──
-                { id: 'byo-device', label: 'Use my own device', subtitle: 'SocietyOS digital experience only — no hardware', logo: 'skip', type: 'skip' },
+                { id: 'byo-device', label: 'BYOD — Bring Your Own Device', subtitle: 'We recommend SocietyOS on current or SocietyOS-provided hardware for the best experience. Services are subject to individual hardware requirements — SocietyOS is not liable for hardware limitations on brought-your-own devices.', logo: 'skip', type: 'skip' },
             ]
         },
         2: {
@@ -1987,7 +1992,7 @@
             ]
         },
         3: {
-            prompt: 'Activate your SocietyOS Sovereign Wallet',
+            prompt: 'Activate your SocietyOS Sovereign Wallet — launching in December',
             subtitle: 'Tap your Tangem card to your phone to pair — powered by Tangem EAL6+',
             options: [
                 { id: 'tangem-purple', label: 'SocietyOS Sovereign Wallet', subtitle: 'Nyx Purple · NFC · EAL6+ · 25yr warranty', logo: 'tangem', type: 'tangem' },
@@ -1998,7 +2003,7 @@
         },
         4: {
             prompt: 'Choose your membership',
-            subtitle: 'Sovereign Services for SocietyOS Members',
+            subtitle: 'Launching in December — new users: select Add Later to continue',
             options: [
                 { id: 'socialite-special', label: 'Socialite Special', subtitle: '$399 · 1yr Carbon Pro + SocietyOS STB included · Pre-launch', logo: 'societyos', type: 'tier', checkoutUrl: 'https://buy.stripe.com/4gM6oGfCi2AtedEc8I53O07' },
                 { id: 'carbon', label: 'Carbon Pro', subtitle: '$499 first year · then $399/yr · Maestro + sovereign AI', logo: 'societyos', type: 'tier', checkoutUrl: 'https://buy.stripe.com/9B6cN475M3ExglM5Kk53O06' },
@@ -2179,7 +2184,9 @@
 
     // Render step
     function renderStep(step) {
-        const data = stepData[step];
+        let data = stepData[step];
+        if (step === 2 && selections.devicePlatform === 'apple') data = { ...data, options: data.options.filter(o => o.platform === 'apple') };
+        if (step === 2 && selections.devicePlatform === 'android') data = { ...data, options: data.options.filter(o => o.platform === 'android') };
         prompt.style.opacity = '0';
         subtitle.style.opacity = '0';
 
@@ -2198,6 +2205,7 @@
         grid.innerHTML = '';
         grid.style.display = 'grid';
         deviceRender.style.display = 'none';
+        if (step === 2 && !selections.devicePlatform) { renderPlatformChooser(); return; }
         // Remove toggle button if present
         var oldToggle = document.getElementById('deviceViewToggle');
         if (oldToggle) oldToggle.remove();
@@ -2389,13 +2397,44 @@ if (step === 4 && selections.membership) {
 }
 }
 
+    function renderPlatformChooser() {
+        grid.innerHTML = '';
+        const plats = [
+            { id: 'apple', label: 'Apple', desc: 'iPhone · iPad', logo: 'apple' },
+            { id: 'android', label: 'Android', desc: 'Samsung Galaxy · Fold', logo: 'samsung' },
+        ];
+        plats.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'selection-card';
+            card.innerHTML = (logos[p.logo] || '') +
+                '<div class="card-title">' + p.label + '</div>' +
+                '<div class="card-subtitle">Use SocietyOS on your ' + p.label + ' devices</div>';
+            card.addEventListener('click', () => { selections.devicePlatform = p.id; renderStep(2); });
+            grid.appendChild(card);
+        });
+        const byo = document.createElement('div');
+        byo.className = 'selection-card';
+        byo.style.gridColumn = '1 / -1';
+        byo.innerHTML = '<div class="card-title">BYOD — Bring Your Own Device</div><div class="card-subtitle">We recommend SocietyOS on current or SocietyOS-provided hardware for the best experience. Services are subject to individual hardware requirements — SocietyOS is not liable for hardware limitations on brought-your-own devices.</div>';
+        byo.addEventListener('click', () => {
+            selections.devicePlatform = 'byo';
+            const byoOpt = stepData[2].options.find(o => o.id === 'byo-device');
+            selectOption(2, byoOpt, byo);
+        });
+        grid.appendChild(byo);
+    }
+
     function selectOption(step, opt, card) {
         // Deselect siblings
         grid.querySelectorAll('.selection-card').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
 
         // Store selection
-        if (step === 1) selections.device = opt;
+        if (step === 1) {
+            if (opt.type === 'link') { window.open(opt.url, '_self'); return; }
+            if (opt.type === 'tier') { selections.membership = opt; selections.device = null; }
+            else selections.device = opt;
+        }
         if (step === 2) { selections.case = opt; window.__caseLocked = true; document.getElementById('selection-grid').classList.add('case-locked'); }
         if (step === 3) selections.wallet = opt;
         if (step === 4) {
@@ -3233,7 +3272,7 @@ var SOCIETYOS_ACCESSORIES = []; // Removed — accessories will return when real
     }
 
     function isStepComplete(step) {
-        if (step === 1) return selections.device !== null;
+        if (step === 1) return selections.membership !== null || selections.device !== null;
         if (step === 2) return selections.case !== null;
         if (step === 3) return selections.wallet !== null;
         if (step === 4) return selections.membership !== null;
