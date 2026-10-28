@@ -79,7 +79,7 @@ async function load(){
     const extra = m.adjust ? '<br><small>Earned: $' + Number(m.adjust.earned).toLocaleString() + (m.payout ? ' · Payout: ' + m.payout.scheduledFor + ' via ' + (m.payout.method||'—') : '') + '</small>' : '';
     const activity = (m.ambassadorCode) ? '<small>QR scans: ' + (m.scans||0) + ' · Carbon signups: ' + (m.carbonSignups||0) + (m.tierSignups ? ' · Paid signups: ' + m.tierSignups.total : '') + '</small>' : '—';
     const rid = 'rw-' + btoa(m.ambassadorCode || m.username).replace(/=/g,'');
-    const updateCell = m.ambassadorCode ? '<div class="rowactions"><input id="' + rid + '" placeholder="$ earned" style="width:90px"><button onclick="updateRewards(\'' + m.ambassadorCode + '\', \'' + rid + '\')">Set $</button></div><div class="rowactions"><input id="rf-' + rid + '" placeholder="referrals" style="width:90px"><button onclick="setRefs(\'' + m.ambassadorCode + '\', \'' + 'rf-' + rid + '\')">Set refs</button></div>' : '—';
+    const updateCell = m.ambassadorCode ? '<div class="rowactions"><input id="' + rid + '" placeholder="$ earned" style="width:90px"><button onclick="updateRewards(\'' + m.ambassadorCode + '\', \'' + rid + '\')">Set $</button></div><div class="rowactions"><input id="rf-' + rid + '" placeholder="add referrals" style="width:90px"><button onclick="setRefs(\'' + m.ambassadorCode + '\', \'' + 'rf-' + rid + '\')">Set refs</button></div>' : '—';
     tr.innerHTML =
       '<td>' + m.username + '</td>' +
       '<td>' + ((m.profile && m.profile.name) || '—') + '</td>' +
@@ -102,11 +102,11 @@ async function updateRewards(code, inputId){
   if(d.ok) load();
 }
 async function setRefs(code, inputId){
-  const v = document.getElementById(inputId).value;
-  if(!v){ alert('Enter referral count'); return; }
-  const r = await fetch(AMB + '/api/admin/setrefs', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ adminKey: KEY, code, referrals: Number(v) }) });
+  const v = Number(document.getElementById(inputId).value);
+  if(!v){ alert('Enter a number of NEW referrals (negative to correct)'); return; }
+  const r = await fetch(AMB + '/api/addrefs', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ adminKey: KEY, code, added: v }) });
   const d = await r.json();
-  alert(d.ok ? 'Referrals for ' + code + ' set to ' + v : 'Failed: ' + (d.error||''));
+  alert(d.ok ? 'Added ' + v + ' referrals to ' + code + ' — new total: ' + d.referrals + ' refs, balance $' + d.earned.toLocaleString() : 'Failed: ' + (d.error||''));
   if(d.ok) load();
 }
 

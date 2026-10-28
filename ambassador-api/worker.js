@@ -243,6 +243,40 @@ export default {
       return json({ ok: true, adminKey: env.ADMIN_KEY });
     }
 
+    // ---- POST /api/addrefs { adminKey|code:'meastro', code, added } — ADD referrals + auto-update balance ----
+    if (url.pathname === '/api/addrefs' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      const isAdmin = body.adminKey === env.ADMIN_KEY;
+      const by = String(body.code || '').trim().toLowerCase();
+      if (!isAdmin && by !== 'meastro') return json({ ok: false, error: 'Forbidden' }, 403);
+      const target = String(body.target || body.code || '').trim().toLowerCase();
+      if (!ROSTER[target]) return json({ ok: false, error: 'Unknown ambassador' }, 401);
+      const rate = ROSTER[target].perRef;
+      const added = Number(body.added);
+      if (!Number.isFinite(added) || added === 0) return json({ ok: false, error: 'Invalid referral count' }, 400);
+      // increment referral count (existing override or live count)
+      let current = 0;
+      const refOverride = await env.AMB.get('refcount:' + target);
+      if (refOverride !== null && refOverride !== undefined && !isNaN(Number(refOverride))) current = Number(refOverride);
+      else {
+        try {
+          const csRes = await fetch('https://api.stripe.com/v1/checkout/sessions?limit=100', { headers: { Authorization: `Bearer ${env.STRIPE_KEY}` } });
+          const csData = await csRes.json();
+          current = (csData.data || []).filter(s => s.status === 'complete' && s.client_reference_id && s.client_reference_id.toLowerCase().startsWith(target + '-')).length;
+        } catch (e) {}
+      }
+      const newRefs = current + added;
+      if (newRefs < 0) return json({ ok: false, error: 'Cannot go below 0' }, 400);
+      await env.AMB.put('refcount:' + target, newRefs);
+      // auto-update balance by added × rate
+      const adjust = await env.AMB.get('adjust:' + target, 'json');
+      const curEarned = adjust && typeof adjust.earned === 'number' ? adjust.earned : current * rate;
+      const newEarned = Math.max(0, curEarned + added * rate);
+      const note = (adjust && adjust.note) || '';
+      await env.AMB.put('adjust:' + target, JSON.stringify({ earned: newEarned, note: note ? note + ' · +' + added + ' referrals (auto ' + '$' + added * rate + ')' : 'Added ' + added + ' referrals (auto $' + added * rate + ')', setAt: new Date().toISOString() }));
+      return json({ ok: true, code: target, referrals: newRefs, earned: newEarned, added: added, addedValue: added * rate });
+    }
+
     // ---- POST /api/admin/setrefs { adminKey, code, referrals } — referral count override ----
     if (url.pathname === '/api/admin/setrefs' && request.method === 'POST') {
       const body = await request.json().catch(() => ({}));

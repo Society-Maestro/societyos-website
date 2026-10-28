@@ -322,7 +322,7 @@ async function loadStats(){
         '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)"><b>$' + Number(a.earned).toLocaleString() + '</b><br><small style="color:var(--mut)">' + a.referrals + ' referrals</small></td>' +
         '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)"><small>' + a.scans + ' scans · ' + a.carbonSignups + ' carbon<br>Payout: ' + payoutTxt + '</small></td>' +
         '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)"><div style="display:flex;gap:4px;margin-bottom:4px"><input id="' + rid + '" placeholder="$" style="width:70px;padding:5px;font-size:12px"><button class="ghost" style="padding:5px 8px;margin:0;font-size:11px" onclick="manageUpdate(\'' + a.code + '\',\'' + rid + '\',\'earned\')">Set $</button></div>' +
-        '<div style="display:flex;gap:4px"><input id="' + rfid + '" placeholder="refs" style="width:70px;padding:5px;font-size:12px"><button class="ghost" style="padding:5px 8px;margin:0;font-size:11px" onclick="manageUpdate(\'' + a.code + '\',\'' + rfid + '\',\'referrals\')">Set refs</button></div></td>';
+        '<div style="display:flex;gap:4px"><input id="' + rfid + '" placeholder="add referrals" style="width:70px;padding:5px;font-size:12px"><button class="ghost" style="padding:5px 8px;margin:0;font-size:11px" onclick="manageUpdate(\'' + a.code + '\',\'' + rfid + '\',\'referrals\')">Set refs</button></div></td>';
       tb.appendChild(tr);
     }
     const stb = document.getElementById('socialiteRows');
@@ -347,6 +347,13 @@ async function loadStats(){
   async function manageUpdate(target, inputId, field){
     const v = document.getElementById(inputId).value;
     if(!v){ alert('Enter a value'); return; }
+    if(field === 'referrals'){
+      const r = await fetch(API + '/api/addrefs', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: 'meastro', target: target, added: Number(v) }) });
+      const d = await r.json();
+      if(d.ok){ alert('Added ' + v + ' referrals to ' + target + ' — new total: ' + d.referrals + ' refs, balance $' + d.earned.toLocaleString()); loadManage(); }
+      else alert('Failed: ' + (d.error||''));
+      return;
+    }
     const body = { code: 'meastro', target: target };
     body[field] = Number(v);
     const r = await fetch(API + '/api/manage', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
