@@ -1688,12 +1688,15 @@
                     <span class="credential-value">societyos.pro</span>
                 </div>
                 <div class="credential-row">
-                    <span class="credential-label">Username</span>
-                    <span class="credential-value" id="silo-username">—</span>
+                    <span class="credential-label">Your Silo Username</span>
+                    <span class="credential-value">SOS + your last name</span>
                 </div>
                 <div class="credential-row">
                     <span class="credential-label">Password</span>
-                    <span class="credential-value" id="silo-password">—</span>
+                    <span class="credential-value">Being provisioned</span>
+                </div>
+                <div style="margin-top:0.8rem;font-size:0.8rem;color:#b0b8c8;line-height:1.6;">
+                    Your streaming credentials are being activated — they'll arrive by <b style="color:#e5c585;">text and email within 24 hours</b>. Then sign in at societyos.pro and follow the 2-step device setup below.
                 </div>
             </div>
             <div class="completion-actions">
@@ -3254,25 +3257,9 @@ var SOCIETYOS_ACCESSORIES = []; // Removed — accessories will return when real
         }
     }
 
-    // Generate SocietyOS streaming credentials based on membership tier
-    function generateSiloCredentials() {
-        var tier = selections.membership?.id || 'carbon';
-        var tierPrefix = tier === 'gold' ? 'gd' : tier === 'onyx' ? 'ox' : 'cb';
-        var randomSuffix = Math.random().toString(36).substring(2, 8);
-        var username = 'soc_' + tierPrefix + '_' + randomSuffix;
-        // Generate a memorable but secure password
-        var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%';
-        var password = '';
-        for (var i = 0; i < 14; i++) {
-            password += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return { username: username, password: password };
-    }
-
     function showCompletion() {
-        var creds = generateSiloCredentials();
-        document.getElementById('silo-username').textContent = creds.username;
-        document.getElementById('silo-password').textContent = creds.password;
+        // Silo credentials are provisioned by SocietyOS staff in the streaming panel
+        // and delivered to the member by text/email — never generated in the browser.
         document.getElementById('completionScreen').classList.add('visible');
 
         // Scroll to top so the completion card is centered
