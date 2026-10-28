@@ -277,6 +277,17 @@ export default {
       return json({ ok: true, code: target, referrals: newRefs, earned: newEarned, added: added, addedValue: added * rate });
     }
 
+    // ---- POST /api/admin/provision { adminKey, ref, username, password } — real Silo creds from the panel ----
+    if (url.pathname === '/api/admin/provision' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      if (body.adminKey !== env.ADMIN_KEY) return json({ ok: false, error: 'Forbidden' }, 403);
+      const ref = String(body.ref || '').slice(0, 120);
+      if (!ref) return json({ ok: false, error: 'ref required' }, 400);
+      const rec = { username: String(body.username || '').slice(0, 80), password: String(body.password || '').slice(0, 80), provisionedAt: new Date().toISOString() };
+      await env.AMB.put('silo:' + ref, JSON.stringify(rec));
+      return json({ ok: true, provisioned: rec });
+    }
+
     // ---- POST /api/admin/setrefs { adminKey, code, referrals } — referral count override ----
     if (url.pathname === '/api/admin/setrefs' && request.method === 'POST') {
       const body = await request.json().catch(() => ({}));
@@ -384,6 +395,7 @@ export default {
       } while (cursor);
       // per-code tier breakdown from Stripe checkout sessions (client_reference_id = code-timestamp)
       let tierByCode = {};
+      const paidSessions = [];
       try {
         const csRes = await fetch('https://api.stripe.com/v1/checkout/sessions?limit=100', {
           headers: { Authorization: `Bearer ${env.STRIPE_KEY}` },
@@ -398,11 +410,23 @@ export default {
           if (s.status !== 'complete' || !s.client_reference_id) continue;
           const code = s.client_reference_id.split('-')[0].toLowerCase();
           const tier = PRICE_TIER[s.checkout_url ? linkTier(s.checkout_url) : ''] || 'Membership';
+          paidSessions.push({
+            code, tier,
+            email: (s.customer_details || {}).email || '—',
+            name: ((s.customer_details || {}).address || {}).name || (s.customer_details || {}).name || '—',
+            ref: s.client_reference_id,
+          });
           (tierByCode[code] = tierByCode[code] || { total: 0 });
           tierByCode[code][tier] = (tierByCode[code][tier] || 0) + 1;
           tierByCode[code].total += 1;
         }
       } catch (e) {}
+      // Provisioning queue: paid signups that still need Silo credentials created in the panel
+      const provisionQueue = [];
+      for (const ps of paidSessions) {
+        const has = await env.AMB.get('silo:' + ps.code);
+        if (!has) provisionQueue.push(ps);
+      }
 
       // attached ambassador data
       for (const m of out) {
@@ -421,7 +445,7 @@ export default {
           m.paydetails = await env.AMB.get(`paydetails:${code}`, 'json') || null;
         }
       }
-      return json({ ok: true, members: out });
+      return json({ ok: true, members: out, provisionQueue });
     }
 
     // ---- POST /api/admin/setpass { adminKey, username, password } — admin override ----

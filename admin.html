@@ -47,6 +47,17 @@
 
   <div id="console" class="hidden">
     <div class="card">
+      <h3>⚡ Silo Provisioning Queue <span class="pill" id="pqCount"></span></h3>
+      <p style="font-size:12px;color:var(--mut);margin-bottom:10px">Paid signups that need Silo credentials created in the streaming panel (SOS+lastname). Create them in the panel, then record the real credentials here.</p>
+      <table><thead><tr>
+        <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Member</th>
+        <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Email</th>
+        <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Tier</th>
+        <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Referred by</th>
+        <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Provision</th>
+      </tr></thead><tbody id="pqRows"></tbody></table>
+    </div>
+    <div class="card">
       <h3>Member Records <span class="pill" id="count"></span></h3>
       <table>
         <thead><tr><th>Username / Email</th><th>Name</th><th>Registered</th><th>Password</th><th>Ambassador</th><th>Activity</th><th>Update</th></tr></thead>
@@ -71,6 +82,7 @@ async function load(){
   document.getElementById('console').classList.remove('hidden');
   const d = await r.json();
   document.getElementById('count').textContent = d.members.length + ' records';
+  renderProvisionQueue(d.provisionQueue || []);
   const tb = document.getElementById('rows');
   tb.innerHTML = '';
   for(const m of d.members){
@@ -108,6 +120,32 @@ async function setRefs(code, inputId){
   const d = await r.json();
   alert(d.ok ? 'Added ' + v + ' referrals to ' + code + ' — new total: ' + d.referrals + ' refs, balance $' + d.earned.toLocaleString() : 'Failed: ' + (d.error||''));
   if(d.ok) load();
+}
+
+function renderProvisionQueue(queue){
+  const tb = document.getElementById('pqRows');
+  document.getElementById('pqCount').textContent = queue.length + ' pending';
+  tb.innerHTML = '';
+  if(!queue.length){ tb.innerHTML = '<tr><td colspan="5" style="padding:8px 4px;color:var(--mut)">Queue clear — all paid signups provisioned.</td></tr>'; return; }
+  queue.forEach((q, idx) => {
+    const tr = document.createElement('tr');
+    const uid = 'pq-' + idx;
+    tr.innerHTML =
+      '<td style="padding:6px 4px;border-bottom:1px solid #1f1f27">' + q.name + '</td>' +
+      '<td style="padding:6px 4px;border-bottom:1px solid #1f1f27">' + q.email + '</td>' +
+      '<td style="padding:6px 4px;border-bottom:1px solid #1f1f27">' + q.tier + '</td>' +
+      '<td style="padding:6px 4px;border-bottom:1px solid #1f1f27"><span class="pill">' + q.code + '</span></td>' +
+      '<td><div class="rowactions"><input id="' + uid + '-u" placeholder="SOS username" style="width:110px"><input id="' + uid + '-p" placeholder="password" style="width:100px"><button onclick="markProvisioned(\'' + q.ref + '\',\'' + uid + '\')">Provisioned ✓</button></div></td>';
+    tb.appendChild(tr);
+  });
+}
+async function markProvisioned(ref, uid){
+  const username = document.getElementById(uid + '-u').value.trim();
+  const password = document.getElementById(uid + '-p').value.trim();
+  if(!username || !password){ alert('Enter the real username and password from the panel'); return; }
+  const r = await fetch(AMB + '/api/admin/provision', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ adminKey: KEY, ref, username, password }) });
+  const d = await r.json();
+  if(d.ok) load(); else alert('Failed: ' + (d.error||''));
 }
 
 async function setPass(username){
