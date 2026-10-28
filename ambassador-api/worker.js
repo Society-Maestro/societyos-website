@@ -260,7 +260,32 @@ export default {
           scans: Number(await env.AMB.get('scan:' + code)) || 0,
           carbonSignups: Number(await env.AMB.get('carbon-signup:' + code)) || 0 });
       }
-      return json({ ok: true, ambassadors: list });
+      // Full Socialite ledger — every referred signup, per code (SOSMaestro eyes only)
+      const socialites = [];
+      try {
+        const csRes2 = await fetch('https://api.stripe.com/v1/checkout/sessions?limit=100', {
+          headers: { Authorization: `Bearer ${env.STRIPE_KEY}` },
+        });
+        const cs2 = await csRes2.json();
+        const PRICE_TIER = {
+          '9B6cN475M3ExglM5Kk53O06': 'Carbon Pro', '4gM6oGfCi2AtedEc8I53O07': 'Carbon Pro (Special)',
+          '28EfZg89Q3Ex2uW5Kk53O08': 'Onyx', '00waEW2Pwa2Vb1s5Kk53O09': 'Gold',
+        };
+        const tierOf = sess => {
+          const m = Object.keys(PRICE_TIER).find(k => (sess.checkout_url || '').includes(k));
+          return m ? PRICE_TIER[m] : 'Membership';
+        };
+        for (const s of (cs2.data || [])) {
+          if (s.status !== 'complete' || !s.client_reference_id) continue;
+          socialites.push({
+            code: s.client_reference_id.split('-')[0].toLowerCase(),
+            email: (s.customer_details || {}).email || '—',
+            tier: tierOf(s),
+            date: s.created ? new Date(s.created).toISOString().slice(0, 10) : '—',
+          });
+        }
+      } catch (e) {}
+      return json({ ok: true, ambassadors: list, socialites });
     }
 
     // ---- POST /api/manage { code: meastro, target, earned?, referrals? } — update any account ----

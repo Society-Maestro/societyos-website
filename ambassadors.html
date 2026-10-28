@@ -175,6 +175,19 @@
         </tr></thead>
         <tbody id="manageRows"></tbody>
       </table>
+      <div style="margin-top:1.4rem">
+        <h2 style="font-size:1.1rem">Referred Socialites — full ledger</h2>
+        <div class="goal-line">Every signup through an Ambassador link: email, tier, date, referred-by.</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:10px">
+          <thead><tr>
+            <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Email</th>
+            <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Tier</th>
+            <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Referred by</th>
+            <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Date</th>
+          </tr></thead>
+          <tbody id="socialiteRows"></tbody>
+        </table>
+      </div>
     </div>
 
     <div class="foot">SocietyOS · Ambassador Program · Questions: hello@societyos.world</div>
@@ -278,6 +291,23 @@ async function loadStats(){
         '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)"><div style="display:flex;gap:4px;margin-bottom:4px"><input id="' + rid + '" placeholder="$" style="width:70px;padding:5px;font-size:12px"><button class="ghost" style="padding:5px 8px;margin:0;font-size:11px" onclick="manageUpdate(\'' + a.code + '\',\'' + rid + '\',\'earned\')">Set $</button></div>' +
         '<div style="display:flex;gap:4px"><input id="' + rfid + '" placeholder="refs" style="width:70px;padding:5px;font-size:12px"><button class="ghost" style="padding:5px 8px;margin:0;font-size:11px" onclick="manageUpdate(\'' + a.code + '\',\'' + rfid + '\',\'referrals\')">Set refs</button></div></td>';
       tb.appendChild(tr);
+    }
+    const stb = document.getElementById('socialiteRows');
+    if (stb) {
+      stb.innerHTML = '';
+      if (!d.socialites || !d.socialites.length) {
+        stb.innerHTML = '<tr><td colspan="4" style="padding:8px 4px;color:var(--mut)">No referred signups yet.</td></tr>';
+      } else {
+        for (const s of d.socialites) {
+          const str = document.createElement('tr');
+          str.innerHTML =
+            '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)">' + s.email + '</td>' +
+            '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)">' + s.tier + '</td>' +
+            '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)"><span class="pill">' + s.code + '</span></td>' +
+            '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)"><small>' + s.date + '</small></td>';
+          stb.appendChild(str);
+        }
+      }
     }
   }
 
