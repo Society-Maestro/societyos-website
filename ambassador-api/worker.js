@@ -31,6 +31,7 @@ export default {
       'oakley':      { name: 'Neil Wilkinson', tier: 'Gold Ambassador', nodes: 1, perRef: 40 },
       'ares':        { name: 'Ares', tier: 'Gold Ambassador', nodes: 1, perRef: 40 },
       'sam':         { name: 'Sam', tier: 'Gold Ambassador', nodes: 1, perRef: 40 },
+      'meastro':     { name: 'SOSMaestro', tier: 'Admin Ambassador', nodes: 0, perRef: 40 },
     };
 
     if (url.pathname === '/api/login' && request.method === 'POST') {
