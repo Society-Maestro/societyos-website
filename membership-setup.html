@@ -2301,8 +2301,8 @@
             grid.appendChild(card);
         });
 
-        // Step 2: filter cases by selected phone and show split layout
-        if (step === 2) {
+        // Step 3: filter cases by selected phone and show split layout
+        if (step === 3) {
             const deviceId = selections.device ? selections.device.id : null;
             const compatibleSeries = deviceId ? (phoneCaseMap[deviceId] || []) : [];
             const compatibleCaseIds = new Set();
