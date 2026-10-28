@@ -31,7 +31,7 @@ export default {
       'oakley':      { name: 'Neil Wilkinson', tier: 'Gold Ambassador', nodes: 1, perRef: 40 },
       'ares':        { name: 'Ares', tier: 'Gold Ambassador', nodes: 1, perRef: 40 },
       'sam':         { name: 'Sam', tier: 'Gold Ambassador', nodes: 1, perRef: 40 },
-      'meastro':     { name: 'SOSMaestro', tier: 'Admin Ambassador', nodes: 0, perRef: 40 },
+      'meastro':     { name: 'SOSMaestro', tier: 'Admin Ambassador', nodes: 3, perRef: 40 },
     };
 
     if (url.pathname === '/api/login' && request.method === 'POST') {
@@ -108,8 +108,27 @@ export default {
         method,
         status: 'scheduled',
       };
+      // Early-attempt tracking: any payout request before the January window is logged
+      // with attempt count so admin sees who tried to take payouts early.
+      await env.AMB.put('earlyattempt:' + raw, JSON.stringify(rec));
+      const attempts = await env.AMB.get('earlyattempts', 'json') || { count: 0, log: [] };
+      attempts.count = (attempts.count || 0) + 1;
+      attempts.log.unshift({
+        code: raw, name: (ROSTER[raw] || {}).name || raw, method,
+        at: rec.requestedAt,
+      });
+      attempts.log = attempts.log.slice(0, 200);
+      await env.AMB.put('earlyattempts', JSON.stringify(attempts));
       await env.AMB.put(`payout:${raw}`, JSON.stringify(rec));
       return json({ ok: true, payout: rec });
+    }
+
+    // ---- GET /api/earlyattempts?code=meastro — who tried to take payouts early ----
+    if (url.pathname === '/api/earlyattempts' && request.method === 'GET') {
+      const raw = (url.searchParams.get('code') || '').trim().toLowerCase();
+      if (raw !== 'meastro') return json({ ok: false, error: 'Forbidden' }, 403);
+      const attempts = await env.AMB.get('earlyattempts', 'json') || { count: 0, log: [] };
+      return json({ ok: true, totalAttempts: attempts.count, log: attempts.log });
     }
 
     // ---- POST /api/payout-details { code, method, fields{} } — where funds go ----

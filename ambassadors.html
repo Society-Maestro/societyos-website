@@ -175,6 +175,18 @@
         </tr></thead>
         <tbody id="manageRows"></tbody>
       </table>
+      <div style="margin-top:1.4rem" id="earlyCard">
+        <h2 style="font-size:1.1rem">Early Payout Attempts</h2>
+        <div class="goal-line">Anyone who tried to schedule a payout before the January window — with attempt counts.</div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:10px">
+          <thead><tr>
+            <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Ambassador</th>
+            <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Method</th>
+            <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">When</th>
+          </tr></thead>
+          <tbody id="earlyRows"></tbody>
+        </table>
+      </div>
       <div style="margin-top:1.4rem">
         <h2 style="font-size:1.1rem">Referred Socialites — full ledger</h2>
         <div class="goal-line">Every signup through an Ambassador link: email, tier, date, referred-by.</div>
@@ -259,6 +271,7 @@ async function loadStats(){
   if(d.code === 'meastro'){
   document.getElementById('manageCard').classList.remove('hidden');
   loadManage();
+  loadEarlyAttempts();
   }
   if(d.payout){
   document.getElementById('payoutForm').classList.add('hidden');
@@ -272,6 +285,26 @@ async function loadStats(){
   document.getElementById('cancelBtn').style.display = 'none';
   const sk = document.getElementById('schedOk'); if (sk) sk.style.display = 'none';
   }
+  }
+
+  async function loadEarlyAttempts(){
+    const r = await fetch(API + '/api/earlyattempts?code=' + encodeURIComponent(CODE));
+    const d = await r.json();
+    if(!d.ok) return;
+    const tb = document.getElementById('earlyRows');
+    tb.innerHTML = '';
+    if(!d.totalAttempts){ tb.innerHTML = '<tr><td colspan="3" style="padding:8px 4px;color:var(--mut)">No early attempts.</td></tr>'; return; }
+    const head = document.createElement('tr');
+    head.innerHTML = '<td colspan="3" style="padding:6px 4px;color:#e2b45a"><b>' + d.totalAttempts + ' total early attempt(s)</b></td>';
+    tb.appendChild(head);
+    for(const a of d.log){
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)">' + a.name + ' (' + a.code + ')</td>' +
+        '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)">' + a.method + '</td>' +
+        '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)"><small>' + new Date(a.at).toLocaleString() + '</small></td>';
+      tb.appendChild(tr);
+    }
   }
 
   async function loadManage(){
