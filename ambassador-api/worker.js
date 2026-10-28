@@ -236,6 +236,53 @@ export default {
       return json({ ok: true, code: raw, referrals: refs });
     }
 
+    // ---- GET /api/overview?code=meastro — your Ambassador view of ALL accounts ----
+    if (url.pathname === '/api/overview' && request.method === 'GET') {
+      const raw = (url.searchParams.get('code') || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      if (raw !== 'meastro') return json({ ok: false, error: 'Forbidden' }, 403);
+      const list = [];
+      for (const [code, who] of Object.entries(ROSTER)) {
+        let refs = 0;
+        try {
+          const csRes = await fetch('https://api.stripe.com/v1/checkout/sessions?limit=100', { headers: { Authorization: `Bearer ${env.STRIPE_KEY}` } });
+          const csData = await csRes.json();
+          refs = (csData.data || []).filter(s => s.status === 'complete' && s.client_reference_id && s.client_reference_id.toLowerCase().startsWith(code + '-')).length;
+        } catch (e) {}
+        const refOverride = await env.AMB.get('refcount:' + code);
+        if (refOverride !== null && refOverride !== undefined && !isNaN(Number(refOverride))) refs = Number(refOverride);
+        const adjust = await env.AMB.get('adjust:' + code, 'json');
+        const earned = adjust && typeof adjust.earned === 'number' ? adjust.earned : refs * who.perRef;
+        const payout = await env.AMB.get('payout:' + code, 'json');
+        const paydetails = await env.AMB.get('paydetails:' + code, 'json');
+        list.push({ code, name: who.name, tier: who.tier, nodes: who.nodes, referrals: refs,
+          earned, adjusted: !!(adjust && typeof adjust.earned === 'number'),
+          payout: payout || null, paydetails: paydetails || null,
+          scans: Number(await env.AMB.get('scan:' + code)) || 0,
+          carbonSignups: Number(await env.AMB.get('carbon-signup:' + code)) || 0 });
+      }
+      return json({ ok: true, ambassadors: list });
+    }
+
+    // ---- POST /api/manage { code: meastro, target, earned?, referrals? } — update any account ----
+    if (url.pathname === '/api/manage' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      const by = String(body.code || '').trim().toLowerCase();
+      if (by !== 'meastro') return json({ ok: false, error: 'Forbidden' }, 403);
+      const target = String(body.target || '').trim().toLowerCase();
+      if (!ROSTER[target]) return json({ ok: false, error: 'Unknown ambassador' }, 401);
+      if (body.earned !== undefined && body.earned !== null && body.earned !== '') {
+        const earned = Number(body.earned);
+        if (!Number.isFinite(earned) || earned < 0) return json({ ok: false, error: 'Invalid amount' }, 400);
+        await env.AMB.put('adjust:' + target, JSON.stringify({ earned, note: 'Updated by SOSMaestro', setAt: new Date().toISOString() }));
+      }
+      if (body.referrals !== undefined && body.referrals !== null && body.referrals !== '') {
+        const refs = Number(body.referrals);
+        if (!Number.isFinite(refs) || refs < 0) return json({ ok: false, error: 'Invalid count' }, 400);
+        await env.AMB.put('refcount:' + target, refs);
+      }
+      return json({ ok: true });
+    }
+
     // ---- GET /api/admin/members?adminKey= — inspect member records ----
     if (url.pathname === '/api/admin/members' && request.method === 'GET') {
       if (url.searchParams.get('adminKey') !== env.ADMIN_KEY) return json({ ok: false, error: 'Forbidden' }, 403);

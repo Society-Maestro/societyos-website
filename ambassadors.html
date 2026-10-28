@@ -163,6 +163,20 @@
       <input autocapitalize="none" autocorrect="off" spellcheck="false" id="refLink" readonly style="margin-top:10px;font-size:14px">
     </div>
 
+    <div class="card hidden" id="manageCard">
+      <h2>Company — All Ambassadors</h2>
+      <div class="goal-line">Live view of every account. Update any rewards or referral count inline.</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:12px">
+        <thead><tr>
+          <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Ambassador</th>
+          <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Earned / Refs</th>
+          <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Scans · Carbon · Payout</th>
+          <th style="text-align:left;color:var(--mut);padding:6px 4px;border-bottom:1px solid var(--bd)">Update</th>
+        </tr></thead>
+        <tbody id="manageRows"></tbody>
+      </table>
+    </div>
+
     <div class="foot">SocietyOS · Ambassador Program · Questions: hello@societyos.world</div>
   </div>
 </div>
@@ -229,6 +243,10 @@ async function loadStats(){
   document.getElementById('sTo').textContent = d.toBreakeven === 0 ? 'Break-even reached — every referral is now profit' : d.toBreakeven + ' referrals to break-even';
   document.getElementById('sCap').textContent = '$' + d.atCapProjection.toLocaleString() + '/yr';
   document.getElementById('refLink').value = 'https://societyos.world/membership-setup.html?ref=' + d.code;
+  if(d.code === 'meastro'){
+  document.getElementById('manageCard').classList.remove('hidden');
+  loadManage();
+  }
   if(d.payout){
   document.getElementById('payoutForm').classList.add('hidden');
   const ok = document.getElementById('payoutOk');
@@ -241,6 +259,36 @@ async function loadStats(){
   document.getElementById('cancelBtn').style.display = 'none';
   const sk = document.getElementById('schedOk'); if (sk) sk.style.display = 'none';
   }
+  }
+
+  async function loadManage(){
+    const r = await fetch(API + '/api/overview?code=' + encodeURIComponent(CODE));
+    const d = await r.json();
+    if(!d.ok) return;
+    const tb = document.getElementById('manageRows');
+    tb.innerHTML = '';
+    for(const a of d.ambassadors){
+      const tr = document.createElement('tr');
+      const rid = 'mrn-' + a.code, rfid = 'mrf-' + a.code;
+      const payoutTxt = a.payout ? a.payout.scheduledFor + ' via ' + (a.payout.method||'—') : (a.paydetails ? a.paydetails.method + ' ready' : '—');
+      tr.innerHTML =
+        '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)"><b>' + a.name + '</b><br><small style="color:var(--mut)">' + a.tier + ' · ' + a.nodes + ' Node(s)</small></td>' +
+        '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)"><b>$' + Number(a.earned).toLocaleString() + '</b><br><small style="color:var(--mut)">' + a.referrals + ' referrals</small></td>' +
+        '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)"><small>' + a.scans + ' scans · ' + a.carbonSignups + ' carbon<br>Payout: ' + payoutTxt + '</small></td>' +
+        '<td style="padding:6px 4px;border-bottom:1px solid var(--bd)"><div style="display:flex;gap:4px;margin-bottom:4px"><input id="' + rid + '" placeholder="$" style="width:70px;padding:5px;font-size:12px"><button class="ghost" style="padding:5px 8px;margin:0;font-size:11px" onclick="manageUpdate(\'' + a.code + '\',\'' + rid + '\',\'earned\')">Set $</button></div>' +
+        '<div style="display:flex;gap:4px"><input id="' + rfid + '" placeholder="refs" style="width:70px;padding:5px;font-size:12px"><button class="ghost" style="padding:5px 8px;margin:0;font-size:11px" onclick="manageUpdate(\'' + a.code + '\',\'' + rfid + '\',\'referrals\')">Set refs</button></div></td>';
+      tb.appendChild(tr);
+    }
+  }
+
+  async function manageUpdate(target, inputId, field){
+    const v = document.getElementById(inputId).value;
+    if(!v){ alert('Enter a value'); return; }
+    const body = { code: 'meastro', target: target };
+    body[field] = Number(v);
+    const r = await fetch(API + '/api/manage', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const d = await r.json();
+    if(d.ok) loadManage(); else alert('Failed: ' + (d.error||''));
   }
 
   async function cancelPayout(){
