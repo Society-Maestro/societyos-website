@@ -323,7 +323,7 @@
         .section {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 6rem 2rem;
+            padding: 4rem 2rem;
         }
         .section-label {
             display: inline-block;
@@ -549,7 +549,7 @@
         /* ═══ FEATURE GRID ═══ */
         .feature-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
         }
         .feature-card {
@@ -665,7 +665,7 @@
         /* ═══ PLATFORM SHOWCASE ═══ */
         .platforms-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(5, 1fr);
             gap: 1rem;
             margin-top: 3rem;
         }
@@ -707,7 +707,10 @@
             padding: 2.5rem;
             transition: var(--transition);
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
+        .pricing-card .pricing-features { flex: 1; }
         .pricing-card.featured {
             border-color: var(--border-glow);
             background: var(--bg-elevated);
@@ -822,6 +825,8 @@
         }
         @media (max-width: 768px) {
             .footer-grid { grid-template-columns: 1fr 1fr; }
+            .platforms-row { grid-template-columns: repeat(2, 1fr); }
+            .features-grid { grid-template-columns: 1fr; }
         }
         .footer-brand h4 {
             font-family: var(--font-display);
