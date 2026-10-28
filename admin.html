@@ -49,7 +49,7 @@
     <div class="card">
       <h3>Member Records <span class="pill" id="count"></span></h3>
       <table>
-        <thead><tr><th>Username / Email</th><th>Name</th><th>Registered</th><th>Password</th><th>Ambassador</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Username / Email</th><th>Name</th><th>Registered</th><th>Password</th><th>Ambassador</th><th>Activity</th><th>Update</th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
       <p style="font-size:11px;color:var(--mut);margin-top:10px">Passwords are stored salted+hashed (PBKDF2, 100k iterations) — never readable. Override sets a new password only.</p>
@@ -77,15 +77,37 @@ async function load(){
     const tr = document.createElement('tr');
     const amb = m.ambassadorCode ? '<span class="pill">' + m.ambassadorCode + '</span>' : '—';
     const extra = m.adjust ? '<br><small>Earned: $' + Number(m.adjust.earned).toLocaleString() + (m.payout ? ' · Payout: ' + m.payout.scheduledFor + ' via ' + (m.payout.method||'—') : '') + '</small>' : '';
+    const activity = (m.ambassadorCode) ? '<small>QR scans: ' + (m.scans||0) + ' · Carbon signups: ' + (m.carbonSignups||0) + (m.tierSignups ? ' · Paid signups: ' + m.tierSignups.total : '') + '</small>' : '—';
+    const rid = 'rw-' + btoa(m.ambassadorCode || m.username).replace(/=/g,'');
+    const updateCell = m.ambassadorCode ? '<div class="rowactions"><input id="' + rid + '" placeholder="$ earned" style="width:90px"><button onclick="updateRewards(\'' + m.ambassadorCode + '\', \'' + rid + '\')">Set $</button></div><div class="rowactions"><input id="rf-' + rid + '" placeholder="referrals" style="width:90px"><button onclick="setRefs(\'' + m.ambassadorCode + '\', \'' + 'rf-' + rid + '\')">Set refs</button></div>' : '—';
     tr.innerHTML =
       '<td>' + m.username + '</td>' +
       '<td>' + ((m.profile && m.profile.name) || '—') + '</td>' +
       '<td><small>' + (m.created ? m.created.slice(0,10) : '—') + '</small></td>' +
       '<td><small>' + (m.hasPass ? 'set' : 'none') + '</small></td>' +
       '<td>' + amb + extra + '</td>' +
+      '<td>' + activity + '</td>' +
+      '<td>' + updateCell + '</td>' +
       '<td><div class="rowactions"><input autocapitalize="none" autocorrect="off" spellcheck="false" type="text" placeholder="new password" id="np-' + btoa(m.username).replace(/=/g,'') + '"><button onclick="setPass(\'' + m.username.replace(/'/g,"\\'") + '\')">Override</button></div></td>';
     tb.appendChild(tr);
   }
+}
+
+async function updateRewards(code, inputId){
+  const v = document.getElementById(inputId).value;
+  if(!v){ alert('Enter an amount'); return; }
+  const r = await fetch(AMB + '/api/admin/adjust', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ adminKey: KEY, code, earned: Number(v), note: 'Admin update' }) });
+  const d = await r.json();
+  alert(d.ok ? 'Rewards for ' + code + ' set to $' + Number(v).toLocaleString() : 'Failed: ' + (d.error||''));
+  if(d.ok) load();
+}
+async function setRefs(code, inputId){
+  const v = document.getElementById(inputId).value;
+  if(!v){ alert('Enter referral count'); return; }
+  const r = await fetch(AMB + '/api/admin/setrefs', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ adminKey: KEY, code, referrals: Number(v) }) });
+  const d = await r.json();
+  alert(d.ok ? 'Referrals for ' + code + ' set to ' + v : 'Failed: ' + (d.error||''));
+  if(d.ok) load();
 }
 
 async function setPass(username){

@@ -75,7 +75,16 @@ async function signup(){
   const r = await fetch(API + '/api/link/register', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: email, password: pass, name, email }) });
   const d = await r.json();
   if(!d.ok){ err.textContent = d.error === 'username already registered' ? 'This email is already registered — sign in instead, or use another email.' : (d.error || 'Signup failed'); err.style.display='block'; return; }
-  try { sessionStorage.setItem('sos_member', JSON.stringify({ username: email, name, token: d.token })); } catch(e){}
+  try {
+    sessionStorage.setItem('sos_member', JSON.stringify({ username: email, name, token: d.token }));
+    var ref = new URLSearchParams(window.location.search).get('ref');
+    if (ref && /^[A-Za-z0-9_-]{1,64}$/.test(ref)) {
+      fetch('https://societyos-ambassador.societyos.workers.dev/api/scan', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: ref, type: 'carbon-signup' })
+      }).catch(function(){});
+    }
+  } catch(e){}
   document.getElementById('form').classList.add('hidden');
   document.getElementById('done').classList.remove('hidden');
 }

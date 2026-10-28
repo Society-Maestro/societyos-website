@@ -61,7 +61,9 @@ export default {
         return json({ ok: false, error: 'Stripe lookup failed' }, 502);
       }
 
-      const referrals = sessions.length;
+      let referrals = sessions.length;
+      const refOverride = await env.AMB.get('refcount:' + raw);
+      if (refOverride !== null && refOverride !== undefined && !isNaN(Number(refOverride))) referrals = Number(refOverride);
       const autoEarned = referrals * who.perRef;
 
       // Manual adjustment (admin-set) overrides the automated calculation when present
@@ -183,6 +185,17 @@ export default {
       return json({ ok: true, username, code: raw });
     }
 
+    // ---- POST /api/scan { code, type } — QR/link scan + Carbon-signup tracking ----
+    if (url.pathname === '/api/scan' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      const raw = String(body.code || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      if (!ROSTER[raw]) return json({ ok: false }, 401);
+      const type = body.type === 'carbon-signup' ? 'carbon-signup' : 'scan';
+      const cnt = ((await env.AMB.get(type + ':' + raw)) || 0) + 1;
+      await env.AMB.put(type + ':' + raw, cnt);
+      return json({ ok: true, type, count: cnt });
+    }
+
     // ---- GET /api/nodes — public NODE counter ----
     if (url.pathname === '/api/nodes' && request.method === 'GET') {
       let n = await env.AMB.get('nodes', 'json');
@@ -210,6 +223,18 @@ export default {
       return json({ ok: true, adminKey: env.ADMIN_KEY });
     }
 
+    // ---- POST /api/admin/setrefs { adminKey, code, referrals } — referral count override ----
+    if (url.pathname === '/api/admin/setrefs' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      if (body.adminKey !== env.ADMIN_KEY) return json({ ok: false, error: 'Forbidden' }, 403);
+      const raw = String(body.code || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      if (!ROSTER[raw]) return json({ ok: false, error: 'Code not recognized' }, 401);
+      const refs = Number(body.referrals);
+      if (!Number.isFinite(refs) || refs < 0) return json({ ok: false, error: 'Invalid count' }, 400);
+      await env.AMB.put('refcount:' + raw, refs);
+      return json({ ok: true, code: raw, referrals: refs });
+    }
+
     // ---- GET /api/admin/members?adminKey= — inspect member records ----
     if (url.pathname === '/api/admin/members' && request.method === 'GET') {
       if (url.searchParams.get('adminKey') !== env.ADMIN_KEY) return json({ ok: false, error: 'Forbidden' }, 403);
@@ -231,10 +256,39 @@ export default {
         }
         cursor = page.list_complete ? undefined : page.cursor;
       } while (cursor);
+      // per-code tier breakdown from Stripe checkout sessions (client_reference_id = code-timestamp)
+      let tierByCode = {};
+      try {
+        const csRes = await fetch('https://api.stripe.com/v1/checkout/sessions?limit=100', {
+          headers: { Authorization: `Bearer ${env.STRIPE_KEY}` },
+        });
+        const csData = await csRes.json();
+        const PRICE_TIER = {
+          '9B6cN475M3ExglM5Kk53O06': 'Carbon Pro', '4gM6oGfCi2AtedEc8I53O07': 'Carbon Pro (Special)',
+          '28EfZg89Q3Ex2uW5Kk53O08': 'Onyx', '00waEW2Pwa2Vb1s5Kk53O09': 'Gold',
+        };
+        const linkTier = u => Object.keys(PRICE_TIER).find(k => u && u.includes(k));
+        for (const s of (csData.data || [])) {
+          if (s.status !== 'complete' || !s.client_reference_id) continue;
+          const code = s.client_reference_id.split('-')[0].toLowerCase();
+          const tier = PRICE_TIER[s.checkout_url ? linkTier(s.checkout_url) : ''] || 'Membership';
+          (tierByCode[code] = tierByCode[code] || { total: 0 });
+          tierByCode[code][tier] = (tierByCode[code][tier] || 0) + 1;
+          tierByCode[code].total += 1;
+        }
+      } catch (e) {}
+
       // attached ambassador data
       for (const m of out) {
         const code = (await env.AMB.get(`ambuser:${m.username}`)) || null;
         m.ambassadorCode = code;
+        if (code) {
+          // per-code analytics: QR scans, carbon signups, tier signups from Stripe
+          m.scans = Number(await env.AMB.get('scan:' + code)) || 0;
+          m.carbonSignups = Number(await env.AMB.get('carbon-signup:' + code)) || 0;
+          m.tierSignups = tierByCode[code] || null;
+          m.refcount = await env.AMB.get('refcount:' + code);
+        }
         if (code) {
           m.adjust = await env.AMB.get(`adjust:${code}`, 'json') || null;
           m.payout = await env.AMB.get(`payout:${code}`, 'json') || null;

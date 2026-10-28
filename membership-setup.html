@@ -1850,6 +1850,10 @@
             var m = new URLSearchParams(window.location.search).get('ref');
             if (m && /^[A-Za-z0-9_-]{1,64}$/.test(m)) {
                 sessionStorage.setItem('sos_ref', m);
+                fetch('https://societyos-ambassador.societyos.workers.dev/api/scan', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: m, type: 'scan' })
+                }).catch(function(){});
             }
         } catch (e) { /* no-op */ }
     })();
