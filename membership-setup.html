@@ -1900,6 +1900,12 @@
                 { id: 'gold', label: 'Gold — Sovereign', subtitle: '$1,299 first year — Umbrel Pro + 2TB included · then $399/yr', logo: 'solana', type: 'tier', checkoutUrl: 'https://buy.stripe.com/00waEW2Pwa2Vb1s5Kk53O09' },
                 { id: 'ambassador-onyx', label: 'Onyx Ambassador', subtitle: '$1,499/yr · 70,000+ reach · 2 ads/mo · $25 residual referrals', logo: 'societyos', type: 'link', url: 'ambassadors.html' },
                 { id: 'ambassador-gold', label: 'Gold Ambassador', subtitle: '$2,499/yr · 1M+ national reach · 4 ads/mo · $40 residual referrals', logo: 'societyos', type: 'link', url: 'ambassadors.html' },
+            ]
+        },
+        2: {
+            prompt: 'Use SocietyOS on your devices',
+            subtitle: 'Select your platform, then your device — or bring your own',
+            options: [
                 // ── iPhone 18 Series ──
                 { id: 'iphone-18-pro', label: 'iPhone 18 Pro', subtitle: 'A20 Pro · 48MP Fusion · Sept 2026', logo: 'apple', type: 'phone', platform: 'apple' },
                 { id: 'iphone-18-promax', label: 'iPhone 18 Pro Max', subtitle: 'A20 Pro · Longest Battery · Sept 2026', logo: 'apple', type: 'phone', platform: 'apple' },
@@ -1916,7 +1922,7 @@
                 { id: 'byo-device', label: 'BYOD — Bring Your Own Device', subtitle: 'We recommend SocietyOS on current or SocietyOS-provided hardware for the best experience. Services are subject to individual hardware requirements — SocietyOS is not liable for hardware limitations on brought-your-own devices.', logo: 'skip', type: 'skip' },
             ]
         },
-        2: {
+        3: {
             prompt: 'Reserve your case style',
             subtitle: 'SocietyOS Case Collection — Coming 2027 · reserve your style',
             options: [
@@ -1991,7 +1997,7 @@
                 { id: 'raptic-s26u-aramid-fortune-black', label: 'Aramid Skin — Fortune/Black', subtitle: 'Coming 2027 · pre-order', type: 'magsafe', lifestyle: 'Ultra-Slim · Aero Woven Aramid', material: 'aramid', series: 's26', hasMagsafe: true, rapticSeries: 'Grid' },
             ]
         },
-        3: {
+        4: {
             prompt: 'Activate your SocietyOS Sovereign Wallet — launching in December',
             subtitle: 'Tap your Tangem card to your phone to pair — powered by Tangem EAL6+',
             options: [
@@ -2001,16 +2007,6 @@
                 { id: 'skip-wallet', label: 'Add Later', subtitle: 'Can activate anytime', logo: 'skip', type: 'skip' },
             ]
         },
-        4: {
-            prompt: 'Choose your membership',
-            subtitle: 'Launching in December — new users: select Add Later to continue',
-            options: [
-                { id: 'socialite-special', label: 'Socialite Special', subtitle: '$399 · 1yr Carbon Pro + SocietyOS STB included · Pre-launch', logo: 'societyos', type: 'tier', checkoutUrl: 'https://buy.stripe.com/4gM6oGfCi2AtedEc8I53O07' },
-                { id: 'carbon', label: 'Carbon Pro', subtitle: '$499 first year · then $399/yr · Maestro + sovereign AI', logo: 'societyos', type: 'tier', checkoutUrl: 'https://buy.stripe.com/9B6cN475M3ExglM5Kk53O06' },
-                { id: 'onyx', label: 'Onyx', subtitle: '$799 first year — hardware included · then $499/yr', logo: 'societyos', type: 'tier', checkoutUrl: 'https://buy.stripe.com/28EfZg89Q3Ex2uW5Kk53O08' },
-                { id: 'gold', label: 'GOLD', subtitle: '$1,299 first year — hardware included · then $399/yr', logo: 'solana', type: 'tier', checkoutUrl: 'https://buy.stripe.com/00waEW2Pwa2Vb1s5Kk53O09' },
-            ]
-        }
     };
 
     // Brand SVG logos
@@ -2258,9 +2254,9 @@
 
             const iconHTML = getLogoHTML(opt.logo || opt.type);
             // Show silhouettes on step 1 for foldable devices, and step 2 for all cases
-            const showSilhouette = (step === 2 && opt.id) || (step === 1 && (opt.type === 'foldable' || opt.type === 'foldable-wide' || opt.type === 'foldable-horizontal'));
+            const showSilhouette = (step === 3 && opt.id) || (step === 2 && (opt.type === 'foldable' || opt.type === 'foldable-wide' || opt.type === 'foldable-horizontal'));
             let silhouetteHTML = '';
-            if (step === 2 && opt.id) {
+            if (step === 3 && opt.id) {
                 silhouetteHTML = getCaseSilhouette(opt.id);
             } else if (step === 1 && opt.type === 'foldable') {
                 silhouetteHTML = caseSilhouettes.foldable;
@@ -2270,7 +2266,7 @@
                 silhouetteHTML = caseSilhouettes.foldable_horizontal;
             }
 
-            const caseImgSrc = (step === 2 && caseImageMap[opt.id]) ? caseImageMap[opt.id] : null;
+            const caseImgSrc = (step === 3 && caseImageMap[opt.id]) ? caseImageMap[opt.id] : null;
             const caseImgHTML = caseImgSrc ? `<div class="case-card-image"><img src="${caseImgSrc}" alt="${opt.label}" /></div>` : '';
 
             card.innerHTML = `
@@ -2435,27 +2431,25 @@ if (step === 4 && selections.membership) {
             if (opt.type === 'tier') { selections.membership = opt; selections.device = null; }
             else selections.device = opt;
         }
-        if (step === 2) { selections.case = opt; window.__caseLocked = true; document.getElementById('selection-grid').classList.add('case-locked'); }
-        if (step === 3) selections.wallet = opt;
+        if (step === 3) { selections.case = opt; window.__caseLocked = true; document.getElementById('selection-grid').classList.add('case-locked'); }
         if (step === 4) {
-            selections.membership = opt;
-            // Re-render accessories with tier discount
-            // Accessories rendering removed
+            selections.wallet = opt;
+            showSummary();
         }
 
         // Morph the bubble
         morphBubble(step, opt);
 
         // Show device render for device selection
-        if (step === 1) {
+        if (step === 2) {
             showDeviceRender(opt);
         }
-        if (step === 2) {
+        if (step === 3) {
             try { renderCaseInPreview(opt); } catch(e) { console.error('renderCaseInPreview error:', e); }
             // Auto-scroll to the Complete the Set section
             // Auto-scroll removed, 200);
         }
-        if (step === 3 && (opt.type === 'tangem' || opt.type === 'tangem-ring')) {
+        if (step === 4 && (opt.type === 'tangem' || opt.type === 'tangem-ring')) {
             // Show real Tangem product image
             deviceRender.style.display = 'flex';
             grid.style.display = 'none';
@@ -2487,7 +2481,7 @@ if (step === 4 && selections.membership) {
             // Morph to phone shape
             bubble.classList.add('morphed-phone');
             bubble.querySelector('.ai-bubble-mark').innerHTML = logos[opt.logo] ? logos[opt.logo].replace(/width="\d+"/, 'width="24"').replace(/height="\d+"/, 'height="24"') : '✓';
-        } else if (step === 2) {
+        } else if (step === 3) {
             bubble.classList.add('morphed-case');
             // Color the bubble based on case type
             if (opt.type === 'magsafe') {
@@ -3273,9 +3267,9 @@ var SOCIETYOS_ACCESSORIES = []; // Removed — accessories will return when real
 
     function isStepComplete(step) {
         if (step === 1) return selections.membership !== null || selections.device !== null;
-        if (step === 2) return selections.case !== null;
-        if (step === 3) return selections.wallet !== null;
-        if (step === 4) return selections.membership !== null;
+        if (step === 3) return selections.case !== null;
+        if (step === 4) return selections.wallet !== null;
+        if (step === 1) return selections.membership !== null || selections.device !== null;
         return false;
     }
 
@@ -3309,7 +3303,7 @@ var SOCIETYOS_ACCESSORIES = []; // Removed — accessories will return when real
         if (currentStep < 4) {
             currentStep++;
             // Skip step 2 (case selection) if device has no compatible cases
-            if (currentStep === 2 && !deviceHasCases(selections.device?.id)) {
+            if (currentStep === 3 && !deviceHasCases(selections.device?.id)) {
                 selections.case = null; // ensure no stale case
                 currentStep = 3;
             }
@@ -3343,7 +3337,7 @@ var SOCIETYOS_ACCESSORIES = []; // Removed — accessories will return when real
         if (currentStep > 1) {
             currentStep--;
             // Skip step 2 when going back if device has no compatible cases
-            if (currentStep === 2 && !deviceHasCases(selections.device?.id)) {
+            if (currentStep === 3 && !deviceHasCases(selections.device?.id)) {
                 currentStep = 1;
             }
             // Unlock hover when returning to step 2
