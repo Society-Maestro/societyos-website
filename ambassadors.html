@@ -239,26 +239,46 @@ const API = 'https://societyos-ambassador.societyos.workers.dev';
 let CODE = null;
 let AMB_DISCOUNT = null;
 
-// Ambassador checkout — passes discount code + referral code to Stripe
+// Ambassador checkout — creates a Stripe Checkout Session via the ambassador worker
+// (Payment Links don't support promo codes reliably; Checkout Sessions do)
 function ambCheckout(tier) {
-  var base = tier === 'onyx'
-    ? 'https://buy.stripe.com/dRm7sKcq65MF8TkgoY53O0g'
-    : 'https://buy.stripe.com/4gM4gyahYfnf5H81u453O0h';
-  var params = [];
-  // Pass referral code if available
-  try {
-    var refCode = sessionStorage.getItem('sos_ref');
-    if (refCode && /^[A-Za-z0-9_-]{1,64}$/.test(refCode)) {
-      params.push('client_reference_id=' + encodeURIComponent(refCode + '-' + Date.now()));
-    }
-  } catch(e) {}
-  // Pass discount code if applied
+  var promoCode = '';
   var dcInput = document.getElementById('ambDiscountCode');
-  if (dcInput && dcInput.value.trim()) {
-    params.push('prefilled_promotion_code=' + encodeURIComponent(dcInput.value.trim()));
-  }
-  if (params.length) base += '?' + params.join('&');
-  window.open(base, '_self');
+  if (dcInput && dcInput.value.trim()) promoCode = dcInput.value.trim();
+  
+  var refCode = '';
+  try { refCode = sessionStorage.getItem('sos_ref') || ''; } catch(e) {}
+  
+  // Map tier to the API tier name
+  var apiTier = tier === 'onyx' ? 'ambassador-onyx' : 'ambassador-gold';
+  
+  // Show loading state on the clicked button
+  var btns = document.querySelectorAll('#ambPurchaseBtns button');
+  btns.forEach(function(b) { b.style.opacity = '0.5'; b.style.pointerEvents = 'none'; });
+  
+  fetch('https://societyos-ambassador.societyos.workers.dev/api/checkout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ tier: apiTier, promoCode: promoCode, refCode: refCode })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.ok && data.url) {
+      window.open(data.url, '_self');
+    } else {
+      btns.forEach(function(b) { b.style.opacity = '1'; b.style.pointerEvents = 'auto'; });
+      var msg = document.getElementById('ambDiscountMsg');
+      if (msg) {
+        msg.style.display = 'block';
+        msg.textContent = 'Something went wrong. Please try again.';
+        msg.style.color = '#ef4444';
+      }
+    }
+  })
+  .catch(function(err) {
+    btns.forEach(function(b) { b.style.opacity = '1'; b.style.pointerEvents = 'auto'; });
+    console.error('Checkout error:', err);
+  });
 }
 
 // Apply discount code — just validates non-empty and shows confirmation

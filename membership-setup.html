@@ -3300,15 +3300,32 @@ var SOCIETYOS_ACCESSORIES = []; // Removed — accessories will return when real
     }
 
     function goNext() {
-        // Ambassador tiles go straight to Stripe checkout — skip device/case/wallet steps
-        if (selections.membership && selections.membership.checkoutUrl && (selections.membership.id === 'ambassador-onyx' || selections.membership.id === 'ambassador-gold')) {
-            var checkoutUrl = selections.membership.checkoutUrl;
-            var refCode = sessionStorage.getItem('sos_ref');
-            if (refCode && /^[A-Za-z0-9_-]{1,64}$/.test(refCode)) {
-                checkoutUrl += (checkoutUrl.indexOf('?') === -1 ? '?' : '&') +
-                    'client_reference_id=' + encodeURIComponent(refCode + '-' + Date.now());
-            }
-            window.open(checkoutUrl, '_self');
+        // Ambassador tiles go straight to Stripe checkout via API — skip device/case/wallet steps
+        // Uses Checkout Session (not Payment Link) so promo codes work reliably
+        if (selections.membership && (selections.membership.id === 'ambassador-onyx' || selections.membership.id === 'ambassador-gold')) {
+            var ambRefCode = '';
+            try { ambRefCode = sessionStorage.getItem('sos_ref') || ''; } catch(e) {}
+            var ambApiTier = selections.membership.id; // 'ambassador-onyx' or 'ambassador-gold'
+            // Disable the next button during redirect
+            if (btnNext) { btnNext.style.opacity = '0.5'; btnNext.style.pointerEvents = 'none'; }
+            fetch('https://societyos-ambassador.societyos.workers.dev/api/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tier: ambApiTier, refCode: ambRefCode })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.ok && data.url) {
+                    window.open(data.url, '_self');
+                } else {
+                    if (btnNext) { btnNext.style.opacity = '1'; btnNext.style.pointerEvents = 'auto'; }
+                    console.error('SocietyOS checkout error:', data.error);
+                }
+            })
+            .catch(function(err) {
+                if (btnNext) { btnNext.style.opacity = '1'; btnNext.style.pointerEvents = 'auto'; }
+                console.error('SocietyOS checkout network error:', err);
+            });
             return;
         }
         if (currentStep < 4) {
