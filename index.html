@@ -826,7 +826,7 @@
         @media (max-width: 768px) {
             .footer-grid { grid-template-columns: 1fr 1fr; }
             .platforms-row { grid-template-columns: repeat(2, 1fr); }
-            .features-grid { grid-template-columns: 1fr; }
+            .feature-grid, .features-grid { grid-template-columns: 1fr; }
         }
         .footer-brand h4 {
             font-family: var(--font-display);
@@ -1461,6 +1461,74 @@
       /* ═══ CONTAINMENT LAW — nothing escapes its box ═══ */
   html, body { overflow-x: clip; }
   .pricing-card, .selection-card, .stat, .card, .opt, .panel, .info-box, .pricing-grid, .content { overflow-x: clip; min-width: 0; }
+
+  /* ═══════════════════════════════════════════════════
+     NODE INFRASTRUCTURE — hierarchy visual
+     ═══════════════════════════════════════════════════ */
+  .node-hierarchy {
+    max-width: 900px;
+    margin: 0 auto 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    overflow-x: clip;
+  }
+  .node-tier {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 2rem;
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    overflow-x: clip;
+    min-width: 0;
+  }
+  .node-tier-founders {
+    border-color: var(--border-glow);
+    box-shadow: 0 0 30px var(--society-gold-glow);
+  }
+  .node-tier-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+    max-width: 700px;
+    overflow-x: clip;
+  }
+  .node-tier-ambassador { max-width: none; }
+  .node-tier-socialite { max-width: 600px; }
+  .node-tier-label {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--society-gold-light);
+    margin-bottom: 0.25rem;
+  }
+  .node-tier-count {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent-green);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+  .node-tier-desc {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .node-tier-arrow {
+    font-size: 1.3rem;
+    color: var(--society-gold);
+    opacity: 0.5;
+    line-height: 1;
+  }
+  @media (max-width: 768px) {
+    .node-tier-group { grid-template-columns: 1fr; }
+    .node-tier { padding: 1.25rem 1.25rem; }
+  }
 </style>
 </head>
 <body>
@@ -1760,6 +1828,81 @@
                 <div class="eco-node eco-node-3">⛓️</div>
                 <div class="eco-node eco-node-4">🧠</div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     NODE INFRASTRUCTURE
+     ═══════════════════════════════════════════════════ -->
+<div class="section" id="node-infrastructure">
+    <div class="section-label">Node Infrastructure</div>
+    <h2 class="section-title">Built by the people.<br>For the people.</h2>
+    <p class="section-subtitle">
+        SocietyOS runs on a three-tier node architecture — Founders, Ambassadors, and Socialites.
+        Not a platform that extracts value from its users. A network where the people who build it
+        own it, earn from it, and govern it together.
+    </p>
+
+    <!-- Hierarchy visual -->
+    <div class="node-hierarchy">
+        <div class="node-tier node-tier-founders">
+            <div class="node-tier-label">Founders Node</div>
+            <div class="node-tier-count">11 per release cycle</div>
+            <div class="node-tier-desc">Scarce infrastructure assets. Transferable with company approval. New nodes are produced <strong>only</strong> when all existing Founders Nodes reach full capacity — provable, verifiable scarcity.</div>
+        </div>
+        <div class="node-tier-arrow">&darr;</div>
+        <div class="node-tier-group">
+            <div class="node-tier node-tier-ambassador">
+                <div class="node-tier-label">Onyx Ambassador</div>
+                <div class="node-tier-count">11 per Founders Node</div>
+                <div class="node-tier-desc">Operates a node. Manages 1,000 account slots. Earns residual income for every Socialite — for the life of the customer.</div>
+            </div>
+            <div class="node-tier node-tier-ambassador">
+                <div class="node-tier-label">Gold Ambassador</div>
+                <div class="node-tier-count">11 per Founders Node</div>
+                <div class="node-tier-desc">Operates a node. Manages 3,000 account slots. Earns residual income for every Socialite — for the life of the customer.</div>
+            </div>
+        </div>
+        <div class="node-tier-arrow">&darr;</div>
+        <div class="node-tier node-tier-socialite">
+            <div class="node-tier-label">Socialites</div>
+            <div class="node-tier-count">1,000 Onyx &middot; 3,000 Gold per node</div>
+            <div class="node-tier-desc">Members who hold accounts on Ambassador-operated nodes. Their data is sovereign. Their membership is finite and provably scarce — not account number 48 million on a platform that can create infinite accounts.</div>
+        </div>
+    </div>
+
+    <!-- Why it works -->
+    <div class="feature-grid" style="margin-top: 3rem;">
+        <div class="feature-card">
+            <div class="feature-icon">&#128208;</div>
+            <h3>Provable Scarcity</h3>
+            <p>Only 11 Founders Nodes per release cycle. New nodes are produced <strong>only</strong> when every existing node is at full capacity. No hidden inflation, no secret minting. The supply is mathematically provable and verifiable by anyone.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">&#129309;</div>
+            <h3>Aligned Incentives</h3>
+            <p>Ambassadors earn residual income for every Socialite they bring — for the life of the customer. They are financially motivated to recruit, support, and retain members. Every layer adds value to the one below it. No passive middlemen skimming value.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">&#127963;</div>
+            <h3>Community Governance</h3>
+            <p>Founders Nodes are transferable with company approval — not freely tradeable, not locked forever. SocietyOS retains a right of refusal, preventing hostile acquisitions while keeping operator investment liquid. A responsible ownership class, accountable to the network.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">&#128737;</div>
+            <h3>Sovereignty by Design</h3>
+            <p>Socialite accounts live on Ambassador-operated nodes, not in a corporate data center. Ambassadors are stewards, not landlords. No single entity can monetize or exploit member data because the architecture disperses control across the entire node network.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">&#127793;</div>
+            <h3>Growth Earned, Not Manufactured</h3>
+            <p>Growth happens at the speed of real demand, not investor pressure. Every operator is motivated to fill their node because capacity must be full before new nodes release. No boom-and-bust. No over-expansion. The network grows because people want in.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">&#9937;</div>
+            <h3>For the People, By the People</h3>
+            <p>Founders are not investors in a boardroom — they are operators in the field. Ambassadors are not salespeople on commission — they are community builders with a stake. Socialites are not just users — they are members of a finite, valuable community they were personally invited into.</p>
         </div>
     </div>
 </div>

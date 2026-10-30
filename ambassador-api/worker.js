@@ -205,6 +205,61 @@ export default {
       return json({ ok: true, username, code: raw });
     }
 
+    // ---- POST /api/checkout { tier, promoCode, refCode } — create Stripe Checkout Session with optional promo code ----
+    // Payment Links don't support promotion codes reliably; this creates a Checkout Session instead
+    if (url.pathname === '/api/checkout' && request.method === 'POST') {
+      const body = await request.json().catch(() => ({}));
+      const tier = String(body.tier || '').trim().toLowerCase();
+      const promoCode = String(body.promoCode || '').trim();
+      const refCode = String(body.refCode || '').trim();
+
+      // Price IDs for Ambassador first-year (one-time)
+      const PRICE_MAP = {
+        'ambassador-onyx': 'price_1UWF9pBjdoORLnVav1YCxpgv',  // $2,999.95 one-time
+        'ambassador-gold': 'price_1UWF9pBjdoORLnVaPWk4sm24',  // $4,499.95 one-time
+      };
+      const priceId = PRICE_MAP[tier];
+      if (!priceId) return json({ ok: false, error: 'Invalid tier' }, 400);
+
+      // Build checkout session params
+      const params = new URLSearchParams();
+      params.append('line_items[0][price]', priceId);
+      params.append('line_items[0][quantity]', '1');
+      params.append('mode', 'payment');
+      params.append('success_url', 'https://societyos.world/success');
+      params.append('cancel_url', 'https://societyos.world/cancel');
+
+      // Attach referral code if valid
+      if (refCode && /^[A-Za-z0-9_-]{1,64}$/.test(refCode)) {
+        params.append('client_reference_id', refCode + '-' + Date.now());
+      }
+
+      // Look up promotion code ID if provided
+      if (promoCode) {
+        try {
+          const promoRes = await fetch('https://api.stripe.com/v1/promotion_codes?code=' + encodeURIComponent(promoCode) + '&active=true', {
+            headers: { Authorization: 'Bearer ' + env.STRIPE_KEY },
+          });
+          const promoData = await promoRes.json();
+          if (promoData.data && promoData.data.length > 0) {
+            params.append('discounts[0][promotion_code]', promoData.data[0].id);
+          }
+        } catch (e) { /* promo code lookup failed — proceed without discount */ }
+      }
+
+      const csRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + env.STRIPE_KEY, 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params.toString(),
+      });
+      const csData = await csRes.json();
+      if (csData.url) {
+        return json({ ok: true, url: csData.url });
+      } else {
+        return json({ ok: false, error: csData.error?.message || 'Failed to create checkout session' }, 500);
+      }
+    }
+
     // ---- POST /api/scan { code, type } — QR/link scan + Carbon-signup tracking ----
     if (url.pathname === '/api/scan' && request.method === 'POST') {
       const body = await request.json().catch(() => ({}));
