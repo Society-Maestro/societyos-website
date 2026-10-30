@@ -3300,6 +3300,17 @@ var SOCIETYOS_ACCESSORIES = []; // Removed — accessories will return when real
     }
 
     function goNext() {
+        // Ambassador tiles go straight to Stripe checkout — skip device/case/wallet steps
+        if (selections.membership && selections.membership.checkoutUrl && (selections.membership.id === 'ambassador-onyx' || selections.membership.id === 'ambassador-gold')) {
+            var checkoutUrl = selections.membership.checkoutUrl;
+            var refCode = sessionStorage.getItem('sos_ref');
+            if (refCode && /^[A-Za-z0-9_-]{1,64}$/.test(refCode)) {
+                checkoutUrl += (checkoutUrl.indexOf('?') === -1 ? '?' : '&') +
+                    'client_reference_id=' + encodeURIComponent(refCode + '-' + Date.now());
+            }
+            window.open(checkoutUrl, '_self');
+            return;
+        }
         if (currentStep < 4) {
             currentStep++;
             // Skip step 2 (case selection) if device has no compatible cases
