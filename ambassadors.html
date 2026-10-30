@@ -68,9 +68,17 @@
       <div class="stat"><b style="color:var(--gold)">Repeat business</b><small>Offer members a discount — continued traffic, all year</small></div>
     </div>
     <div class="goal-line" style="margin-top:6px"><b>The math is simple:</b> refer 100 Socialites and earn $2,500–$4,000 every year — whether or not you refer anyone else that year. Refer 500 and earn $12,500–$20,000. Gold Ambassadors are awarded a territory of up to 3,000 Socialites per Node. <b>Plus</b>: offer SocietyOS members a discount at your business and SocietyOS drives repeat customers and continued traffic straight to you — members prove membership with their Tangem card or the app, and your QR tracking records every visit.</div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;align-items:center">
-      <a href="https://buy.stripe.com/9B67sK89Q5MF3z01u453O0e" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,var(--gold),#d4af37);color:#0d1f2d;font-weight:700;border-radius:8px;text-decoration:none;font-size:15px;letter-spacing:0.02em">Become an Onyx Ambassador — $2,999.95</a>
-      <a href="https://buy.stripe.com/6oU9AS89Q1wp1qS1u453O0f" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,var(--gold),#d4af37);color:#0d1f2d;font-weight:700;border-radius:8px;text-decoration:none;font-size:15px;letter-spacing:0.02em">Become a Gold Ambassador — $4,499.95</a>
+    <div style="margin-top:20px;padding:16px 20px;border:1px solid var(--bd);border-radius:10px;background:rgba(197,160,89,0.04)">
+      <label style="font-size:13px;color:var(--fg);font-weight:600;margin-bottom:6px;display:block">Have a discount code?</label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <input autocapitalize="none" autocorrect="off" spellcheck="false" id="ambDiscountCode" placeholder="Enter your code" style="flex:1;min-width:160px;padding:8px 14px;border:1px solid var(--bd);border-radius:6px;background:var(--bg-card);color:var(--fg);font-size:14px">
+        <button onclick="applyAmbDiscount()" style="padding:8px 20px;background:var(--bg-elevated);color:var(--gold);border:1px solid var(--gold);border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:0.02em;transition:all 0.3s ease">Apply Code</button>
+      </div>
+      <div id="ambDiscountMsg" style="margin-top:8px;font-size:12px;color:var(--gold);display:none"></div>
+    </div>
+    <div id="ambPurchaseBtns" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;align-items:center">
+      <button onclick="ambCheckout('onyx')" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,var(--gold),#d4af37);color:#0d1f2d;font-weight:700;border-radius:8px;border:none;font-size:15px;letter-spacing:0.02em;cursor:pointer;transition:all 0.3s ease">Become an Onyx Ambassador — $2,999.95</button>
+      <button onclick="ambCheckout('gold')" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,var(--gold),#d4af37);color:#0d1f2d;font-weight:700;border-radius:8px;border:none;font-size:15px;letter-spacing:0.02em;cursor:pointer;transition:all 0.3s ease">Become a Gold Ambassador — $4,499.95</button>
     </div>
     <button class="ghost" style="margin-top:16px" onclick="document.getElementById('loginCard').scrollIntoView({behavior:'smooth'})">Already an Ambassador? Log in below ↓</button>
   </div>
@@ -229,6 +237,47 @@
 <script>
 const API = 'https://societyos-ambassador.societyos.workers.dev';
 let CODE = null;
+let AMB_DISCOUNT = null;
+
+// Ambassador checkout — passes discount code + referral code to Stripe
+function ambCheckout(tier) {
+  var base = tier === 'onyx'
+    ? 'https://buy.stripe.com/9B67sK89Q5MF3z01u453O0e'
+    : 'https://buy.stripe.com/6oU9AS89Q1wp1qS1u453O0f';
+  var params = [];
+  // Pass referral code if available
+  try {
+    var refCode = sessionStorage.getItem('sos_ref');
+    if (refCode && /^[A-Za-z0-9_-]{1,64}$/.test(refCode)) {
+      params.push('client_reference_id=' + encodeURIComponent(refCode + '-' + Date.now()));
+    }
+  } catch(e) {}
+  // Pass discount code if applied
+  var dcInput = document.getElementById('ambDiscountCode');
+  if (dcInput && dcInput.value.trim()) {
+    params.push('prefilled_promotion_code=' + encodeURIComponent(dcInput.value.trim()));
+  }
+  if (params.length) base += '?' + params.join('&');
+  window.open(base, '_self');
+}
+
+// Apply discount code — just validates non-empty and shows confirmation
+function applyAmbDiscount() {
+  var input = document.getElementById('ambDiscountCode');
+  var msg = document.getElementById('ambDiscountMsg');
+  if (!input || !msg) return;
+  var code = input.value.trim();
+  if (!code) {
+    msg.style.display = 'block';
+    msg.textContent = 'Enter a code first.';
+    msg.style.color = '#ef4444';
+    return;
+  }
+  AMB_DISCOUNT = code;
+  msg.style.display = 'block';
+  msg.textContent = 'Code "' + code + '" applied — it will be entered at checkout.';
+  msg.style.color = 'var(--gold)';
+}
 (function(){ try { const c = sessionStorage.getItem('sos_amb_code'); if (c) { CODE = c; sessionStorage.removeItem('sos_amb_code'); document.getElementById('loginCard').classList.add('hidden'); document.getElementById('dash').classList.remove('hidden'); setTimeout(loadStats, 0); } } catch(e){} })();
 
 async function userLogin(){
