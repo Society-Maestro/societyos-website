@@ -1594,7 +1594,7 @@
     </div>
 
     <!-- Progress steps -->
-    <div class="steps">
+    <div class="steps" style="display:none;">
         <div class="step active" id="step-1">
             <div class="step-dot">1</div>
             <span class="step-label">Device</span>
@@ -1632,8 +1632,8 @@
 
             <div class="nfc-pulse" id="nfc-pulse"></div>
 
-            <div class="stage-prompt" id="stage-prompt">Select your device</div>
-            <div class="stage-subtitle" id="stage-subtitle">The bubble will morph to match your world</div>
+            <div class="stage-prompt" id="stage-prompt">Choose your SocietyOS</div>
+            <div class="stage-subtitle" id="stage-subtitle">Select your membership — then check out in seconds</div>
         </div>
 
         <!-- Selection grid — changes based on step -->
@@ -1674,6 +1674,11 @@
     <div class="action-bar">
         <button class="btn btn-ghost" id="btn-back" style="display:none;" onclick="goBack()">← Back</button>
         <button class="btn btn-primary" id="btn-next" disabled onclick="goNext()">Continue →</button>
+    </div>
+
+    <!-- Optional: SocietyOS Cases — Available on your preferred mobile device -->
+    <div style="text-align:center; margin-top:1.5rem; padding-bottom:2rem;">
+        <a href="cases.html" style="color: var(--society-gold); text-decoration: none; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem; opacity: 0.85; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">SocietyOS Cases — Available on your preferred mobile device →</a>
     </div>
 
     <!-- Completion screen — shows Silo credentials after setup -->
@@ -3328,36 +3333,19 @@ var SOCIETYOS_ACCESSORIES = []; // Removed — accessories will return when real
             });
             return;
         }
-        if (currentStep < 4) {
-            currentStep++;
-            // Skip step 2 (case selection) if device has no compatible cases
-            if (currentStep === 3 && !deviceHasCases(selections.device?.id)) {
-                selections.case = null; // ensure no stale case
-                currentStep = 3;
+        // All tiers go straight to Stripe checkout — no device/case/wallet steps
+        if (selections.membership && selections.membership.checkoutUrl) {
+            var checkoutUrl = selections.membership.checkoutUrl;
+            var refCode = '';
+            try { refCode = sessionStorage.getItem('sos_ref') || ''; } catch(e) {}
+            if (refCode && /^[A-Za-z0-9_-]{1,64}$/.test(refCode)) {
+                checkoutUrl += (checkoutUrl.indexOf('?') === -1 ? '?' : '&') +
+                    'client_reference_id=' + encodeURIComponent(refCode + '-' + Date.now());
             }
-            try { renderStep(currentStep); } catch(e) { console.error('SocietyOS renderStep error:', e); }
-            // Auto-scroll to top of content area on step change
-            setTimeout(function() {
-                var contentEl = document.querySelector('.content') || document.querySelector('main') || document.body;
-                if (contentEl) {
-                    contentEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                } else {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            }, 100);
+            if (btnNext) { btnNext.style.opacity = '0.5'; btnNext.style.pointerEvents = 'none'; }
+            window.open(checkoutUrl, '_self');
         } else {
-            // Complete — redirect to Stripe payment link for selected tier
-            if (selections.membership && selections.membership.checkoutUrl) {
-                var checkoutUrl = selections.membership.checkoutUrl;
-                var refCode = sessionStorage.getItem('sos_ref');
-                if (refCode && /^[A-Za-z0-9_-]{1,64}$/.test(refCode)) {
-                    checkoutUrl += (checkoutUrl.indexOf('?') === -1 ? '?' : '&') +
-                        'client_reference_id=' + encodeURIComponent(refCode + '-' + Date.now());
-                }
-                window.open(checkoutUrl, '_self');
-            } else {
-                showCompletion();
-            }
+            showCompletion();
         }
     }
 

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocietyOS Case Collection — Available on your preferred mobile device</title>
+    <meta name="description" content="SocietyOS Case Collection — premium cases for your preferred mobile device. Coming 2027.">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <style>
+        :root {
+            --bg-primary: #0d1f2d;
+            --bg-secondary: #122844;
+            --bg-elevated: #1a3358;
+            --bg-card: #152a45;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-glow: rgba(197, 160, 89, 0.3);
+            --society-gold: #c5a059;
+            --society-gold-light: #e5c585;
+            --society-gold-glow: rgba(197, 160, 89, 0.15);
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b8;
+            --text-tertiary: #6a6a82;
+            --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            overflow-x: clip;
+        }
+
+        /* ── Nav ── */
+        .nav {
+            padding: 1.25rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(13, 31, 45, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.02em;
+        }
+        .nav-logo img {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            object-fit: contain;
+        }
+        .nav-back {
+            color: var(--society-gold);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 0.5rem 1.25rem;
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+        .nav-back:hover {
+            background: var(--society-gold-glow);
+            border-color: var(--society-gold);
+        }
+
+        /* ── Hero ── */
+        .hero {
+            text-align: center;
+            padding: 3.5rem 2rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border-radius: 999px;
+            background: var(--society-gold-glow);
+            border: 1px solid var(--border-glow);
+            color: var(--society-gold);
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            margin-bottom: 1.25rem;
+        }
+        .hero-badge .pulse {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--society-gold);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .hero h1 {
+            font-family: 'EB Garamond', Georgia, serif;
+            font-size: 2.4rem;
+            line-height: 1.15;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        .hero h1 .gold { color: var(--society-gold); }
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        /* ── Device type chooser ── */
+        .chooser {
+            max-width: 640px;
+            margin: 2.5rem auto 0;
+            padding: 0 2rem;
+        }
+        .chooser-label {
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 1.25rem;
+        }
+        .chooser-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .chooser-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.75rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .chooser-btn:hover {
+            border-color: var(--border-glow);
+            transform: translateY(-2px);
+        }
+        .chooser-btn.active {
+            border-color: var(--society-gold);
+            background: var(--society-gold-glow);
+        }
+        .chooser-btn .chooser-sub {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: var(--text-tertiary);
+            margin-top: 0.4rem;
+        }
+
+        /* ── Device models ── */
+        .device-section {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: none;
+        }
+        .device-section.visible { display: block; }
+
+        .device-group {
+            margin-bottom: 3rem;
+        }
+        .device-group-title {
+            font-family: 'EB Garamond', Georgia, serif;
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            padding-bottom: 0.6rem;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 1.5rem;
+        }
+        .device-group-sub {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+            margin-left: 0.5rem;
+        }
+
+        /* ── Case grid ── */
+        .case-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.25rem;
+        }
+        .case-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: default;
+            min-width: 0;
+        }
+        .case-card:hover {
+            border-color: var(--border-glow);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        }
+        .case-card-img {
+            width: 100%;
+            aspect-ratio: 1;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .case-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .case-card-body {
+            padding: 0.9rem 1rem 1.1rem;
+        }
+        .case-card-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.3rem;
+            line-height: 1.3;
+        }
+        .case-card-lifestyle {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.45;
+            margin-bottom: 0.6rem;
+        }
+        .case-card-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--society-gold);
+            background: var(--society-gold-glow);
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            letter-spacing: 0.03em;
+        }
+
+        /* ── Coming soon banner ── */
+        .coming-banner {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 1rem;
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .coming-banner a {
+            color: var(--society-gold);
+            text-decoration: none;
+        }
+        .coming-banner a:hover {
+            text-decoration: underline;
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-tertiary);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border-subtle);
+            margin-top: 2rem;
+        }
+        .footer a {
+            color: var(--society-gold);
+            text-decoration: none;
+        }
+
+        /* ── Mobile ── */
+        @media (max-width: 768px) {
+            .nav { padding: 1rem 1.25rem; }
+            .hero { padding: 2.5rem 1.25rem 1.5rem; }
+            .hero h1 { font-size: 1.85rem; }
+            .hero p { font-size: 0.95rem; }
+            .chooser { padding: 0 1.25rem; }
+            .chooser-buttons { grid-template-columns: 1fr; }
+            .device-section { padding: 1.5rem 1.25rem; }
+            .case-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 0.85rem;
+            }
+            .case-card-name { font-size: 0.82rem; }
+            .case-card-lifestyle { font-size: 0.72rem; }
+        }
+        @media (max-width: 480px) {
+            .case-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav class="nav">
+    <a href="membership-setup.html" class="nav-logo">
+        <img src="assets/societyos-ares-4.png" alt="SocietyOS">
+        SocietyOS
+    </a>
+    <a href="membership-setup.html" class="nav-back">← Back to SocietyOS</a>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+    <div class="hero-badge">
+        <span class="pulse"></span>
+        SocietyOS Case Collection · Coming 2027
+    </div>
+    <h1>Available on your <span class="gold">preferred mobile device</span></h1>
+    <p>Select your device type, then browse the SocietyOS Case Collection — premium aramid, leather, and clear cases designed for your phone.</p>
+</section>
+
+<!-- ── Device type chooser ── -->
+<div class="chooser">
+    <div class="chooser-label">Choose your device type</div>
+    <div class="chooser-buttons">
+        <div class="chooser-btn" id="btn-apple" onclick="selectPlatform('apple')">
+            Apple
+            <span class="chooser-sub">iPhone 17 & 18 Series</span>
+        </div>
+        <div class="chooser-btn" id="btn-android" onclick="selectPlatform('android')">
+            Android
+            <span class="chooser-sub">Samsung & Compatible</span>
+        </div>
+    </div>
+</div>
+
+<!-- ── Apple device section ── -->
+<div class="device-section" id="section-apple">
+    <!-- Populated by JS -->
+</div>
+
+<!-- ── Android device section ── -->
+<div class="device-section" id="section-android">
+    <!-- Populated by JS -->
+</div>
+
+<!-- ── Coming soon banner ── -->
+<div class="coming-banner" id="coming-banner" style="display:none;">
+    <p>The SocietyOS Case Collection launches in 2027.</p>
+    <p style="margin-top:0.5rem;">Ready to join SocietyOS? <a href="membership-setup.html">Get started →</a></p>
+</div>
+
+<!-- ── Footer ── -->
+<div class="footer">
+    <p>SocietyOS &mdash; Sovereign people-driven OS. <a href="membership-setup.html">Join the Society →</a></p>
+</div>
+
+<script>
+// ── Case data (grouped by platform and device) ──
+// Manufacturer names appear here only to match cases to compatible devices.
+var CASE_DATA = {
+    apple: [
+        {
+            group: 'iPhone 18 Pro',
+            sub: '6.3" display',
+            cases: [
+                { id: 'raptic-i18p-dual-ultra-valor', name: 'Aramid Dual Ultra — Grid Valor', lifestyle: 'Full Aramid · Tactile Woven · Narrow Camera Rim', img: 'case-images/raptic-i18p-dual-ultra-valor.jpg' },
+                { id: 'raptic-i18p-dual-ultra-scepter', name: 'Aramid Dual Ultra — Scepter', lifestyle: 'Full Aramid · 24K Matte Gold Plating', img: 'case-images/raptic-i18p-dual-ultra-scepter.jpg' },
+                { id: 'raptic-i18p-dual-ultra-amber', name: 'Aramid Dual Ultra — Serenity Amber', lifestyle: 'KeZhi Weaving · Metal Camera Lens Frame', img: 'case-images/raptic-i18p-dual-ultra-amber.jpg' },
+                { id: 'raptic-i18p-dual-ultra-emerald', name: 'Aramid Dual Ultra — Serenity Emerald', lifestyle: 'KeZhi Weaving · Metal Camera Lens Frame', img: 'case-images/raptic-i18p-dual-ultra-emerald.jpg' },
+                { id: 'raptic-i18p-skin-valor', name: 'Aramid Skin — Grid Valor', lifestyle: 'Ultra-Thin · Gold Thread Weaving', img: 'case-images/raptic-i18p-skin-valor.jpg' },
+                { id: 'raptic-i18p-skin-wisdom', name: 'Aramid Skin — Grid Wisdom', lifestyle: 'Ultra-Thin · KeZhi Weaving', img: 'case-images/raptic-i18p-skin-wisdom.jpg' },
+                { id: 'raptic-i18p-skin-amber', name: 'Aramid Skin — Serenity Amber', lifestyle: 'Ultra-Thin · KeZhi Weaving', img: 'case-images/raptic-i18p-skin-amber.jpg' },
+                { id: 'raptic-i18p-skin-emerald', name: 'Aramid Skin — Serenity Emerald', lifestyle: 'Ultra-Thin · KeZhi Weaving', img: 'case-images/raptic-i18p-skin-emerald.jpg' },
+                { id: 'raptic-i18p-skin-mondrian', name: 'Aramid Skin — Mondrian', lifestyle: 'Ultra-Thin · Minimalist Aesthetics', img: 'case-images/raptic-i18p-skin-mondrian.jpg' },
+                { id: 'raptic-i18p-dual-valor', name: 'Aramid Dual — Grid Valor', lifestyle: 'Four-Corner Drop Protection · Soft Bumper', img: 'case-images/raptic-i18p-dual-valor.jpg' },
+                { id: 'raptic-i18p-dual-wisdom', name: 'Aramid Dual — Grid Wisdom', lifestyle: 'Four-Corner Drop Protection · Soft Bumper', img: 'case-images/raptic-i18p-dual-wisdom.jpg' },
+                { id: 'raptic-i18p-nano-cherry', name: 'Urban Nano — Dark Cherry', lifestyle: 'Ultra-Slim 1.6mm · Premium PU Leather', img: 'case-images/raptic-i18p-nano-cherry.jpg' },
+                { id: 'raptic-i18p-nano-black', name: 'Urban Nano — Stellar Black', lifestyle: 'Ultra-Slim 1.6mm · Premium PU Leather', img: 'case-images/raptic-i18p-nano-black.jpg' },
+                { id: 'raptic-i18p-nano-white', name: 'Urban Nano — Plume White', lifestyle: 'Ultra-Slim 1.6mm · Premium PU Leather', img: 'case-images/raptic-i18p-nano-white.jpg' },
+                { id: 'raptic-i18p-folio-black', name: 'Urban Folio — Black', lifestyle: 'Military-Grade · Slim Front Cover', img: 'case-images/raptic-i18p-folio-black.jpg' },
+                { id: 'raptic-i18p-air-stand-clear', name: 'Air Stand — Clear', lifestyle: 'Military-Grade · 360° Kickstand', img: 'case-images/raptic-i18p-air-stand-clear.jpg' },
+                { id: 'raptic-i18p-air-stand-burgundy', name: 'Air Stand — Burgundy', lifestyle: 'Military-Grade · Burgundy Bumper', img: 'case-images/raptic-i18p-air-stand-burgundy.jpg' },
+                { id: 'raptic-i18p-air-clear-clear', name: 'Air Clear — Clear', lifestyle: 'Quad-Corner Airbag · >95% Transmittance', img: 'case-images/raptic-i18p-air-clear-clear.jpg' },
+                { id: 'raptic-i18p-air-clear-burgundy', name: 'Air Clear — Burgundy', lifestyle: 'Quad-Corner Airbag · Burgundy Accents', img: 'case-images/raptic-i18p-air-clear-burgundy.jpg' },
+                { id: 'raptic-i18p-shield-evo-starfall', name: 'Shield Evo — Starfall', lifestyle: '3m Military-Grade · Multi-Ap Tech', img: 'case-images/raptic-i18p-shield-evo-starfall.jpg' },
+                { id: 'raptic-i18p-shield-evo-gold', name: 'Shield Evo — Titan Gold', lifestyle: '3m Military-Grade · Metal Buttons', img: 'case-images/raptic-i18p-shield-evo-gold.jpg' },
+                { id: 'raptic-i18p-shield-evo-onyx', name: 'Shield Evo — Onyx', lifestyle: '3m Military-Grade · Metal Buttons', img: 'case-images/raptic-i18p-shield-evo-onyx.jpg' }
+            ]
+        },
+        {
+            group: 'iPhone Duo',
+            sub: 'Foldable · 7.8" display',
+            cases: [
+                { id: 'raptic-ifold-skinpro-valor', name: 'Aramid Skin-Pro — Grid Valor', lifestyle: 'Leather Hinge Protection · Magnetic Adsorption', img: 'case-images/raptic-ifold-skinpro-valor.jpg' },
+                { id: 'raptic-ifold-skinpro-wisdom', name: 'Aramid Skin-Pro — Grid Wisdom', lifestyle: 'Leather Hinge Protection · KeZhi Weaving', img: 'case-images/raptic-ifold-skinpro-wisdom.jpg' },
+                { id: 'raptic-ifold-skinpro-rise', name: 'Aramid Skin-Pro — Rise', lifestyle: 'Leather Hinge Protection · Gold Thread', img: 'case-images/raptic-ifold-skinpro-rise.jpg' },
+                { id: 'raptic-ifold-skinpro-amber', name: 'Aramid Skin-Pro — Serenity Amber', lifestyle: 'Leather Hinge Protection · KeZhi Weaving', img: 'case-images/raptic-ifold-skinpro-amber.jpg' },
+                { id: 'raptic-ifold-skinpro-emerald', name: 'Aramid Skin-Pro — Serenity Emerald', lifestyle: 'Leather Hinge Protection · KeZhi Weaving', img: 'case-images/raptic-ifold-skinpro-emerald.jpg' },
+                { id: 'raptic-ifold-skinpro-mondrian', name: 'Aramid Skin-Pro — Mondrian', lifestyle: 'Leather Hinge Protection · Minimalist', img: 'case-images/raptic-ifold-skinpro-mondrian.jpg' },
+                { id: 'raptic-ifold-nano-cherry', name: 'Urban Nano — Dark Cherry', lifestyle: 'Ultra-Slim 1.6mm · Full Genuine Leather', img: 'case-images/raptic-ifold-nano-cherry.jpg' },
+                { id: 'raptic-ifold-nano-black', name: 'Urban Nano — Stellar Black', lifestyle: 'Ultra-Slim 1.6mm · Full Genuine Leather', img: 'case-images/raptic-ifold-nano-black.jpg' },
+                { id: 'raptic-ifold-nav-cherry', name: 'Urban Nav — Dark Cherry', lifestyle: '3D Leather · 18K Gold Plating · Ceramic Button', img: 'case-images/raptic-ifold-nav-cherry.jpg' },
+                { id: 'raptic-ifold-nav-dark', name: 'Urban Nav — Dark', lifestyle: '3D Leather · 18K Gold Plating · Ceramic Button', img: 'case-images/raptic-ifold-nav-dark.jpg' },
+                { id: 'raptic-ifold-air-stand-clear', name: 'Air Stand — Clear', lifestyle: 'Military-Grade · Built-in Kickstand', img: 'case-images/raptic-ifold-air-stand-clear.jpg' },
+                { id: 'raptic-ifold-air-clear-clear', name: 'Air Clear — Clear', lifestyle: 'Quad-Corner Airbag · >95% Transmittance', img: 'case-images/raptic-ifold-air-clear-clear.jpg' }
+            ]
+        },
+        {
+            group: 'iPhone 17 Pro Max',
+            sub: '6.9" display · up to 2TB',
+            cases: [
+                { id: 'raptic-ip17pm-aramid-rise', name: 'Aramid Skin — Rise', lifestyle: 'Minimalist · Ultra-Light · MagSafe', img: 'case-images/raptic-ip17pm-aramid-skin-rise.jpg' },
+                { id: 'raptic-ip17pm-aramid-sky', name: 'Aramid Skin — Sky', lifestyle: 'Minimalist · Ultra-Light · MagSafe', img: 'case-images/raptic-ip17pm-aramid-skin-sky.jpg' },
+                { id: 'raptic-ip17pm-aramid-ocean', name: 'Aramid Skin — Ocean', lifestyle: 'Minimalist · Ultra-Light · MagSafe', img: 'case-images/raptic-ip17pm-aramid-skin-ocean.jpg' },
+                { id: 'raptic-ip17pm-aramid-profound', name: 'Aramid Skin — Profound', lifestyle: 'Minimalist · Ultra-Light · MagSafe', img: 'case-images/raptic-ip17pm-aramid-skin-profound.jpg' },
+                { id: 'raptic-ip17pm-aramid-humble', name: 'Aramid Skin — Humble', lifestyle: 'Minimalist · Ultra-Light · MagSafe', img: 'case-images/raptic-ip17pm-aramid-skin-humble.jpg' },
+                { id: 'raptic-ip17pm-aramid-bionic-snake', name: 'Aramid Bionic — Snake', lifestyle: 'Statement · Bionic Design', img: 'case-images/raptic-ip17pm-aramid-skin-bionic-snake.jpg' },
+                { id: 'raptic-ip17pm-aramid-dual-600d', name: 'Aramid Dual — 600D', lifestyle: 'Dual-Layer · Ultra-Light · MagSafe', img: 'case-images/raptic-ip17pm-aramid-dual-600d.jpg' },
+                { id: 'raptic-ip17pm-aramid-geotik-mondrian', name: 'Aramid Geotik — Mondrian', lifestyle: 'Trendsetter · Geometric Design', img: 'case-images/raptic-ip17pm-aramid-geotik-mondrian.jpg' },
+                { id: 'raptic-ip17pm-shield-black', name: 'Shield Classic — Black', lifestyle: 'Military-Grade · Drop Protection', img: 'case-images/raptic-ip17pm-shield-classic-black.jpg' },
+                { id: 'raptic-ip17pm-shield-iridescent', name: 'Shield Classic — Iridescent', lifestyle: 'Military-Grade · Iridescent', img: 'case-images/raptic-ip17pm-shield-classic-iridescent.jpg' },
+                { id: 'raptic-ip17pm-air-clear-clear', name: 'Air Clear — Clear', lifestyle: 'Showcase · Non-Yellowing', img: 'case-images/raptic-ip17pm-air-clear-clear.jpg' },
+                { id: 'raptic-ip17pm-air-clear-black', name: 'Air Clear — Black', lifestyle: 'Showcase · Black Bumper', img: 'case-images/raptic-ip17pm-air-clear-black.jpg' }
+            ]
+        }
+    ],
+    android: [
+        {
+            group: 'Samsung Z Fold8 Ultra',
+            sub: 'Foldable · 8.0" main display',
+            cases: [
+                { id: 'raptic-fold8-slim-serenity-amber', name: 'Slim Aramid — Serenity Amber', lifestyle: 'Foldable · Magnetic · MagSafe', img: 'case-images/raptic-fold8-slim-aramid-serenity-amber.jpg' },
+                { id: 'raptic-fold8-ultra-thin-mondrian', name: 'Ultra-Thin Aramid — Mondrian', lifestyle: 'Ultra-Thin · Magnetic · 0.04in', img: 'case-images/raptic-fold8-ultra-thin-mondrian.jpg' },
+                { id: 'raptic-fold8-ultra-thin-blue-gold', name: 'Ultra-Thin Aramid — Blue & Gold', lifestyle: 'Foldable · Blue & Gold Weave', img: 'case-images/raptic-fold8-ultra-thin-blue-gold.jpg' }
+            ]
+        },
+        {
+            group: 'Samsung S26 Ultra',
+            sub: 'Flagship · 6.9" display',
+            cases: [
+                { id: 'raptic-s26u-shield-black', name: 'Shield Magnetic — Black', lifestyle: 'Military-Grade · 23ft Drop', img: 'case-images/raptic-s26u-shield-magnetic-black.jpg' },
+                { id: 'raptic-s26u-shield-iridescent', name: 'Shield Magnetic — Iridescent', lifestyle: 'Military-Grade · Iridescent', img: 'case-images/raptic-s26u-shield-magnetic-black.jpg' },
+                { id: 'raptic-s26u-clear-air-stand', name: 'Clear w/ Air Stand', lifestyle: 'Kickstand · 10ft Drop Protection', img: 'case-images/raptic-s26u-clear-with-air-stand.jpg' },
+                { id: 'raptic-s26u-aramid-fortune-black', name: 'Aramid Skin — Fortune/Black', lifestyle: 'Ultra-Slim · Aero Woven Aramid', img: 'case-images/raptic-s26u-aramid-skin-fortune-black.jpg' }
+            ]
+        }
+    ]
+};
+
+// ── Platform selector ──
+function selectPlatform(platform) {
+    // Update button states
+    var btns = document.querySelectorAll('.chooser-btn');
+    btns.forEach(function(b) { b.classList.remove('active'); });
+    document.getElementById('btn-' + platform).classList.add('active');
+
+    // Hide all sections
+    document.getElementById('section-apple').classList.remove('visible');
+    document.getElementById('section-android').classList.remove('visible');
+
+    // Show selected section
+    var section = document.getElementById('section-' + platform);
+    section.classList.add('visible');
+
+    // Render cases
+    renderCases(section, platform);
+
+    // Show coming banner
+    document.getElementById('coming-banner').style.display = 'block';
+
+    // Scroll to section
+    setTimeout(function() {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+}
+
+// ── Render cases into a section ──
+function renderCases(section, platform) {
+    var data = CASE_DATA[platform];
+    var html = '';
+
+    data.forEach(function(device) {
+        html += '<div class="device-group">';
+        html += '<h2 class="device-group-title">' + device.group;
+        if (device.sub) {
+            html += '<span class="device-group-sub"> · ' + device.sub + '</span>';
+        }
+        html += '</h2>';
+        html += '<div class="case-grid">';
+
+        device.cases.forEach(function(c) {
+            html += '<div class="case-card">';
+            html += '<div class="case-card-img"><img src="' + c.img + '" alt="SocietyOS case" loading="lazy"></div>';
+            html += '<div class="case-card-body">';
+            html += '<div class="case-card-name">' + c.name + '</div>';
+            html += '<div class="case-card-lifestyle">' + c.lifestyle + '</div>';
+            html += '<span class="case-card-badge">Coming 2027 · Pre-order</span>';
+            html += '</div></div>';
+        });
+
+        html += '</div></div>';
+    });
+
+    section.innerHTML = html;
+}
+</script>
+
+</body>
+</html>
