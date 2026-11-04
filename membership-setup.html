@@ -1679,6 +1679,26 @@
         <button class="btn btn-primary" id="btn-next" disabled onclick="goNext()">Continue →</button>
     </div>
 
+    <!-- Signup capture modal — captures name/email before Stripe redirect -->
+    <div id="signup-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:var(--bg-card, #152a45); border:1px solid var(--border-glow, rgba(197,160,89,0.3)); border-radius:16px; padding:2rem; max-width:420px; width:90%; margin:auto;">
+            <h3 style="text-align:center; color:var(--text-primary, #f0f0f5); font-size:1.3rem; margin-bottom:0.5rem;">Secure your spot</h3>
+            <p style="text-align:center; color:var(--text-secondary, #a0a0b8); font-size:0.9rem; margin-bottom:0.5rem;">Enter your details to reserve your SocietyOS membership and your seat at Avengers Doomsday.</p>
+            <p id="signup-tier-display" style="text-align:center; color:var(--society-gold, #c5a059); font-weight:700; font-size:1rem; margin-bottom:1.25rem;"></p>
+            <div style="margin-bottom:1rem;">
+                <label style="display:block; font-size:0.75rem; color:var(--text-tertiary, #6a6a82); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem;">Full Name</label>
+                <input id="signup-name" type="text" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Your name" style="width:100%; background:var(--bg-primary, #0d1f2d); border:1px solid var(--border-subtle, rgba(255,255,255,0.06)); color:var(--text-primary, #f0f0f5); border-radius:10px; padding:0.7rem 0.9rem; font-size:0.95rem; box-sizing:border-box;">
+            </div>
+            <div style="margin-bottom:1.5rem;">
+                <label style="display:block; font-size:0.75rem; color:var(--text-tertiary, #6a6a82); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem;">Email</label>
+                <input id="signup-email" type="email" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="you@example.com" style="width:100%; background:var(--bg-primary, #0d1f2d); border:1px solid var(--border-subtle, rgba(255,255,255,0.06)); color:var(--text-primary, #f0f0f5); border-radius:10px; padding:0.7rem 0.9rem; font-size:0.95rem; box-sizing:border-box;">
+            </div>
+            <button id="signup-continue" onclick="submitSignup()" style="width:100%; background:var(--society-gold, #c5a059); color:#111; border:none; border-radius:10px; padding:0.8rem; font-weight:700; font-size:1rem; cursor:pointer;">Continue to Payment →</button>
+            <button onclick="closeSignupModal()" style="width:100%; background:transparent; color:var(--text-tertiary, #6a6a82); border:none; padding:0.5rem; font-size:0.8rem; cursor:pointer; margin-top:0.5rem;">← Back</button>
+            <div id="signup-err" style="color:#e26a6a; font-size:0.85rem; text-align:center; margin-top:0.5rem; display:none;"></div>
+        </div>
+    </div>
+
     <!-- Optional: SocietyOS Cases — Available on your preferred mobile device -->
     <div style="text-align:center; margin-top:1.5rem; padding-bottom:2rem;">
         <a href="cases.html" style="color: var(--society-gold); text-decoration: none; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem; opacity: 0.85; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">SocietyOS Cases — Available on your preferred mobile device →</a>
@@ -3308,46 +3328,103 @@ var SOCIETYOS_ACCESSORIES = []; // Removed — accessories will return when real
     }
 
     function goNext() {
-        // Ambassador tiles go straight to Stripe checkout via API — skip device/case/wallet steps
-        // Uses Checkout Session (not Payment Link) so promo codes work reliably
-        if (selections.membership && (selections.membership.id === 'ambassador-onyx' || selections.membership.id === 'ambassador-gold')) {
-            var ambRefCode = '';
-            try { ambRefCode = sessionStorage.getItem('sos_ref') || ''; } catch(e) {}
-            var ambApiTier = selections.membership.id; // 'ambassador-onyx' or 'ambassador-gold'
-            // Disable the next button during redirect
-            if (btnNext) { btnNext.style.opacity = '0.5'; btnNext.style.pointerEvents = 'none'; }
+        // All tiers — show signup modal to capture name/email before checkout
+        if (selections.membership) {
+            var tierName = selections.membership.label || 'SocietyOS Membership';
+            var tierDisplay = document.getElementById('signup-tier-display');
+            if (tierDisplay) { tierDisplay.textContent = tierName; }
+            var modal = document.getElementById('signup-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                var nameInput = document.getElementById('signup-name');
+                if (nameInput) { nameInput.focus(); }
+            }
+        } else {
+            showCompletion();
+        }
+    }
+
+    // ── Signup modal: capture name/email, record signup, then redirect to checkout ──
+    function closeSignupModal() {
+        var modal = document.getElementById('signup-modal');
+        if (modal) { modal.style.display = 'none'; }
+        var errEl = document.getElementById('signup-err');
+        if (errEl) { errEl.style.display = 'none'; }
+    }
+
+    function submitSignup() {
+        var name = document.getElementById('signup-name')?.value?.trim() || '';
+        var email = document.getElementById('signup-email')?.value?.trim() || '';
+        var errEl = document.getElementById('signup-err');
+        
+        if (!name || !email) {
+            if (errEl) { errEl.textContent = 'Please enter your name and email.'; errEl.style.display = 'block'; }
+            return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            if (errEl) { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; }
+            return;
+        }
+
+        var refCode = '';
+        try { refCode = sessionStorage.getItem('sos_ref') || ''; } catch(e) {}
+        var tierId = selections.membership?.id || 'unknown';
+        var tierLabel = selections.membership?.label || 'SocietyOS Membership';
+
+        // Record the signup via the ambassador worker
+        try {
+            fetch('https://societyos-ambassador.societyos.workers.dev/api/scan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: refCode || 'direct',
+                    type: 'tier-signup',
+                    email: email,
+                    name: name,
+                    tier: tierLabel,
+                    tierId: tierId,
+                    refCode: refCode,
+                    event: 'avengers-doomsday'
+                })
+            }).catch(function(){});
+        } catch(e) {}
+
+        // Disable the continue button
+        var continueBtn = document.getElementById('signup-continue');
+        if (continueBtn) { continueBtn.style.opacity = '0.5'; continueBtn.style.pointerEvents = 'none'; continueBtn.textContent = 'Redirecting to payment...'; }
+
+        // Now redirect to Stripe
+        if (selections.membership && selections.membership.id && (selections.membership.id === 'ambassador-onyx' || selections.membership.id === 'ambassador-gold')) {
+            // Ambassador tier — use the /api/checkout endpoint (Checkout Session for promo code support)
             fetch('https://societyos-ambassador.societyos.workers.dev/api/checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ tier: ambApiTier, refCode: ambRefCode })
+                body: JSON.stringify({ tier: selections.membership.id, refCode: refCode })
             })
             .then(function(r) { return r.json(); })
             .then(function(data) {
                 if (data.ok && data.url) {
                     window.open(data.url, '_self');
                 } else {
-                    if (btnNext) { btnNext.style.opacity = '1'; btnNext.style.pointerEvents = 'auto'; }
-                    console.error('SocietyOS checkout error:', data.error);
+                    if (continueBtn) { continueBtn.style.opacity = '1'; continueBtn.style.pointerEvents = 'auto'; continueBtn.textContent = 'Continue to Payment →'; }
+                    if (errEl) { errEl.textContent = 'Checkout error. Please try again.'; errEl.style.display = 'block'; }
                 }
             })
-            .catch(function(err) {
-                if (btnNext) { btnNext.style.opacity = '1'; btnNext.style.pointerEvents = 'auto'; }
-                console.error('SocietyOS checkout network error:', err);
+            .catch(function() {
+                if (continueBtn) { continueBtn.style.opacity = '1'; continueBtn.style.pointerEvents = 'auto'; continueBtn.textContent = 'Continue to Payment →'; }
+                if (errEl) { errEl.textContent = 'Network error. Please try again.'; errEl.style.display = 'block'; }
             });
-            return;
-        }
-        // All tiers go straight to Stripe checkout — no device/case/wallet steps
-        if (selections.membership && selections.membership.checkoutUrl) {
+        } else if (selections.membership && selections.membership.checkoutUrl) {
+            // Non-ambassador tier — redirect to Stripe Payment Link
             var checkoutUrl = selections.membership.checkoutUrl;
-            var refCode = '';
-            try { refCode = sessionStorage.getItem('sos_ref') || ''; } catch(e) {}
             if (refCode && /^[A-Za-z0-9_-]{1,64}$/.test(refCode)) {
                 checkoutUrl += (checkoutUrl.indexOf('?') === -1 ? '?' : '&') +
                     'client_reference_id=' + encodeURIComponent(refCode + '-' + Date.now());
             }
-            if (btnNext) { btnNext.style.opacity = '0.5'; btnNext.style.pointerEvents = 'none'; }
             window.open(checkoutUrl, '_self');
         } else {
+            // No checkout URL — show completion
+            closeSignupModal();
             showCompletion();
         }
     }

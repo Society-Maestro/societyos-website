@@ -38,7 +38,7 @@
   <div class="card">
     <div id="form">
       <h2>Create your SocietyOS account</h2>
-      <div class="step">Step 1 of 2 — your SocietyOS record. Step 2 unlocks your FreeCast activation link.</div>
+      <div class="step">Step 1 of 2 — your SocietyOS record. Secures your seat at Avengers Doomsday. Step 2 unlocks your FreeCast activation link.</div>
       <label>Full Name</label>
       <input autocapitalize="none" autocorrect="off" spellcheck="false" id="name" placeholder="Your name" autocomplete="name">
       <label>Email</label>
@@ -81,7 +81,7 @@ async function signup(){
     if (ref && /^[A-Za-z0-9_-]{1,64}$/.test(ref)) {
       fetch('https://societyos-ambassador.societyos.workers.dev/api/scan', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: ref, type: 'carbon-signup', email: email, name: name, tier: 'Carbon Free' })
+        body: JSON.stringify({ code: ref, type: 'carbon-signup', email: email, name: name, tier: 'Carbon Free', event: 'avengers-doomsday' })
       }).catch(function(){});
     }
   } catch(e){}
