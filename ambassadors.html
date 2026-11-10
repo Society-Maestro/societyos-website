@@ -142,6 +142,10 @@
           <div><span id="cmpWire">$0 Wire</span></div>
         </div>
         <div style="font-size:12px;color:var(--mut);margin-top:8px">Goldbacks appreciate ~14% annually on average. Cash holds its value in USD. Choose what fits your strategy — or mix and match.</div>
+        <div id="perRefBox" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--bd);display:none">
+          <div style="font-size:13px;color:var(--mut);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Per referral ($<span id="perRefVal">40</span> each):</div>
+          <div id="perRefDisplay" style="font-size:16px;font-weight:700;color:var(--gold)"></div>
+        </div>
       </div>
       <div id="payoutForm">
         <label>Payout method</label>
@@ -399,6 +403,7 @@ async function loadStats(){
     earnLabel.style.color = '';
   }
   document.getElementById('sPer').textContent = '$' + d.perRef;
+  CURRENT_PER_REF = d.perRef || 40;
   document.getElementById('sNodes').textContent = d.nodes;
   document.getElementById('bar').style.width = d.goalPct + '%';
   document.getElementById('sPct').textContent = d.goalPct + '%';
@@ -537,6 +542,8 @@ async function loadStats(){
   }
 
 let PDMETHOD = 'wire';
+var GB_RATE = 8.21;
+var CURRENT_PER_REF = 40;
 function chooseMethod(m){
   PDMETHOD = m;
   document.getElementById('detailForm').classList.remove('hidden');
@@ -544,6 +551,24 @@ function chooseMethod(m){
   document.getElementById('tangemFields').classList.toggle('hidden', m !== 'tangem');
   document.getElementById('checkFields').classList.toggle('hidden', m !== 'check');
   document.getElementById('goldbackFields').classList.toggle('hidden', m !== 'goldback');
+  // Show per-referral conversion
+  var perRefBox = document.getElementById('perRefBox');
+  var perRefDisplay = document.getElementById('perRefDisplay');
+  if (perRefBox && perRefDisplay) {
+    perRefBox.style.display = 'block';
+    var perRefVal = document.getElementById('perRefVal');
+    if (perRefVal) perRefVal.textContent = CURRENT_PER_REF;
+    if (m === 'goldback') {
+      var gb = (CURRENT_PER_REF / GB_RATE).toFixed(1);
+      perRefDisplay.innerHTML = '<img src="assets/goldback-logo.png" alt="GB" style="width:18px;height:18px;border-radius:3px;vertical-align:middle;margin-right:6px">' + gb + ' Goldbacks per referral';
+    } else if (m === 'tangem') {
+      perRefDisplay.textContent = '$' + CURRENT_PER_REF + ' Tangem Pay per referral';
+    } else if (m === 'wire') {
+      perRefDisplay.textContent = '$' + CURRENT_PER_REF + ' Wire Transfer per referral';
+    } else if (m === 'check') {
+      perRefDisplay.textContent = '$' + CURRENT_PER_REF + ' Certified Check per referral';
+    }
+  }
 }
 async function saveDetails(){
   const err = document.getElementById('pdErr'), ok = document.getElementById('pdOk');
