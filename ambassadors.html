@@ -116,7 +116,7 @@
       <div class="stats">
         <div class="stat"><b id="sRefs">0</b><small>Referrals (paid)</small></div>
         <div class="stat"><b id="sEarn">$0</b><small>Earned — residual</small></div>
-        <div class="stat"><b id="sGold">0</b><small>Goldbacks (1 = $8.21)</small></div>
+        <div class="stat" style="border-color:rgba(255,221,50,0.25)"><b id="sGold" style="color:#ffdd32">0</b><small><img src="assets/goldback-logo.png" alt="Goldback" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;border-radius:2px">Goldbacks (1 = $8.21) · <a href="https://www.goldback.com/" target="_blank" rel="noopener" style="color:#ffdd32;text-decoration:underline">Learn</a></small></div>
         <div class="stat"><b id="sPer">$0</b><small>Per referral / yr</small></div>
         <div class="stat"><b id="sNodes">0</b><small>Nodes held</small></div>
       </div>
@@ -130,12 +130,24 @@
       <ul class="perks">
         <li>Rewards are residual — paid for the life of every customer you refer</li>
         <li>First payout window: <b>January 2027</b> — schedule yours below</li>
+        <li>Choose <b>any payment method you prefer</b> — your earnings convert at the current rate for your chosen currency</li>
+        <li>You can <b>split your rewards</b> across methods — keep some in Goldbacks to grow with gold, some in cash via wire, some in Tangem — whatever maximizes your returns</li>
       </ul>
+      <div style="background:#0f0f14;border:1px solid var(--bd);border-radius:10px;padding:14px;margin:10px 0">
+        <div style="font-size:13px;color:var(--mut);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Your earnings at a glance — valued in each currency:</div>
+        <div id="payoutComparison" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px">
+          <div style="display:flex;align-items:center;gap:6px"><img src="assets/goldback-logo.png" alt="GB" style="width:16px;height:16px;border-radius:3px"><span id="cmpGold">0 Goldbacks</span></div>
+          <div><span id="cmpUsd">$0 USD</span></div>
+          <div><span id="cmpTangem">$0 Tangem</span></div>
+          <div><span id="cmpWire">$0 Wire</span></div>
+        </div>
+        <div style="font-size:12px;color:var(--mut);margin-top:8px">Goldbacks appreciate ~14% annually on average. Cash holds its value in USD. Choose what fits your strategy — or mix and match.</div>
+      </div>
       <div id="payoutForm">
         <label>Payout method</label>
-        <div style="display:flex;gap:10px;margin-top:4px">
+        <div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap">
+          <button class="ghost" style="margin-top:0" onclick="chooseMethod('goldback')"><img src="assets/goldback-logo.png" alt="" style="width:14px;height:14px;border-radius:2px;vertical-align:middle;margin-right:4px">Goldbacks</button>
           <button class="ghost" style="margin-top:0" onclick="chooseMethod('tangem')">Tangem Pay</button>
-          <button class="ghost" style="margin-top:0" onclick="chooseMethod('goldback')">Goldbacks</button>
           <button class="ghost" style="margin-top:0" onclick="chooseMethod('wire')">Wire Transfer</button>
           <button class="ghost" style="margin-top:0" onclick="chooseMethod('check')">Certified Check</button>
         </div>
@@ -363,12 +375,21 @@ async function loadStats(){
     var goldLabel = goldEl.parentElement.querySelector('small');
     if (goldLabel) {
       if (gbHeld > 0) {
-        goldLabel.textContent = 'Goldbacks (' + gbHeld.toLocaleString() + ' held + ' + gbEarned.toLocaleString() + ' earned · 1 = $' + gbRate + ')';
+        goldLabel.innerHTML = '<img src="assets/goldback-logo.png" alt="Goldback" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;border-radius:2px">Goldbacks (' + gbHeld.toLocaleString() + ' held + ' + gbEarned.toLocaleString() + ' earned · 1 = $' + gbRate + ') · <a href="https://www.goldback.com/" target="_blank" rel="noopener" style="color:#ffdd32;text-decoration:underline">Learn</a>';
       } else {
-        goldLabel.textContent = 'Goldbacks (1 = $' + gbRate + ')';
+        goldLabel.innerHTML = '<img src="assets/goldback-logo.png" alt="Goldback" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;border-radius:2px">Goldbacks (1 = $' + gbRate + ') · <a href="https://www.goldback.com/" target="_blank" rel="noopener" style="color:#ffdd32;text-decoration:underline">Learn</a>';
       }
     }
   }
+  // Payout comparison — earnings valued in each currency
+  var cmpGold = document.getElementById('cmpGold');
+  var cmpUsd = document.getElementById('cmpUsd');
+  var cmpTangem = document.getElementById('cmpTangem');
+  var cmpWire = document.getElementById('cmpWire');
+  if (cmpGold) cmpGold.textContent = gbTotal.toLocaleString() + ' Goldbacks';
+  if (cmpUsd) cmpUsd.textContent = '$' + d.earned.toLocaleString() + ' USD';
+  if (cmpTangem) cmpTangem.textContent = '$' + d.earned.toLocaleString() + ' Tangem';
+  if (cmpWire) cmpWire.textContent = '$' + d.earned.toLocaleString() + ' Wire';
   const earnLabel = document.getElementById('sEarn').parentElement.querySelector('small');
   if (d.adjusted) {
     earnLabel.textContent = 'Earned — residual ✓ (verified by SocietyOS)';
