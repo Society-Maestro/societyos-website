@@ -116,6 +116,7 @@
       <div class="stats">
         <div class="stat"><b id="sRefs">0</b><small>Referrals (paid)</small></div>
         <div class="stat"><b id="sEarn">$0</b><small>Earned — residual</small></div>
+        <div class="stat"><b id="sGold">0</b><small>Goldbacks (1 = $8.21)</small></div>
         <div class="stat"><b id="sPer">$0</b><small>Per referral / yr</small></div>
         <div class="stat"><b id="sNodes">0</b><small>Nodes held</small></div>
       </div>
@@ -134,6 +135,7 @@
         <label>Payout method</label>
         <div style="display:flex;gap:10px;margin-top:4px">
           <button class="ghost" style="margin-top:0" onclick="chooseMethod('tangem')">Tangem Pay</button>
+          <button class="ghost" style="margin-top:0" onclick="chooseMethod('goldback')">Goldbacks</button>
           <button class="ghost" style="margin-top:0" onclick="chooseMethod('wire')">Wire Transfer</button>
           <button class="ghost" style="margin-top:0" onclick="chooseMethod('check')">Certified Check</button>
         </div>
@@ -157,6 +159,11 @@
             <label>State / Region</label><input autocapitalize="none" autocorrect="off" spellcheck="false" id="pd_state" placeholder="State">
             <label>ZIP / Postal Code</label><input autocapitalize="none" autocorrect="off" spellcheck="false" id="pd_zip" placeholder="ZIP code">
             <label>Country</label><input autocapitalize="none" autocorrect="off" spellcheck="false" id="pd_country2" placeholder="Country">
+          </div>
+          <div id="goldbackFields" class="hidden">
+            <div class="goal-line" style="margin-bottom:10px">Goldbacks are gold-backed currency (1 Goldback = $8.21). Your earnings convert at the current daily rate. Enter where to send your Goldbacks:</div>
+            <label>Goldback Wallet / Mailing Address</label><input autocapitalize="none" autocorrect="off" spellcheck="false" id="pd_gbwallet" placeholder="Goldback wallet address or mailing address for physical delivery">
+            <label>Account Holder Name</label><input autocapitalize="none" autocorrect="off" spellcheck="false" id="pd_gbholder" placeholder="Name on the account">
           </div>
           <button class="ghost" onclick="saveDetails()" style="margin-top:14px">Save payout details</button>
           <div class="err" id="pdErr"></div>
@@ -343,6 +350,9 @@ async function loadStats(){
   document.getElementById('whoTier').textContent = d.tier;
   document.getElementById('sRefs').textContent = d.referrals;
   document.getElementById('sEarn').textContent = '$' + d.earned.toLocaleString();
+  var gbRate = 8.21;
+  var gbEarned = Math.floor(d.earned / gbRate);
+  document.getElementById('sGold').textContent = gbEarned.toLocaleString();
   const earnLabel = document.getElementById('sEarn').parentElement.querySelector('small');
   if (d.adjusted) {
     earnLabel.textContent = 'Earned — residual ✓ (verified by SocietyOS)';
@@ -496,6 +506,7 @@ function chooseMethod(m){
   document.getElementById('wireFields').classList.toggle('hidden', m !== 'wire');
   document.getElementById('tangemFields').classList.toggle('hidden', m !== 'tangem');
   document.getElementById('checkFields').classList.toggle('hidden', m !== 'check');
+  document.getElementById('goldbackFields').classList.toggle('hidden', m !== 'goldback');
 }
 async function saveDetails(){
   const err = document.getElementById('pdErr'), ok = document.getElementById('pdOk');
@@ -503,6 +514,7 @@ async function saveDetails(){
   let fields;
   if (PDMETHOD === 'wire') fields = { beneficiary: pd_val('pd_name'), bank: pd_val('pd_bank'), account: pd_val('pd_account'), routing: pd_val('pd_routing'), country: pd_val('pd_country') };
   else if (PDMETHOD === 'check') fields = { payTo: pd_val('pd_payto'), street: pd_val('pd_street'), city: pd_val('pd_city'), state: pd_val('pd_state'), zip: pd_val('pd_zip'), country: pd_val('pd_country2') };
+  else if (PDMETHOD === 'goldback') fields = { wallet: pd_val('pd_gbwallet'), holder: pd_val('pd_gbholder') };
   else fields = { wallet: pd_val('pd_wallet'), holder: pd_val('pd_holder') };
   for (const v of Object.values(fields)) { if (!v) { err.textContent = 'All fields are required.'; err.style.display = 'block'; return; } }
   const r = await fetch(API + '/api/payout-details', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: CODE, method: PDMETHOD, fields }) });
@@ -519,7 +531,7 @@ async function schedulePayout(method){
   const d = await r.json();
   if(d.ok){
     sk.style.display = 'block';
-    sk.textContent = '✓ Payout scheduled for January 2027 via ' + (method === 'wire' ? 'Wire Transfer' : method === 'check' ? 'Certified Check' : 'Tangem Pay') + ' — you can cancel below anytime.';
+    sk.textContent = '✓ Payout scheduled for January 2027 via ' + (method === 'wire' ? 'Wire Transfer' : method === 'check' ? 'Certified Check' : method === 'goldback' ? 'Goldbacks' : 'Tangem Pay') + ' — you can cancel below anytime.';
     loadStats();
   }
 }
