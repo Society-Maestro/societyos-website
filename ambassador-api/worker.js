@@ -266,14 +266,14 @@ export default {
       const body = await request.json().catch(() => ({}));
       const raw = String(body.code || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
       if (!ROSTER[raw]) return json({ ok: false }, 401);
-      const type = body.type === 'carbon-signup' ? 'carbon-signup' : 'scan';
+      const type = body.type === 'carbon-signup' ? 'carbon-signup' : body.type === 'tier-signup' ? 'tier-signup' : 'scan';
       const cnt = ((await env.AMB.get(type + ':' + raw)) || 0) + 1;
       await env.AMB.put(type + ':' + raw, cnt);
-      // Signup ledger entry (carbon free signups): who, email, when, referred-by
-      if (type === 'carbon-signup') {
+      // Signup ledger entry (carbon free OR paid tier signups): who, email, when, referred-by
+      if (type === 'carbon-signup' || type === 'tier-signup') {
         const ledger = await env.AMB.get('signups', 'json') || { count: 0, log: [] };
         ledger.count = (ledger.count || 0) + 1;
-        ledger.log.unshift({ code: raw, email: String(body.email || '').slice(0, 120), name: String(body.name || '').slice(0, 80), at: new Date().toISOString(), tier: body.tier || 'Carbon Free' });
+        ledger.log.unshift({ code: raw, email: String(body.email || '').slice(0, 120), name: String(body.name || '').slice(0, 80), at: new Date().toISOString(), tier: body.tier || (type === 'tier-signup' ? 'Paid Tier' : 'Carbon Free'), tierId: String(body.tierId || '').slice(0, 60), refCode: String(body.refCode || '').slice(0, 40), event: String(body.event || '').slice(0, 40) });
         ledger.log = ledger.log.slice(0, 500);
         await env.AMB.put('signups', JSON.stringify(ledger));
       }

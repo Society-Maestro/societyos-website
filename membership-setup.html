@@ -3371,21 +3371,29 @@ var SOCIETYOS_ACCESSORIES = []; // Removed — accessories will return when real
         var tierId = selections.membership?.id || 'unknown';
         var tierLabel = selections.membership?.label || 'SocietyOS Membership';
 
-        // Record the signup via the ambassador worker
+        // Record the signup via the ambassador worker — send to BOTH endpoints for redundancy
         try {
+            var signupData = {
+                code: refCode || 'direct',
+                type: 'tier-signup',
+                email: email,
+                name: name,
+                tier: tierLabel,
+                tierId: tierId,
+                refCode: refCode,
+                event: 'avengers-doomsday'
+            };
+            // Primary: /api/scan with tier-signup type
             fetch('https://societyos-ambassador.societyos.workers.dev/api/scan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    code: refCode || 'direct',
-                    type: 'tier-signup',
-                    email: email,
-                    name: name,
-                    tier: tierLabel,
-                    tierId: tierId,
-                    refCode: refCode,
-                    event: 'avengers-doomsday'
-                })
+                body: JSON.stringify(signupData)
+            }).catch(function(){});
+            // Backup: /api/signup endpoint (always records to ledger)
+            fetch('https://societyos-ambassador.societyos.workers.dev/api/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(signupData)
             }).catch(function(){});
         } catch(e) {}
 
