@@ -351,8 +351,24 @@ async function loadStats(){
   document.getElementById('sRefs').textContent = d.referrals;
   document.getElementById('sEarn').textContent = '$' + d.earned.toLocaleString();
   var gbRate = 8.21;
+  var gbHeld = 0;
+  if (d.code === 'sam') gbHeld = 445;
+  else if (d.code === 'ares') gbHeld = 644;
+  else if (d.code === 'healthyself') gbHeld = 1012;
   var gbEarned = Math.floor(d.earned / gbRate);
-  document.getElementById('sGold').textContent = gbEarned.toLocaleString();
+  var gbTotal = gbHeld + gbEarned;
+  var goldEl = document.getElementById('sGold');
+  if (goldEl) {
+    goldEl.textContent = gbTotal.toLocaleString();
+    var goldLabel = goldEl.parentElement.querySelector('small');
+    if (goldLabel) {
+      if (gbHeld > 0) {
+        goldLabel.textContent = 'Goldbacks (' + gbHeld.toLocaleString() + ' held + ' + gbEarned.toLocaleString() + ' earned · 1 = $' + gbRate + ')';
+      } else {
+        goldLabel.textContent = 'Goldbacks (1 = $' + gbRate + ')';
+      }
+    }
+  }
   const earnLabel = document.getElementById('sEarn').parentElement.querySelector('small');
   if (d.adjusted) {
     earnLabel.textContent = 'Earned — residual ✓ (verified by SocietyOS)';
