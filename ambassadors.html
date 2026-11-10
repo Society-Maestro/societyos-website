@@ -370,7 +370,7 @@ async function loadStats(){
   var gbHeld = 0;
   if (d.code === 'sam') gbHeld = 445;
   else if (d.code === 'ares') gbHeld = 644;
-  else if (d.code === 'healthyself') gbHeld = 3410;
+  else if (d.code === 'healthyself') gbHeld = 4068;
   var gbEarned = Math.floor(d.earned / gbRate);
   var gbTotal = gbHeld + gbEarned;
   var goldEl = document.getElementById('sGold');
