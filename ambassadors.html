@@ -368,10 +368,10 @@ async function loadStats(){
   document.getElementById('sEarn').textContent = '$' + d.earned.toLocaleString();
   var gbRate = 8.21;
   var gbHeld = 0;
-  if (d.code === 'sam') gbHeld = 445;
-  else if (d.code === 'ares') gbHeld = 644;
-  else if (d.code === 'healthyself') gbHeld = 16629;
-  else if (d.code === 'towtheline') gbHeld = 8;
+  if (d.code === 'sam') gbHeld = 453;
+  else if (d.code === 'ares') gbHeld = 652;
+  else if (d.code === 'healthyself') gbHeld = 16637;
+  else if (d.code === 'towtheline') gbHeld = 16;
   var gbEarned = Math.floor(d.earned / gbRate);
   var gbTotal = gbHeld + gbEarned;
   var goldEl = document.getElementById('sGold');
